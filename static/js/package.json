@@ -1,0 +1,9 @@
+{
+  "author": "Song Gao <song@gao.io>",
+  "dependencies": {
+    "react": "^0.11.2",
+    "browserify": ">=5.5.0",
+    "watchify": "^2.0.0",
+    "reactify": "^0.14.0"
+  }
+}
