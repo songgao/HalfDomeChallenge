@@ -1,5 +1,7 @@
 var EventEmitter = require('events').EventEmitter;
 var util = require("util");
+var dispatcher = require('../dispatcher');
+var C = require('../constants');
 
 var _FB_STATES = {
   INIT : "INIT",
@@ -11,7 +13,7 @@ var _FB_STATES = {
 };
 
 function FBLogin() {
-  this.fb_status = null;
+  this.login_status = null;
   this.fb_profile = null;
 
   this._state = null;
@@ -20,6 +22,14 @@ function FBLogin() {
   this.on(_FB_STATES.LOGGED_OUT, this._logged_out.bind(this));
   this.on(_FB_STATES.LOGGED_IN, this._logged_in.bind(this));
   this.on(_FB_STATES.USER_PROFILE_ACQUIRED, this._user_profile_acquired.bind(this));
+
+  dispatcher.register(function(payload) {
+    if(payload.action.type === C.ActionTypes.FB_LOGIN_CLICK) {
+      this.login(payload);
+    } else if (payload.action.type === C.ActionTypes.FB_LOGOUT_CLICK) {
+      this.logout(payload);
+    }
+  }.bind(this));
 }
 util.inherits(FBLogin, EventEmitter);
 
@@ -27,21 +37,6 @@ FBLogin.prototype._changeState = function(to) {
   this._state = to;
   this.emit(to);
 };
-
-// returns true if it's ready, otherwise false. If not ready yet, cb will be
-// emitted when it is.
-FBLogin.prototype.ready = function(cb) {
-  if (
-    this._state === _FB_STATES.LOGGED_OUT ||
-    this._state === _FB_STATES.LOGGED_IN ||
-    this._state === _FB_STATES.USER_PROFILE_ACQUIRED
-  ) {
-    return true;
-  } else {
-    this.once('ready', cb);
-    return false;
-  }
-}
 
 FBLogin.prototype._init = function() {
   var self = this;
@@ -68,8 +63,8 @@ FBLogin.prototype._init = function() {
 FBLogin.prototype._fb_loaded = function() {
   var self = this;
   FB.getLoginStatus(function(response) {
-    self.fb_status = response.status;
-    if(self.fb_status === 'connected') {
+    self.login_status = response;
+    if(self.login_status.status === 'connected') {
       self._changeState(_FB_STATES.LOGGED_IN);
     } else {
       self._changeState(_FB_STATES.LOGGED_OUT);
@@ -78,7 +73,9 @@ FBLogin.prototype._fb_loaded = function() {
 };
 
 FBLogin.prototype._logged_out = function() {
-  this.emit('ready');
+  this.login_status = null;
+  this.fb_profile = null;
+  this.emit('fb_change');
 };
 
 FBLogin.prototype._logged_in = function() {
@@ -89,18 +86,25 @@ FBLogin.prototype._logged_in = function() {
   });
 };
 
-FBLogin.prototype.login = function(callback) {
+FBLogin.prototype.logout = function() {
+  if(this._state !== _FB_STATES.LOGGED_IN && this._state !== _FB_STATES.USER_PROFILE_ACQUIRED) {
+    return;
+  }
+  FB.logout(function() {
+    this._changeState(_FB_STATES.LOGGED_OUT)
+  }.bind(this));
+}
+
+FBLogin.prototype.login = function() {
   var self = this;
   if(self._state !== _FB_STATES.LOGGED_IN && self._state !== _FB_STATES.USER_PROFILE_ACQUIRED && self._state !== _FB_STATES.LOGGED_OUT) {
     return;
   }
 
-  self.once(_FB_STATES.USER_PROFILE_ACQUIRED, callback);
-
   if(self._state === _FB_STATES.LOGGED_OUT) {
     FB.login(function(response) {
-      self.fb_status = response.status;
-      if(self.fb_status === 'connected') {
+      self.login_status = response;
+      if(self.login_status.status === 'connected') {
         self._changeState(_FB_STATES.LOGGED_IN);
       }
     }, {
@@ -112,9 +116,23 @@ FBLogin.prototype.login = function(callback) {
 };
 
 FBLogin.prototype._user_profile_acquired = function() {
-  this.emit('ready');
+  this.emit('fb_change');
 };
 
-var fb = new FBLogin();
-exports.fb = fb;
-fb._changeState(_FB_STATES.INIT);
+FBLogin.prototype.isLoggedIn = function() {
+  return this._state === _FB_STATES.LOGGED_IN || this._state === _FB_STATES.USER_PROFILE_ACQUIRED
+};
+
+FBLogin.prototype.addChangeListener = function(callback) {
+  this.on('fb_change', callback);
+};
+
+FBLogin.prototype.removeChangeListener = function(callback) {
+  this.removeListener('fb_change', callback);
+};
+
+var fb_login = new FBLogin();
+
+exports.fb_login = fb_login;
+exports.FB_STATES = _FB_STATES;
+fb_login._changeState(_FB_STATES.INIT);

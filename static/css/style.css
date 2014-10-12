@@ -1,0 +1,263 @@
+#top {
+  background-color: rgba(255, 255, 255, .85);
+}
+
+.profile-picture {
+  height: 48px;
+  margin-top: 8px;
+  margin-right: 16px;
+}
+
+.el-cap {
+  background-image: url('/images/elcap.jpg');
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  background-position: left bottom;
+}
+
+@media (min-width: 992px) {
+  .el-cap>div.gradient {
+    background-image: url('/images/gradient.png');
+    background-size: 15% 1px;
+    background-repeat: repeat-y;
+    background-position: right;
+  }
+
+  .el-cap>div:not(.gradient) {
+    background-color: white;
+  }
+}
+
+#O_O,html,body,#content {
+  min-height: 100%;
+  height: 100%;
+}
+
+#O_O>span>.container-fluid {
+  padding-top: 64px;
+}
+
+.fullheight {
+  min-height: 100%;
+  height: 100%;
+}
+
+.copyright {
+  position: absolute;
+  bottom: 2px;
+  left: 4px;
+  line-height: 1em;
+}
+
+.copyright > a {
+  color: #666666;
+}
+
+.with-scroll {
+  overflow: scroll;
+}
+
+.no-scroll {
+  overflow: hidden;
+}
+
+.floating-head {
+  position: absolute;
+}
+
+.floating-head > span {
+  position: relative;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 20px;
+  padding-right: 8px;
+  margin-left: -12px;
+  z-index: 8;
+  background: rgba(0, 0, 0, 0.4)!important;
+  color: #DDDDDD;
+}
+
+.floating-head > img {
+  position: relative;
+  height: 64px;
+  width: 64px;
+  z-index: 16;
+}
+
+.progress-rainbow {
+  margin-top: 8px;
+  height: 48px;
+  align-items: center;
+}
+
+.progress-rainbow>div>div {
+  line-height: 48px;
+  vertical-align: middle;
+}
+
+.progress-rainbow>div>.rainbow-name-picture {
+  width: 128px;
+  left: 0px;
+  text-align: right;
+  display: inline-block;
+  position: absolute;
+}
+.progress-rainbow>div>.rainbow-percentage {
+  width: 42px;
+  right: 0px;
+  display: inline-block;
+  position: absolute;
+}
+
+.progress-rainbow>div>.rainbow-chips {
+  width: 100%;
+  padding-left: 128px;
+  padding-right: 42px;
+  display: inline-block;
+}
+
+.rainbow-chip {
+  height: 48px;
+  width: 1.724137931%;
+  display: inline-block;
+}
+
+.me-info {
+  padding: 16px;
+  margin: 16px;
+}
+
+.me-info > div > h3 > span.category-label {
+  margin-left: 16px;
+  font-size: .5em;
+}
+
+.me-info > div > h3 {
+  display: inline-block;
+}
+
+.category-description {
+  text-align: center;
+}
+
+.category-description > p {
+  margin-top: 8px;
+  text-align: justify;
+}
+
+ul.logs,ul.admin-routes {
+  list-style-type: none;
+  margin-top: 24px;
+}
+
+.admin-route>div>span.label {
+  margin-left: 4px;
+  margin-top: 4px;
+}
+
+.admin-route>div {
+  margin-top: 8px;
+}
+
+.admin-route>div>span.badge {
+  height: 16px;
+  width: 16px;
+  margin-right: 8px;
+  display: inline-block;
+  border-style: solid;
+  border-width: 1px;
+}
+
+.admin-routes-parent > div > button {
+  margin-top: 16px;
+  margin-left: 32px;
+}
+
+.log,.admin-routes {
+  margin-top: 16px;
+  font-size: 1.2em;
+}
+
+.log>div>span.pending {
+  float: right;
+  margin-right: 8px;
+  font-style: italic;
+}
+
+.log>div>span.label {
+  margin-left: 4px;
+  float: right;
+  margin-top: 4px;
+}
+
+
+.log>div.pull-right {
+  margin-top: -8px;
+}
+
+.log>div.pull-right>span {
+  margin-left: 8px;
+  font-size: .8em;
+}
+
+.selector-div>ul.dropdown-menu {
+  height: auto;
+  max-height: 200px;
+  overflow-x: scroll;
+}
+
+.selector-div>ul.dropdown-menu>li>button>span {
+  width: 100%;
+  display: inline-block;
+}
+
+.selector-div>ul.dropdown-menu>li>button {
+  width: 100%;
+  text-align: left;
+  padding: 4px;
+  margin: 0px;
+}
+
+.person-picker-name {
+  margin-left: 8px;
+}
+
+.swear-to-aubie {
+  margin-bottom: 8px;
+}
+
+.adminRoutes-enter {
+  opacity: 0.01;
+  transition: opacity .5s ease-in;
+}
+
+.adminRoutes-enter.adminRoutes-enter-active {
+  opacity: 1;
+}
+
+.logs-enter {
+  opacity: 0.01;
+  transition: opacity .5s ease-in;
+}
+
+.logs-enter.logs-enter-active {
+  opacity: 1;
+}
+
+.index-enter {
+  opacity: 0.01;
+  transition: opacity .5s ease-in;
+}
+
+.index-enter.index-enter-active {
+  opacity: 1;
+}
+
+.index-leave {
+  opacity: 1;
+  transition: opacity .5s ease-in;
+}
+
+.index-leave.index-leave-active {
+  opacity: 0.01;
+}

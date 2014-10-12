@@ -1,0 +1,282 @@
+package main
+
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"gopkg.in/mgo.v2/bson"
+	"net/http"
+	"time"
+)
+
+type Server struct {
+	db          *DB
+	config      *Config
+	mux         *http.ServeMux
+	fbValidator *FBValidator
+
+	usersCache  *CachedGetResponse
+	recentCache *CachedGetResponse
+	routesCache *CachedGetResponse
+}
+
+func NewServer(db *DB, config *Config) *Server {
+	server := new(Server)
+	server.db = db
+	server.config = config
+	server.fbValidator = NewFBValidator(config)
+
+	server.usersCache = NewCachedGetReponse(server.db, UsersCacheUpdater(0))
+	server.recentCache = NewCachedGetReponse(server.db, RecentCacheUpdater(0))
+	server.routesCache = NewCachedGetReponse(server.db, RoutesCacheUpdater(0))
+
+	server.usersCache.TriggerUpdate()
+	server.recentCache.TriggerUpdate()
+	server.routesCache.TriggerUpdate()
+
+	server.mux = http.NewServeMux()
+	// GET
+	server.mux.HandleFunc("/api/users", server.handleUsers)
+	server.mux.HandleFunc("/api/user", server.handleUser)
+	server.mux.HandleFunc("/api/recent", server.handleRecent)
+	server.mux.HandleFunc("/api/routes", server.handleRoutes)
+	// POST
+	server.mux.HandleFunc("/api/auth", server.handleAuth)
+	server.mux.HandleFunc("/api/log/new", server.handleLogNew)
+	server.mux.HandleFunc("/api/log/remove", server.handleLogRemove)
+	server.mux.HandleFunc("/api/user/modify", server.handleUserModify)
+	server.mux.HandleFunc("/api/admin/logs/pending", server.handleAdminLogsPending)
+	server.mux.HandleFunc("/api/admin/log/approve", server.handleAdminLogApprove)
+	server.mux.HandleFunc("/api/admin/log/discard", server.handleAdminLogDiscard)
+	server.mux.HandleFunc("/api/admin/route/new", server.handleAdminRouteNew)
+
+	server.mux.Handle("/", http.FileServer(http.Dir(config.UIPath)))
+
+	return server
+}
+
+func (s *Server) ListenAndServe() error {
+	redirect := http.NewServeMux()
+	redirect.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		url := *r.URL
+		url.Scheme = "https"
+		http.Redirect(w, r, url.String(), http.StatusMovedPermanently)
+	})
+	go http.ListenAndServe(s.config.LAddrHTTP, redirect)
+	return http.ListenAndServeTLS(s.config.LAddrHTTPS, s.config.CACert, s.config.CAKey, s.mux)
+}
+
+func (s *Server) handleUsers(w http.ResponseWriter, r *http.Request) {
+	s.usersCache.Respond(w)
+}
+
+func (s *Server) handleRecent(w http.ResponseWriter, r *http.Request) {
+	s.recentCache.Respond(w)
+}
+
+func (s *Server) handleRoutes(w http.ResponseWriter, r *http.Request) {
+	s.routesCache.Respond(w)
+}
+
+func (s *Server) handleUser(w http.ResponseWriter, r *http.Request) {
+	uid := r.URL.Query().Get("id")
+	if uid == "" {
+		json.NewEncoder(w).Encode(map[string]string{"error": "expecting 'id'"})
+		return
+	}
+	resp := new(struct {
+		User *User         `json:"user"`
+		Logs []ClimbingLog `json:"logs"`
+	})
+	var err error
+	resp.User = s.db.GetUser(bson.ObjectIdHex(uid))
+	resp.Logs, err = s.db.ClimbingLogs(bson.ObjectIdHex(uid))
+	if resp.User == nil || err != nil {
+		json.NewEncoder(w).Encode(map[string]string{"error": "getting user info error"})
+		return
+	}
+	json.NewEncoder(w).Encode(resp)
+}
+
+func (s *Server) isAdmin(FBID string, FBToken string) bool {
+	if !s.fbValidator.IsValid(FBID, FBToken) {
+		return false
+	}
+	user := s.db.GetUserFB(FBID)
+	if user == nil {
+		return false
+	}
+	return user.Admin
+}
+
+func (s *Server) handleAuth(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		FBID    string `json:"fb_id"`
+		FBToken string `json:"fb_token"`
+	}
+	json.NewDecoder(r.Body).Decode(&req)
+	if req.FBID == "" || req.FBToken == "" {
+		json.NewEncoder(w).Encode(map[string]string{"error": "invalid request"})
+		return
+	}
+	isValid := s.fbValidator.IsValid(req.FBID, req.FBToken)
+	if !isValid {
+		json.NewEncoder(w).Encode(map[string]string{"error": "unauthorized"})
+		return
+	}
+	user := s.db.GetUserFB(req.FBID)
+	var err error
+	if user == nil {
+		user, err = s.createUserFromFacebook(req.FBID, req.FBToken)
+		if err != nil {
+			json.NewEncoder(w).Encode(map[string]string{"error": "internal error: " + err.Error()})
+			return
+		}
+	}
+	json.NewEncoder(w).Encode(map[string]interface{}{"user_id": user.ID})
+}
+
+func (s *Server) createUserFromFacebook(FBID string, FBToken string) (*User, error) {
+	resp, err := http.Get(fmt.Sprintf("https://graph.facebook.com/v2.1/%s?access_token=%s", FBID, FBToken))
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	var fbResp struct {
+		ID    string      `json:"id"`
+		Email string      `json:"email"`
+		Name  string      `json:"name"`
+		Error interface{} `json:"error"`
+	}
+	if nil != json.NewDecoder(resp.Body).Decode(&fbResp) {
+		return nil, err
+	}
+
+	if fbResp.Error != nil {
+		return nil, errors.New("invalid FBID/FBToken pair")
+	}
+
+	if fbResp.ID == "" || fbResp.Name == "" {
+		return nil, errors.New("calling Facebook Graph API error")
+	}
+
+	user := new(User)
+	user.FBID = FBID
+	user.Name = fbResp.Name
+	user.Email = fbResp.Email
+	user.PictureURL = fmt.Sprintf("https://graph.facebook.com/v2.1/%s/picture", FBID)
+	user.Since = time.Now()
+	err = s.db.NewUser(user)
+	if err != nil {
+		return nil, err
+	}
+
+	s.usersCache.TriggerUpdate()
+
+	return user, nil
+}
+
+func (s *Server) handleLogNew(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		FBID    string `json:"fb_id"`
+		FBToken string `json:"fb_token"`
+		Payload struct {
+			RouteID    bson.ObjectId   `json:"route_id"`
+			ClimbersID []bson.ObjectId `json:"climbers_id"`
+		} `json:"payload"`
+	}
+	json.NewDecoder(r.Body).Decode(&req)
+	if req.FBID == "" || req.FBToken == "" {
+		json.NewEncoder(w).Encode(map[string]string{"error": "invalid request"})
+		return
+	}
+	isValid := s.fbValidator.IsValid(req.FBID, req.FBToken)
+	if !isValid {
+		json.NewEncoder(w).Encode(map[string]string{"error": "unauthorized"})
+		return
+	}
+	user := s.db.GetUserFB(req.FBID)
+	if user == nil {
+		json.NewEncoder(w).Encode(map[string]string{"error": "internal error"})
+	}
+	found := false
+	for _, climberID := range req.Payload.ClimbersID {
+		if climberID == user.ID {
+			found = true
+			break
+		}
+	}
+	if !found {
+		json.NewEncoder(w).Encode(map[string]string{"error": "unauthorized"})
+		return
+	}
+	_, err := s.db.NewClimbingLog(req.Payload.RouteID, req.Payload.ClimbersID)
+	if err != nil {
+		json.NewEncoder(w).Encode(map[string]string{"error": "internal error"})
+	}
+	s.recentCache.TriggerUpdate()
+	json.NewEncoder(w).Encode(map[string]string{"result": "ok"})
+}
+
+func (s *Server) handleLogRemove(w http.ResponseWriter, r *http.Request) {
+}
+
+func (s *Server) handleUserModify(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		FBID    string                 `json:"fb_id"`
+		FBToken string                 `json:"fb_token"`
+		Payload map[string]interface{} `json:"payload"`
+	}
+	json.NewDecoder(r.Body).Decode(&req)
+	if req.FBID == "" || req.FBToken == "" {
+		json.NewEncoder(w).Encode(map[string]string{"error": "invalid request"})
+		return
+	}
+	isValid := s.fbValidator.IsValid(req.FBID, req.FBToken)
+	if !isValid {
+		json.NewEncoder(w).Encode(map[string]string{"error": "unauthorized"})
+		return
+	}
+	err := s.db.UpdateUserFB(req.FBID, req.Payload)
+	if err != nil {
+		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		return
+	}
+	json.NewEncoder(w).Encode(map[string]string{"result": "ok"})
+	s.usersCache.TriggerUpdate()
+}
+
+func (s *Server) handleAdminUserModify(w http.ResponseWriter, r *http.Request) {
+}
+
+func (s *Server) handleAdminUserNew(w http.ResponseWriter, r *http.Request) {
+}
+
+func (s *Server) handleAdminLogsPending(w http.ResponseWriter, r *http.Request) {
+}
+
+func (s *Server) handleAdminLogApprove(w http.ResponseWriter, r *http.Request) {
+}
+
+func (s *Server) handleAdminLogDiscard(w http.ResponseWriter, r *http.Request) {
+}
+
+func (s *Server) handleAdminRouteNew(w http.ResponseWriter, r *http.Request) {
+	req := new(struct {
+		FBID    string `json:"fb_id"`
+		FBToken string `json:"fb_token"`
+		Payload *Route `json:"payload"`
+	})
+	json.NewDecoder(r.Body).Decode(req)
+	if !s.isAdmin(req.FBID, req.FBToken) {
+		json.NewEncoder(w).Encode(map[string]string{"error": "not admin"})
+		return
+	}
+	err := s.db.NewRoute(req.Payload)
+	if err != nil {
+		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		return
+	}
+	s.routesCache.TriggerUpdate()
+	json.NewEncoder(w).Encode(map[string]string{"result": "ok"})
+}

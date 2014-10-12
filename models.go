@@ -9,40 +9,47 @@ import (
 const (
 	_ = iota
 	NatsON
-	NatsOFF
 	NatsPartiallyON
+	NatsOFF
 )
 
 type User struct {
-	ID bson.ObjectId `bson:"_id"`
+	ID bson.ObjectId `bson:"_id" json:"id"`
 
-	Name       string    `bson:"name"`
-	Email      string    `bson:"email"`
-	PictureURL string    `bson:"picture_url"`
-	Category   string    `bson:"category"`
-	Since      time.Time `bson:"since"`
+	Name       string    `bson:"name" json:"name"`
+	Email      string    `bson:"email" json:"email"`
+	PictureURL string    `bson:"picture_url" json:"picture_url"`
+	Category   string    `bson:"category" json:"category"`
+	Since      time.Time `bson:"since" json:"since"`
+	Admin      bool      `bson:"is_admin" json:"is_admin"`
 
-	FBTokenSHA1 string `bson:"fb_token_sha1,omitempty" json:"-"`
-	FBID        string `bson:"fb_id,omitempty" json:"-"`
+	FBID string `bson:"fb_id,omitempty" json:"-"`
 }
 
 type ClimbingLog struct {
-	ID bson.ObjectId `bson:"_id"`
+	ID bson.ObjectId `bson:"_id" json:"id"`
 
-	Time time.Time `bson:"time"`
+	Time time.Time `bson:"time" json:"time"`
 
-	Route    bson.ObjectId   `bson:"route"`
-	Climbers []bson.ObjectId `bson:"climbers"`
+	Route    bson.ObjectId   `bson:"route" json:"route"`
+	Climbers []bson.ObjectId `bson:"climbers" json:"climbers"`
+
+	Pending bool `bson:"pending" json:"pending"`
 }
 
 type Route struct {
-	ID bson.ObjectId `bson:"_id"`
+	ID bson.ObjectId `bson:"_id" json:"id"`
 
-	Name            string `bson:"name"`
-	Rating          string `bson:"rating"` // on of Ratings
-	NaturalFeatures int    `bson:"nats"`   // NatsON, NatsOFF, NatsPartiallyON
-	FollowFeet      bool   `bson:"ff"`
-	Setter          string `bson:"setter"`
+	Name            string `bson:"name" json:"name"`
+	Rating          string `bson:"rating" json:"rating"` // on of Ratings
+	NaturalFeatures int    `bson:"nats" json:"nats"`     // NatsON, NatsOFF, NatsPartiallyON
+	FollowFeet      bool   `bson:"ff" json:"ff"`
+	Setter          string `bson:"setter" json:"setter"`
+
+	BackgroundColor string `bson:"background_color" json:"background_color"`
+	Color           string `bson:"color" json:"color"`
+
+	Enabled bool `bson:"enabled" json:"enabled"`
 }
 
 var Ratings = []string{

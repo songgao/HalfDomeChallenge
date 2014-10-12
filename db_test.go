@@ -29,7 +29,7 @@ func cleanup(db *DB) {
 
 var db *DB
 
-func dumbUserInvalid() *User {
+func dummyUserInvalid() *User {
 	user := new(User)
 	user.Name = "Gopher"
 	user.FBID = "fb_id_blah"
@@ -40,7 +40,7 @@ func dumbUserInvalid() *User {
 	return user
 }
 
-func dumbUserNonFB() *User {
+func dummyUserNonFB() *User {
 	user := new(User)
 	user.Name = "Gopher"
 	user.Since = time.Now()
@@ -50,7 +50,7 @@ func dumbUserNonFB() *User {
 	return user
 }
 
-func dumbUserFB() *User {
+func dummyUserFB() *User {
 	user := new(User)
 	user.Name = "Gopher"
 	user.FBID = "fb_id_blah"
@@ -71,7 +71,7 @@ func TestNewUser(t *testing.T) {
 		err  error
 	)
 
-	user = dumbUserFB()
+	user = dummyUserFB()
 	err = db.NewUser(user)
 	if err != nil {
 		t.Fatalf("adding new FB user failed: %v\n", err)
@@ -81,20 +81,20 @@ func TestNewUser(t *testing.T) {
 		t.Fatalf("adding existed user succeeded. Expected to fail.\n")
 	}
 
-	user = dumbUserNonFB()
+	user = dummyUserNonFB()
 	err = db.NewUser(user)
 	if err != nil {
 		t.Fatalf("adding new Non FB user failed: %v\n", err)
 	}
 
-	user = dumbUserInvalid()
+	user = dummyUserInvalid()
 	err = db.NewUser(user)
 	if err == nil {
 		t.Fatalf("adding invalid user succeeded. Expected to fail.\n")
 	}
 }
 
-func GetUserFB(t *testing.T) {
+func TestGetUserFB(t *testing.T) {
 	db := setup(t)
 	defer cleanup(db)
 
@@ -103,28 +103,32 @@ func GetUserFB(t *testing.T) {
 		err  error
 	)
 
-	user = dumbUserFB()
-	user2, legit := db.GetUserFB(user.FBTokenSHA1, user.FBID)
-	if legit || user2 != nil {
-		t.Fatalf("non-legit user sneaked in. Expected: <nil, false>\n")
+	user = dummyUserFB()
+	_, result := db.GetUserFB(user.FBTokenSHA1, user.FBID)
+	if result == DB_FB_MATCH || result == DB_FB_ERR {
+		t.Fatalf("non-legit user sneaked in or other error \n")
 	}
 	err = db.NewUser(user)
 	if err != nil {
 		t.Fatalf("adding new FB user failed: %v\n", err)
 	}
-	user2, legit = db.GetUserFB(user.FBTokenSHA1, user.FBID)
-	if !legit {
-		t.Fatalf("legit user rejected.\n")
+	_, result = db.GetUserFB("fake sha1", user.FBID)
+	if result != DB_FB_NOTMATCH {
+		t.Fatalf("non-legit user sneaked in or other error \n")
+	}
+	user2, result := db.GetUserFB(user.FBTokenSHA1, user.FBID)
+	if result != DB_FB_MATCH {
+		t.Fatalf("legit user rejected or other error.\n")
 	}
 	if user.Name != user2.Name || user.Email != user2.Email ||
 		user.PictureURL != user2.PictureURL || user.Category != user2.Category ||
-		user.Since != user2.Since || user.FBTokenSHA1 != user2.FBTokenSHA1 ||
+		user.Since.Truncate(time.Second) != user2.Since.Truncate(time.Second) || user.FBTokenSHA1 != user2.FBTokenSHA1 ||
 		user.FBID != user2.FBID {
-		t.Fatalf("User returned by GetUserFB is inconsistent with the one inserted.")
+		t.Fatalf("User returned by GetUserFB is inconsistent with the one inserted. \n%q\n%q\n", user, user2)
 	}
 }
 
-func dumbRoute() *Route {
+func dummyRoute() *Route {
 	route := new(Route)
 	route.Name = "Hello World"
 	route.Rating = "5.9"
@@ -138,14 +142,14 @@ func TestClimbingLog(t *testing.T) {
 	db := setup(t)
 	defer cleanup(db)
 
-	route := dumbRoute()
+	route := dummyRoute()
 	err := db.NewRoute(route)
 	if err != nil {
 		t.Fatalf("creating route error: %v\n", err)
 	}
 
-	user1 := dumbUserFB()
-	user2 := dumbUserNonFB()
+	user1 := dummyUserFB()
+	user2 := dummyUserNonFB()
 	err = db.NewUser(user1)
 	if err != nil {
 		t.Fatalf("creating user error: %v\n", err)

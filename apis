@@ -1,0 +1,13 @@
+GET: (no auth)
+/api/users {timestamp} -> {[]User, timestamp}
+/api/logs {timestamp} -> {[]ClimbingLogs, timestamp}
+/api/routes {timestamp} -> {[]Route, timestamp}
+
+POST: (with auth, {fb_id, fb_token})
+/api/log/new {route_id, climbers: []}
+/api/log/remove {route_id}
+
+POST: (with auth, {super password})
+/api/admin/user/new {user}
+/api/admin/log/new {routeID, climbers: []}
+/api/admin/log/remove {route_id, climber}

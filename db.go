@@ -36,26 +36,26 @@ func (d *DB) c(name string) (*mgo.Collection, *mgo.Session) {
 func (d *DB) ensureIndex() (err error) {
 	cu, su := d.c("users")
 	defer su.Close()
-	err = cu.EnsureIndexKey("fb_id", "name", "email", "category", "_id")
+	err = cu.EnsureIndexKey("fb_id", "category", "_id")
 	if err != nil {
 		return
 	}
 	cr, sr := d.c("routes")
 	defer sr.Close()
-	err = cr.EnsureIndexKey("rating", "_id")
+	err = cr.EnsureIndexKey("rating", "_id", "enabled")
 	if err != nil {
 		return
 	}
 	cc, sc := d.c("climbing_logs")
 	defer sc.Close()
-	err = cc.EnsureIndexKey("climbers", "route", "_id")
+	err = cc.EnsureIndexKey("climbers", "route", "_id", "pending")
 	return
 }
 
 func (d *DB) NewUser(user *User) error {
 	c, s := d.c("users")
 	defer s.Close()
-	if user.FBTokenSHA1 != "" && user.FBID != "" {
+	if user.FBID != "" {
 		usr := new(User)
 		err := c.Find(bson.M{"fb_id": user.FBID}).One(usr)
 		if err != mgo.ErrNotFound {
@@ -63,23 +63,45 @@ func (d *DB) NewUser(user *User) error {
 		}
 		user.ID = bson.NewObjectId()
 		return c.Insert(user)
-	} else if user.FBTokenSHA1 == "" && user.FBID == "" {
+	} else {
 		user.ID = bson.NewObjectId()
 		return c.Insert(user)
-	} else {
-		return errors.New("Invalid user object")
 	}
 }
 
-func (d *DB) GetUserFB(tokenSHA1 string, fbId string) (user *User, legit bool) {
+func (d *DB) UpdateUserFB(fbId string, payload map[string]interface{}) error {
+	c, s := d.c("users")
+	defer s.Close()
+	return c.Update(bson.M{"fb_id": fbId}, bson.M{"$set": payload})
+}
+
+func (d *DB) UpdateUser(userID bson.ObjectId, payload map[string]interface{}) error {
+	c, s := d.c("users")
+	defer s.Close()
+	return c.Update(bson.M{"_id": userID}, bson.M{"$set": payload})
+}
+
+func (d *DB) GetUser(userID bson.ObjectId) (user *User) {
+	c, s := d.c("users")
+	defer s.Close()
+	user = new(User)
+	err := c.Find(bson.M{"_id": userID}).One(user)
+	if err == mgo.ErrNotFound {
+		return nil
+	}
+	return user
+}
+
+func (d *DB) GetUserFB(fbId string) (user *User) {
 	c, s := d.c("users")
 	defer s.Close()
 	user = new(User)
 	err := c.Find(bson.M{"fb_id": fbId}).One(user)
-	if err != nil || user.FBTokenSHA1 != tokenSHA1 {
-		return nil, false
+	if err == mgo.ErrNotFound {
+		return nil
+	} else {
+		return user
 	}
-	return user, true
 }
 
 func (d *DB) NewRoute(route *Route) error {
@@ -92,7 +114,7 @@ func (d *DB) NewRoute(route *Route) error {
 func (d *DB) NewClimbingLog(route bson.ObjectId, climbers []bson.ObjectId) (*ClimbingLog, error) {
 	c, s := d.c("climbing_logs")
 	defer s.Close()
-	log := &ClimbingLog{ID: bson.NewObjectId(), Time: time.Now(), Route: route, Climbers: climbers}
+	log := &ClimbingLog{ID: bson.NewObjectId(), Time: time.Now(), Route: route, Climbers: climbers, Pending: true}
 	err := c.Insert(log)
 	if err != nil {
 		return nil, err
@@ -100,6 +122,7 @@ func (d *DB) NewClimbingLog(route bson.ObjectId, climbers []bson.ObjectId) (*Cli
 	return log, nil
 }
 
+// TODO: only remove user rather than the entire log
 func (d *DB) RemoveClimbingLog(user bson.ObjectId, climbingLog bson.ObjectId) error {
 	c, s := d.c("climbing_logs")
 	defer s.Close()
@@ -121,9 +144,9 @@ func (d *DB) Routes() (routes []Route, err error) {
 	return
 }
 
-func (d *DB) ClimbingLogs() (logs []ClimbingLog, err error) {
+func (d *DB) ClimbingLogs(userID bson.ObjectId) (logs []ClimbingLog, err error) {
 	c, s := d.c("climbing_logs")
 	defer s.Close()
-	err = c.Find(nil).All(&logs)
+	err = c.Find(bson.M{"climbers": userID}).Sort("-time").All(&logs)
 	return
 }
