@@ -1107,7 +1107,7 @@ module.exports = React.createClass({displayName: 'exports',
       React.DOM.div({className: "row progress-rainbow"}, 
         React.DOM.div({className: "col-sm-12"}, 
           React.DOM.div({className: "rainbow-name-picture"}, 
-            this.props.name, React.DOM.img({src: this.props.picture, className: "img-circle"})
+            React.DOM.span({className: "rainbow-name"}, this.props.name), React.DOM.img({src: this.props.picture, className: "img-circle"})
           ), 
           React.DOM.div({className: "rainbow-chips"}, 
             chips

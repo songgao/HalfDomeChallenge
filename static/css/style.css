@@ -111,17 +111,30 @@ div.home>div.home-nav-links {
   vertical-align: middle;
 }
 
-.progress-rainbow>div>.rainbow-name-picture>img.circle {
+.progress-rainbow>div>.rainbow-name-picture>span.rainbow-name {
+  max-width: 140px;
+  white-space: nowrap; 
+  position: absolute;
+  right: 52px;
+  z-index: 1;
+}
+
+.progress-rainbow>div>.rainbow-name-picture>img.img-circle {
+  right: 0px;
+  position: absolute;
   height: 48px;
   width: 48px;
+  z-index: 5;
 }
 
 .progress-rainbow>div>.rainbow-name-picture {
-  width: 128px;
+  width: 192px;
+  height: 48px;
   left: 0px;
   text-align: right;
   display: inline-block;
   position: absolute;
+  overflow: hidden;
 }
 .progress-rainbow>div>.rainbow-percentage {
   width: 42px;
@@ -132,7 +145,7 @@ div.home>div.home-nav-links {
 
 .progress-rainbow>div>.rainbow-chips {
   width: 100%;
-  padding-left: 128px;
+  padding-left: 192px;
   padding-right: 42px;
   display: inline-block;
 }
