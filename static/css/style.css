@@ -25,12 +25,12 @@ div.home>div.home-nav-links {
 }
 
 .el-cap {
-
   /*
    * special thanks to Aaron Clifton for the idea of using floating heads on a
    * picture of El Capital Mountain
    */
 
+  background-image: url('/images/elcap.jpg');
   background-repeat: no-repeat;
   background-size: auto 100%;
   background-position: left bottom;
