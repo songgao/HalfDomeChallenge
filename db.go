@@ -36,7 +36,7 @@ func (d *DB) c(name string) (*mgo.Collection, *mgo.Session) {
 func (d *DB) ensureIndex() (err error) {
 	cu, su := d.c("users")
 	defer su.Close()
-	err = cu.EnsureIndexKey("fb_id", "category", "_id")
+	err = cu.EnsureIndexKey("fb_id", "category", "_id", "updated_time")
 	if err != nil {
 		return
 	}
@@ -79,6 +79,12 @@ func (d *DB) UpdateUser(userID bson.ObjectId, payload map[string]interface{}) er
 	c, s := d.c("users")
 	defer s.Close()
 	return c.Update(bson.M{"_id": userID}, bson.M{"$set": payload})
+}
+
+func (d *DB) UpdateUserUpdatedTime(userID bson.ObjectId) error {
+	c, s := d.c("users")
+	defer s.Close()
+	return c.Update(bson.M{"_id": userID}, bson.M{"$set": bson.M{"updated_time": time.Now()}})
 }
 
 func (d *DB) GetUser(userID bson.ObjectId) (user *User) {
@@ -130,6 +136,13 @@ func (d *DB) RemoveClimbingLog(user bson.ObjectId, climbingLog bson.ObjectId) er
 	return err
 }
 
+func (d *DB) DiscardLog(climbingLog bson.ObjectId) error {
+	c, s := d.c("climbing_logs")
+	defer s.Close()
+	err := c.Remove(bson.M{"_id": climbingLog})
+	return err
+}
+
 func (d *DB) Users() (users []User, err error) {
 	c, s := d.c("users")
 	defer s.Close()
@@ -148,5 +161,32 @@ func (d *DB) ClimbingLogs(userID bson.ObjectId) (logs []ClimbingLog, err error) 
 	c, s := d.c("climbing_logs")
 	defer s.Close()
 	err = c.Find(bson.M{"climbers": userID}).Sort("-time").All(&logs)
+	return
+}
+
+func (d *DB) PendingLogs() (logs []ClimbingLog, err error) {
+	c, s := d.c("climbing_logs")
+	defer s.Close()
+	err = c.Find(bson.M{"pending": true}).Sort("-time").All(&logs)
+	return
+}
+
+func (d *DB) GetLog(logID bson.ObjectId) (log ClimbingLog, err error) {
+	c, s := d.c("climbing_logs")
+	defer s.Close()
+	err = c.FindId(logID).One(&log)
+	return
+}
+
+func (d *DB) ApproveLog(logID bson.ObjectId) error {
+	c, s := d.c("climbing_logs")
+	defer s.Close()
+	return c.Update(bson.M{"_id": logID}, bson.M{"$set": bson.M{"pending": false}})
+}
+
+func (d *DB) RecentlyUpdatedUsers(count int) (users []User, err error) {
+	c, s := d.c("users")
+	defer s.Close()
+	err = c.Find(bson.M{}).Sort("-updated_time").Limit(count).All(&users)
 	return
 }

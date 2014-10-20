@@ -136,6 +136,10 @@
   display: inline-block;
 }
 
+.me-info > div.me-info-chips {
+  margin-top: 16px;
+}
+
 .category-description {
   text-align: center;
 }
@@ -145,9 +149,17 @@
   text-align: justify;
 }
 
-ul.logs,ul.admin-routes {
+ul.logs,ul.admin-routes,ul.pending-logs {
   list-style-type: none;
   margin-top: 24px;
+}
+
+ul.pending-logs>li>div>span>img.img-circle {
+  margin-right: 4px;
+}
+
+ul.pending-logs>li>div>span {
+  margin-left: 8px;
 }
 
 .admin-route>div>span.label {

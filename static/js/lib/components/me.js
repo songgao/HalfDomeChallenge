@@ -40,16 +40,12 @@ module.exports = React.createClass({
     return logs;
   },
   _onMeStoreChange: function() {
-    console.log('me change');
-    console.log(meStore.logs);
     this.setState({user: meStore.user, logs: this._generateLogs(meStore.logs, meStore.user)});
   },
   _onRoutesStoreChange: function() {
-    console.log('routes change');
     this.setState({logs: this._generateLogs(meStore.logs)});
   },
   _onUsersStoreChange: function() {
-    console.log('users change');
     this.setState({logs: this._generateLogs(meStore.logs)});
   },
   componentDidMount: function() {
@@ -62,7 +58,6 @@ module.exports = React.createClass({
     meStore.removeChangeListener(this._onMeStoreChange);
     routesStore.removeChangeListener(this._onRoutesStoreChange);
     usersStore.removeChangeListener(this._onUsersStoreChange);
-    this.setState(this.getInitialState());
   },
   render: function() {
     var climber = {

@@ -8,4 +8,16 @@ module.exports = {
       route: route,
     });
   },
+  discardLog: function(log) {
+    dispatcher.handleViewAction({
+      type: C.ActionTypes.ADMIN_PENDING_DISCARD,
+      log: log
+    });
+  },
+  approveLog: function(log) {
+    dispatcher.handleViewAction({
+      type: C.ActionTypes.ADMIN_PENDING_APPROVE,
+      log: log
+    });
+  },
 };

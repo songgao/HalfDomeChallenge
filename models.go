@@ -22,6 +22,7 @@ type User struct {
 	Category   string    `bson:"category" json:"category"`
 	Since      time.Time `bson:"since" json:"since"`
 	Admin      bool      `bson:"is_admin" json:"is_admin"`
+	Updated    time.Time `bson:"updated_time" json:"updated_time"`
 
 	FBID string `bson:"fb_id,omitempty" json:"-"`
 }

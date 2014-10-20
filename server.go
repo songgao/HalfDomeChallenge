@@ -40,12 +40,12 @@ func NewServer(db *DB, config *Config) *Server {
 	server.mux.HandleFunc("/api/user", server.handleUser)
 	server.mux.HandleFunc("/api/recent", server.handleRecent)
 	server.mux.HandleFunc("/api/routes", server.handleRoutes)
+	server.mux.HandleFunc("/api/logs/pending", server.handleLogsPending)
 	// POST
 	server.mux.HandleFunc("/api/auth", server.handleAuth)
 	server.mux.HandleFunc("/api/log/new", server.handleLogNew)
 	server.mux.HandleFunc("/api/log/remove", server.handleLogRemove)
 	server.mux.HandleFunc("/api/user/modify", server.handleUserModify)
-	server.mux.HandleFunc("/api/admin/logs/pending", server.handleAdminLogsPending)
 	server.mux.HandleFunc("/api/admin/log/approve", server.handleAdminLogApprove)
 	server.mux.HandleFunc("/api/admin/log/discard", server.handleAdminLogDiscard)
 	server.mux.HandleFunc("/api/admin/route/new", server.handleAdminRouteNew)
@@ -76,6 +76,15 @@ func (s *Server) handleRecent(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleRoutes(w http.ResponseWriter, r *http.Request) {
 	s.routesCache.Respond(w)
+}
+
+func (s *Server) handleLogsPending(w http.ResponseWriter, r *http.Request) {
+	logs, err := s.db.PendingLogs()
+	if err != nil {
+		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		return
+	}
+	json.NewEncoder(w).Encode(logs)
 }
 
 func (s *Server) handleUser(w http.ResponseWriter, r *http.Request) {
@@ -166,6 +175,7 @@ func (s *Server) createUserFromFacebook(FBID string, FBToken string) (*User, err
 	user.Email = fbResp.Email
 	user.PictureURL = fmt.Sprintf("https://graph.facebook.com/v2.1/%s/picture", FBID)
 	user.Since = time.Now()
+	user.Updated = time.Now()
 	err = s.db.NewUser(user)
 	if err != nil {
 		return nil, err
@@ -195,6 +205,17 @@ func (s *Server) handleLogNew(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"error": "unauthorized"})
 		return
 	}
+	if !req.Payload.RouteID.Valid() {
+		json.NewEncoder(w).Encode(map[string]string{"error": "invalid route id"})
+		return
+	}
+	for _, id := range req.Payload.ClimbersID {
+		if !id.Valid() {
+			json.NewEncoder(w).Encode(map[string]string{"error": "invalid climber id"})
+			return
+		}
+	}
+
 	user := s.db.GetUserFB(req.FBID)
 	if user == nil {
 		json.NewEncoder(w).Encode(map[string]string{"error": "internal error"})
@@ -252,13 +273,55 @@ func (s *Server) handleAdminUserModify(w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleAdminUserNew(w http.ResponseWriter, r *http.Request) {
 }
 
-func (s *Server) handleAdminLogsPending(w http.ResponseWriter, r *http.Request) {
-}
-
 func (s *Server) handleAdminLogApprove(w http.ResponseWriter, r *http.Request) {
+	req := new(struct {
+		FBID    string        `json:"fb_id"`
+		FBToken string        `json:"fb_token"`
+		Payload bson.ObjectId `json:"payload"`
+	})
+	json.NewDecoder(r.Body).Decode(req)
+	if !s.isAdmin(req.FBID, req.FBToken) {
+		json.NewEncoder(w).Encode(map[string]string{"error": "not admin"})
+		return
+	}
+	if !req.Payload.Valid() {
+		json.NewEncoder(w).Encode(map[string]string{"error": "invalid log id"})
+		return
+	}
+	err := s.db.ApproveLog(req.Payload)
+	if err != nil {
+		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		return
+	}
+	log, err := s.db.GetLog(req.Payload)
+	for _, climber := range log.Climbers {
+		s.db.UpdateUserUpdatedTime(climber)
+	}
+	s.recentCache.TriggerUpdate()
+	json.NewEncoder(w).Encode(map[string]string{"result": "ok"})
 }
 
 func (s *Server) handleAdminLogDiscard(w http.ResponseWriter, r *http.Request) {
+	req := new(struct {
+		FBID    string        `json:"fb_id"`
+		FBToken string        `json:"fb_token"`
+		Payload bson.ObjectId `json:"payload"`
+	})
+	json.NewDecoder(r.Body).Decode(req)
+	if !s.isAdmin(req.FBID, req.FBToken) {
+		json.NewEncoder(w).Encode(map[string]string{"error": "not admin"})
+		return
+	}
+	if !req.Payload.Valid() {
+		json.NewEncoder(w).Encode(map[string]string{"error": "invalid log id"})
+		return
+	}
+	err := s.db.DiscardLog(req.Payload)
+	if err != nil {
+		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		return
+	}
+	json.NewEncoder(w).Encode(map[string]string{"result": "ok"})
 }
 
 func (s *Server) handleAdminRouteNew(w http.ResponseWriter, r *http.Request) {

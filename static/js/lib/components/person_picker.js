@@ -29,7 +29,6 @@ module.exports = React.createClass({
     this.setState({text: e.target.value, options: this._generateOptions(e.target.value), showOptions: true});
   },
   _handleSelect: function(user) {
-    console.log(user);
     this.setState({showOptions: false, selected: user});
   },
   _handleChangeSelected: function(user) {

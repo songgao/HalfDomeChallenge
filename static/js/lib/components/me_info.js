@@ -23,13 +23,20 @@ module.exports = React.createClass({
       category = (<div></div>);
       categorySet = false;
     }
+    var chips = this.props.logs.map(function(log) {
+      var chipStyle = {
+        "background-color": C.Rainbow(C.Ratings[log.route.rating] / (C.Ratings.all.length - 1)),
+      }
+      return <div className = "rainbow-chip" style={chipStyle}></div>;
+    }.bind(this));
     return (
       <div className="panel panel-default me-info">
         <div>
           <h3>{this.props.user.name} {category}</h3>
           <CategorySetter set={categorySet} />
         </div>
-        <div> Joined {moment(this.props.user.since).fromNow()} </div>
+        <div> Joined {moment(this.props.user.since).fromNow()} | Finished: {this.props.logs.length.toString() + ' / ' + C.TotalPitches.toString()}</div>
+        <div className="me-info-chips">{chips}</div>
       </div>
     );
   }

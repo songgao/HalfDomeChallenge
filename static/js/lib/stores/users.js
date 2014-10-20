@@ -27,7 +27,6 @@ Users.prototype._onUsersPull = function(err, data) {
   if(!err) {
     this.users = data ? data : [];
     this.emit('change');
-    console.log(this.users);
   } else {
     console.log(err);
   }

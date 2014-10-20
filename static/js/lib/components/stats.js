@@ -8,26 +8,56 @@ var ProgressRainbow = require('./progress_rainbow');
 
 var C = require('../constants');
 
-var numHeads = 10;
+var recentStore = require('../stores/recent');
+var usersStore = require('../stores/users');
+var routesStore = require('../stores/routes');
+
+var numHeads = 12;
 
 module.exports = React.createClass({
   getInitialState: function() {
-    var climbers = [];
-    for (var i = 0; i < numHeads; ++i) {
-      var climber = {
-        picture: "https://graph.facebook.com/839872286046811/picture?height=64",
-        name: "Song Gao",
-        logs: [],
-      };
-      var numLogs = Math.round(Math.random() * 58);
-      for (var l = 0; l < numLogs; ++l) {
-        var randomLog = Math.round(Math.random() * (C.Ratings.all.length - 1));
-        climber.logs.push(randomLog)
-      }
-      climber.percentage = numLogs / 58;
-      climbers.push(climber);
+    return {climbers: this._generateClimbers(recentStore.recent) }
+  },
+  _generateClimbers: function(recent) {
+    if (!recent || !recent.length) {
+      return [];
     }
-    return { climbers: climbers, latestIndex: Math.round(Math.random() * numHeads) };
+    return recent.map(function(item) {
+      var user = usersStore.findOrMissing(item.user_id);
+      var logs;
+      if (!item.route_ids || !item.route_ids.length) {
+        logs = [];
+      } else {
+        logs = item.route_ids.map(function(route_id) {
+          return C.Ratings[routesStore.findOrMissing(route_id).rating];
+        }.bind(this));
+      }
+      return {
+        picture: user.picture_url + "?height=64",
+        name: user.name,
+        logs: logs,
+        percentage: logs.length / C.TotalPitches,
+      }
+    }.bind(this))
+  },
+  _onRecentStoreChange: function() {
+    this.setState({climbers: this._generateClimbers(recentStore.recent)});
+  },
+  _onRoutesStoreChange: function() {
+    this.setState({climbers: this._generateClimbers(recentStore.recent)});
+  },
+  _onUsersStoreChange: function() {
+    this.setState({climbers: this._generateClimbers(recentStore.recent)});
+  },
+  componentDidMount: function() {
+    recentStore.addChangeListener(this._onRecentStoreChange);
+    routesStore.addChangeListener(this._onRoutesStoreChange);
+    usersStore.addChangeListener(this._onUsersStoreChange);
+  },
+  componentWillUnmount: function() {
+    recentStore.removeChangeListener(this._onRecentStoreChange);
+    routesStore.removeChangeListener(this._onRoutesStoreChange);
+    usersStore.removeChangeListener(this._onUsersStoreChange);
   },
   render: function() {
     var count = this.state.climbers.length;
@@ -36,18 +66,9 @@ module.exports = React.createClass({
       var recentness = (this.state.latestIndex > index ? (this.state.latestIndex - index) : (this.state.latestIndex + numHeads - index)) / numHeads;
       return <FloatingHead picture={climber.picture} percentage={climber.percentage} pos={index/count} recentness={recentness} />;
     }.bind(this));
-    var bars = [];
-    var pushBar = function(climber) {
-      bars.push(
-        <ProgressRainbow name={climber.name} picture={climber.picture} percentage={climber.percentage} logs={climber.logs} />
-      );
-    }
-    for (var i = this.state.latestIndex; i >= 0; --i) {
-      pushBar(this.state.climbers[i]);
-    }
-    for (var i = numHeads - 1; i > this.state.latestIndex; --i) {
-      pushBar(this.state.climbers[i]);
-    }
+    var bars = this.state.climbers.map(function(climber) {
+      return <ProgressRainbow name={climber.name} picture={climber.picture} percentage={climber.percentage} logs={climber.logs} />
+    }.bind(this))
     return (
       <div className="container-fluid fullheight">
         <div className="row el-cap fullheight">
@@ -56,8 +77,6 @@ module.exports = React.createClass({
             {heads}
           </div>
           <div className="col-md-6 fullheight with-scroll">
-            <h1> h1 </h1>
-            <p> bahblah </p>
             {bars}
           </div>
         </div>

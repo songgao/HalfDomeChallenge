@@ -16,7 +16,6 @@ module.exports = React.createClass({
     return {isAdmin: false};
   },
   _onMeStoreChange: function() {
-    console.log(meStore);
     if (meStore.user) {
       this.setState({isAdmin: meStore.user.is_admin ? true : false});
     } else {
