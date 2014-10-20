@@ -1231,6 +1231,9 @@ module.exports = React.createClass({displayName: 'exports',
       return FloatingHead({picture: climber.picture, percentage: climber.percentage, pos: index/count, recentness: recentness});
     }.bind(this));
     var bars = this.state.climbers.map(function(climber) {
+      if (!climber.logs || !climber.logs.length) {
+        return React.DOM.div(null);
+      }
       return ProgressRainbow({name: climber.name, picture: climber.picture, percentage: climber.percentage, logs: climber.logs})
     }.bind(this))
     return (
