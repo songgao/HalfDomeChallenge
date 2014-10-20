@@ -26,7 +26,7 @@ module.exports = React.createClass({
   },
   render: function() {
     if(this.state.status === 'connected') {
-      var picture_url = "//graph.facebook.com/" + this.state.profile.id + "/picture?height=48";
+      var picture_url = "//graph.facebook.com/" + this.state.profile.id + "/picture?height=48&width=48";
       return (
         <div>
         <p className="navbar-text">{this.state.profile.name}</p>

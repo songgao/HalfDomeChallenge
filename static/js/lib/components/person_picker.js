@@ -48,7 +48,7 @@ module.exports = React.createClass({
       return (
           <div>
             <div className="btn btn-link" onClick={this._handleChangeSelected}>
-              <img src={this.state.selected.picture_url + "?height=42"} className="img-circle"/>
+              <img src={this.state.selected.picture_url + "?height=42&width=42"} className="img-circle"/>
               <span className="person-picker-name">{this.state.selected.name}</span>
             </div>
             <span>&#60;&#60; click to change</span>
@@ -60,7 +60,7 @@ module.exports = React.createClass({
         return (
           <li>
           <div className="btn btn-link" onClick={onClick}>
-            <img src={option.picture_url + "?height=42"} className="img-circle"/>
+            <img src={option.picture_url + "?height=42&width=42"} className="img-circle"/>
             <span className="person-picker-name">{option.name}</span>
           </div>
           </li>

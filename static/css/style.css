@@ -111,6 +111,11 @@ div.home>div.home-nav-links {
   vertical-align: middle;
 }
 
+.progress-rainbow>div>.rainbow-name-picture>img.circle {
+  height: 48px;
+  width: 48px;
+}
+
 .progress-rainbow>div>.rainbow-name-picture {
   width: 128px;
   left: 0px;

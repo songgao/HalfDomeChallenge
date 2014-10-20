@@ -17,7 +17,7 @@ module.exports = React.createClass({
       <div className="row progress-rainbow">
         <div className="col-sm-12">
           <div className="rainbow-name-picture">
-            {this.props.name} <img src={this.props.picture} className="img-circle" height="48" />
+            {this.props.name}<img src={this.props.picture} className="img-circle" />
           </div>
           <div className="rainbow-chips">
             {chips}

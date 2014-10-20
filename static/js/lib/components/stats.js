@@ -33,7 +33,7 @@ module.exports = React.createClass({
         }.bind(this));
       }
       return {
-        picture: user.picture_url + "?height=64",
+        picture: user.picture_url + "?height=64&width=64",
         name: user.name,
         logs: logs,
         percentage: logs.length / C.TotalPitches,

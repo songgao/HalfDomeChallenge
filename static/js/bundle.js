@@ -80,7 +80,7 @@ module.exports = React.createClass({displayName: 'exports',
     var people = this.props.climbers.map(function(person) {
       return (
         React.DOM.span(null, 
-          React.DOM.img({src: person.picture_url + "?height=32", className: "img-circle"}), 
+          React.DOM.img({src: person.picture_url + "?height=32&width=32", className: "img-circle"}), 
           person.name
         )
       );
@@ -722,7 +722,7 @@ module.exports = React.createClass({displayName: 'exports',
       );
     }
     var climber = {
-      picture: this.state.user ? (this.state.user.picture_url + "?height=64") : "",
+      picture: this.state.user ? (this.state.user.picture_url + "?height=64&width=64") : "",
       percentage: (this.state.logs ? this.state.logs.length : 0) / C.TotalPitches,
     };
     var logs = this.state.logs.map(function(log) {
@@ -895,7 +895,7 @@ module.exports = React.createClass({displayName: 'exports',
   },
   render: function() {
     if(this.state.status === 'connected') {
-      var picture_url = "//graph.facebook.com/" + this.state.profile.id + "/picture?height=48";
+      var picture_url = "//graph.facebook.com/" + this.state.profile.id + "/picture?height=48&width=48";
       return (
         React.DOM.div(null, 
         React.DOM.p({className: "navbar-text"}, this.state.profile.name), 
@@ -1052,7 +1052,7 @@ module.exports = React.createClass({displayName: 'exports',
       return (
           React.DOM.div(null, 
             React.DOM.div({className: "btn btn-link", onClick: this._handleChangeSelected}, 
-              React.DOM.img({src: this.state.selected.picture_url + "?height=42", className: "img-circle"}), 
+              React.DOM.img({src: this.state.selected.picture_url + "?height=42&width=42", className: "img-circle"}), 
               React.DOM.span({className: "person-picker-name"}, this.state.selected.name)
             ), 
             React.DOM.span(null, "<< click to change")
@@ -1064,7 +1064,7 @@ module.exports = React.createClass({displayName: 'exports',
         return (
           React.DOM.li(null, 
           React.DOM.div({className: "btn btn-link", onClick: onClick}, 
-            React.DOM.img({src: option.picture_url + "?height=42", className: "img-circle"}), 
+            React.DOM.img({src: option.picture_url + "?height=42&width=42", className: "img-circle"}), 
             React.DOM.span({className: "person-picker-name"}, option.name)
           )
           )
@@ -1107,7 +1107,7 @@ module.exports = React.createClass({displayName: 'exports',
       React.DOM.div({className: "row progress-rainbow"}, 
         React.DOM.div({className: "col-sm-12"}, 
           React.DOM.div({className: "rainbow-name-picture"}, 
-            this.props.name, " ", React.DOM.img({src: this.props.picture, className: "img-circle", height: "48"})
+            this.props.name, React.DOM.img({src: this.props.picture, className: "img-circle"})
           ), 
           React.DOM.div({className: "rainbow-chips"}, 
             chips
@@ -1197,7 +1197,7 @@ module.exports = React.createClass({displayName: 'exports',
         }.bind(this));
       }
       return {
-        picture: user.picture_url + "?height=64",
+        picture: user.picture_url + "?height=64&width=64",
         name: user.name,
         logs: logs,
         percentage: logs.length / C.TotalPitches,

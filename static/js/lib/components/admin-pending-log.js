@@ -17,7 +17,7 @@ module.exports = React.createClass({
     var people = this.props.climbers.map(function(person) {
       return (
         <span>
-          <img src={person.picture_url + "?height=32"} className="img-circle"/>
+          <img src={person.picture_url + "?height=32&width=32"} className="img-circle"/>
           {person.name}
         </span>
       );

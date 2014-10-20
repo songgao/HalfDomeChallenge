@@ -73,7 +73,7 @@ module.exports = React.createClass({
       );
     }
     var climber = {
-      picture: this.state.user ? (this.state.user.picture_url + "?height=64") : "",
+      picture: this.state.user ? (this.state.user.picture_url + "?height=64&width=64") : "",
       percentage: (this.state.logs ? this.state.logs.length : 0) / C.TotalPitches,
     };
     var logs = this.state.logs.map(function(log) {
