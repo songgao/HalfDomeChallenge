@@ -66,6 +66,19 @@ module.exports = {
   },
 };
 
+},{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../dispatcher":"/home/songgao/repo/ElCapChallenge/static/js/lib/dispatcher.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/actions/peeker_actions.js":[function(require,module,exports){
+var dispatcher = require('../dispatcher');
+var C = require('../constants');
+
+module.exports = {
+  selectUser: function(user) {
+    dispatcher.handleViewAction({
+      type: C.ActionTypes.PEEKER_SELECT_USER,
+      user: user
+    });
+  },
+};
+
 },{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../dispatcher":"/home/songgao/repo/ElCapChallenge/static/js/lib/dispatcher.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-pending-log.js":[function(require,module,exports){
 /** @jsx React.DOM */
 
@@ -391,6 +404,7 @@ var React = require('react/addons');
 
 var AdminPending = require('./admin-pending');
 var AdminRoutes = require('./admin-routes');
+var Peeker = require('./peeker');
 
 module.exports = React.createClass({displayName: 'exports',
   render: function() {
@@ -403,12 +417,14 @@ module.exports = React.createClass({displayName: 'exports',
 
         React.DOM.ul({className: "nav nav-tabs", role: "tablist"}, 
           React.DOM.li({className: "active"}, React.DOM.a({href: "#admin-pendings", role: "tab", 'data-toggle': "tab"}, "Pendings")), 
-          React.DOM.li(null, React.DOM.a({href: "#admin-routes", role: "tab", 'data-toggle': "tab"}, "Routes"))
+          React.DOM.li(null, React.DOM.a({href: "#admin-routes", role: "tab", 'data-toggle': "tab"}, "Routes")), 
+          React.DOM.li(null, React.DOM.a({href: "#admin-peeker", role: "tab", 'data-toggle': "tab"}, "Peek"))
         ), 
 
         React.DOM.div({className: "tab-content"}, 
           React.DOM.div({className: "tab-pane active", id: "admin-pendings"}, AdminPending(null)), 
-          React.DOM.div({className: "tab-pane", id: "admin-routes"}, AdminRoutes(null))
+          React.DOM.div({className: "tab-pane", id: "admin-routes"}, AdminRoutes(null)), 
+          React.DOM.div({className: "tab-pane", id: "admin-peeker"}, Peeker(null))
         )
       )
     );
@@ -416,7 +432,7 @@ module.exports = React.createClass({displayName: 'exports',
 });
 
 
-},{"./admin-pending":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-pending.js","./admin-routes":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-routes.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/category_setter.js":[function(require,module,exports){
+},{"./admin-pending":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-pending.js","./admin-routes":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-routes.js","./peeker":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/peeker.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/category_setter.js":[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react/addons');
@@ -638,6 +654,12 @@ module.exports = React.createClass({displayName: 'exports',
       }
       str += ", and " + this.props.log.others.length - 1;
     }
+    var removeLink;
+    if (this.props.showRemove) {
+        removeLink = (React.DOM.a({className: "log-remove", onClick: this._handleRemove}, "remove"));
+    } else {
+      showLink = (React.DOM.div(null));
+    }
     return (
       React.DOM.li({className: "log clearfix"}, 
         React.DOM.div(null, 
@@ -650,7 +672,7 @@ module.exports = React.createClass({displayName: 'exports',
         React.DOM.div({className: "pull-right"}, 
         React.DOM.span({className: "with-who"}, withStr), 
         React.DOM.span({className: "rel-time"}, moment(this.props.log.time).fromNow()), 
-        React.DOM.a({className: "log-remove", onClick: this._handleRemove}, "remove")
+        removeLink
         )
       )
     )
@@ -1012,7 +1034,128 @@ module.exports = React.createClass({displayName: 'exports',
   },
 });
 
-},{"../actions/me_actions":"/home/songgao/repo/ElCapChallenge/static/js/lib/actions/me_actions.js","../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../stores/routes":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/routes.js","./person_picker":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/person_picker.js","./selector":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/selector.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/person_picker.js":[function(require,module,exports){
+},{"../actions/me_actions":"/home/songgao/repo/ElCapChallenge/static/js/lib/actions/me_actions.js","../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../stores/routes":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/routes.js","./person_picker":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/person_picker.js","./selector":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/selector.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/peeker.js":[function(require,module,exports){
+/** @jsx React.DOM */
+
+var React = require('react/addons');
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+var moment = require('moment');
+
+var Log = require('./log');
+var C = require('../constants');
+var PersonPicker = require('./person_picker');
+var routesStore = require('../stores/routes');
+var usersStore = require('../stores/users');
+var peekerStore = require('../stores/peeker');
+var peekerActions = require('../actions/peeker_actions');
+
+module.exports = React.createClass({displayName: 'exports',
+  getInitialState: function() {
+    return {users: usersStore.users, user: peekerStore.user, logs: this._generateLogs(peekerStore.logs) }
+  },
+  _generateLogs: function() {
+    var bareLogs = peekerStore.logs;
+    var user = peekerStore.user;
+    if (!bareLogs || !bareLogs.length || !user) {
+      return [];
+    }
+    var logs = bareLogs.map(function(log) {
+      var others = [];
+      for (var i = 0; i < log.climbers.length; ++i) {
+        if (log.climbers[i] !== user.id) {
+          others.push(usersStore.findOrMissing(log.climbers[i]).name);
+        }
+      }
+      return {
+        id: log.id,
+        time: log.time,
+        route: routesStore.findOrMissing(log.route),
+        pending: log.pending,
+        others: others
+      };
+    }.bind(this));
+    return logs;
+  },
+  _onRoutesStoreChange: function() {
+    this.setState({logs: this._generateLogs()});
+  },
+  _onUsersStoreChange: function() {
+    this.setState({users: usersStore.users, logs: this._generateLogs()});
+  },
+  _onPeekerStoreChange: function() {
+    this.setState({user: peekerStore.user, logs: this._generateLogs()});
+  },
+  componentDidMount: function() {
+    routesStore.addChangeListener(this._onRoutesStoreChange);
+    usersStore.addChangeListener(this._onUsersStoreChange);
+    peekerStore.addChangeListener(this._onPeekerStoreChange);
+    this.setState(this.getInitialState());
+  },
+  componentWillUnmount: function() {
+    routesStore.removeChangeListener(this._onRoutesStoreChange);
+    usersStore.removeChangeListener(this._onUsersStoreChange);
+    peekerStore.removeChangeListener(this._onPeekerStoreChange);
+  },
+  _handleSelectPerson: function() {
+    peekerActions.selectUser(this.refs.personPicker.state.selected);
+  },
+  render: function() {
+    var personPicker = (
+      React.DOM.div({className: "row"}, 
+        React.DOM.div({className: "col-sm-3"}), 
+        React.DOM.div({className: "col-sm-6"}, 
+          PersonPicker({ref: "personPicker", onSelectChange: this._handleSelectPerson})
+        )
+      )
+    );
+    if (!this.state.user) {
+      return ( React.DOM.div(null, personPicker) );
+    }
+    var climber = {
+      picture: this.state.user ? (this.state.user.picture_url + "?height=64&width=64") : "",
+      percentage: (this.state.logs ? this.state.logs.length : 0) / C.TotalPitches,
+    };
+    var logs = this.state.logs.map(function(log) {
+      return (Log({log: log, showRemove: false}));
+    });
+    var category;
+    if(this.state.user.category === C.Categories[0]) {
+      category = React.DOM.span({className: "label label-success category-label"}, this.state.user.category)
+    } else if(this.state.user.category === C.Categories[1]) {
+      category = React.DOM.span({className: "label label-warning category-label"}, this.state.user.category)
+    } else if(this.state.user.category === C.Categories[2]) {
+      category = React.DOM.span({className: "label label-danger category-label"}, this.state.user.category)
+    } else {
+      category = (React.DOM.div(null));
+    }
+    var chips = this.state.logs.map(function(log) {
+      var chipStyle = {
+        "background-color": C.Rainbow(C.Ratings[log.route.rating] / (C.Ratings.all.length - 1)),
+      }
+      return React.DOM.div({className: "rainbow-chip", style: chipStyle});
+    }.bind(this));
+    return (
+      React.DOM.div({className: "container-fluid fullheight"}, 
+        personPicker, 
+        React.DOM.div(null, 
+          React.DOM.h4(null, this.state.user.name, " ", category), 
+          React.DOM.div(null, " Joined ", moment(this.state.user.since).fromNow(), " | Finished: ", this.state.logs.length.toString() + ' / ' + C.TotalPitches.toString()), 
+          React.DOM.div({className: "me-info-chips"}, chips), 
+          React.DOM.hr(null), 
+          React.DOM.ul({className: "logs clearfix"}, 
+          ReactCSSTransitionGroup({transitionName: "peeker"}, 
+            logs
+          )
+          )
+        )
+      )
+      );
+  }
+});
+
+
+},{"../actions/peeker_actions":"/home/songgao/repo/ElCapChallenge/static/js/lib/actions/peeker_actions.js","../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../stores/peeker":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/peeker.js","../stores/routes":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/routes.js","../stores/users":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/users.js","./log":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/log.js","./person_picker":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/person_picker.js","moment":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/moment/moment.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/person_picker.js":[function(require,module,exports){
+(function (process){
 /** @jsx React.DOM */
 
 var React = require('react/addons');
@@ -1045,6 +1188,9 @@ module.exports = React.createClass({displayName: 'exports',
   },
   _handleSelect: function(user) {
     this.setState({showOptions: false, selected: user});
+    if(this.props.onSelectChange) {
+      process.nextTick(this.props.onSelectChange);
+    }
   },
   _handleChangeSelected: function(user) {
     this.setState({showOptions: true, selected: null}, function() {
@@ -1088,7 +1234,7 @@ module.exports = React.createClass({displayName: 'exports',
       }
       return (
         React.DOM.div({className: this.state.showOptions ? 'person-picker dropdown open' : 'person-picker dropdown'}, 
-          React.DOM.input({type: "text", className: "form-control", placeholder: "Parter Name", ref: "name", value: this.state.text, onChange: this._handleTextChange, ref: "nameInputText"}), 
+          React.DOM.input({type: "text", className: "form-control", placeholder: "Name", ref: "name", value: this.state.text, onChange: this._handleTextChange, ref: "nameInputText"}), 
           React.DOM.ul({className: "dropdown-menu", role: "menu"}, 
           people
           )
@@ -1098,7 +1244,8 @@ module.exports = React.createClass({displayName: 'exports',
   }
 });
 
-},{"../stores/users":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/users.js","../utils":"/home/songgao/repo/ElCapChallenge/static/js/lib/utils.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/progress_rainbow.js":[function(require,module,exports){
+}).call(this,require('_process'))
+},{"../stores/users":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/users.js","../utils":"/home/songgao/repo/ElCapChallenge/static/js/lib/utils.js","_process":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/process/browser.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/progress_rainbow.js":[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react/addons');
@@ -1276,6 +1423,7 @@ exports.ActionTypes = {
   ADMIN_NEW_ROUTE : "ADMIN_NEW_ROUTE",
   ADMIN_PENDING_APPROVE : "ADMIN_PENDING_APPROVE",
   ADMIN_PENDING_DISCARD : "ADMIN_PENDING_DISCARD",
+  PEEKER_SELECT_USER : "PEEKER_SELECT_USER",
 };
 
 exports.PayloadSources = {
@@ -1687,7 +1835,63 @@ Me.prototype.removeChangeListener = function(callback) {
 
 module.exports = new Me();
 
-},{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../dispatcher":"/home/songgao/repo/ElCapChallenge/static/js/lib/dispatcher.js","./authedPost":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/authedPost.js","./fb_login":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/fb_login.js","./puller":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/puller.js","events":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","util":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/util/util.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/pending_logs.js":[function(require,module,exports){
+},{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../dispatcher":"/home/songgao/repo/ElCapChallenge/static/js/lib/dispatcher.js","./authedPost":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/authedPost.js","./fb_login":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/fb_login.js","./puller":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/puller.js","events":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","util":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/util/util.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/peeker.js":[function(require,module,exports){
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
+var dispatcher = require('../dispatcher');
+var fb_login = require('./fb_login').fb_login;
+var puller = require('./puller');
+var C = require('../constants');
+
+function Peeker() {
+  this.user = null;
+  this.logs = [];
+
+  dispatcher.register(function(payload) {
+    if(payload.action.type === C.ActionTypes.PEEKER_SELECT_USER) {
+      this._selectUser(payload.action.user);
+    }
+  }.bind(this));
+}
+util.inherits(Peeker, EventEmitter);
+
+Peeker.prototype._selectUser = function(user) {
+  puller.now('/api/user?id=' + user.id, this._onSelectUserPull.bind(this));
+};
+
+Peeker.prototype._setNull = function() {
+  var change = false;
+  if (this.user || this.logs.length) {
+    change = true;
+  }
+  this.user = null;
+  this.logs = [];
+  if (change) {
+    this.emit('change');
+  }
+}
+
+Peeker.prototype._onSelectUserPull = function(err, data) {
+  if (!data || data.error) {
+    this._setNull();
+    return;
+  }
+  this.user = data.user;
+  this.logs = data.logs ? data.logs : [];
+  this.emit('change');
+};
+
+Peeker.prototype.addChangeListener = function(callback) {
+  this.on('change', callback);
+};
+
+Peeker.prototype.removeChangeListener = function(callback) {
+  this.removeListener('change', callback);
+};
+
+module.exports = new Peeker();
+
+},{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../dispatcher":"/home/songgao/repo/ElCapChallenge/static/js/lib/dispatcher.js","./fb_login":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/fb_login.js","./puller":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/puller.js","events":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","util":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/util/util.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/pending_logs.js":[function(require,module,exports){
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 var dispatcher = require('../dispatcher');

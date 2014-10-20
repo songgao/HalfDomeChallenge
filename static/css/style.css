@@ -175,7 +175,7 @@ div.home>div.home-nav-links {
   display: inline-block;
 }
 
-.me-info > div.me-info-chips {
+div.me-info-chips {
   margin-top: 16px;
 }
 
@@ -292,6 +292,15 @@ li.log>div>a.log-remove {
   opacity: 1;
 }
 
+.adminRoutes-leave {
+  opacity: 1;
+  transition: opacity .5s ease-in;
+}
+
+.adminRoutes-leave.index-leave-active {
+  opacity: 0.01;
+}
+
 .logs-enter {
   opacity: 0.01;
   transition: opacity .5s ease-in;
@@ -299,6 +308,15 @@ li.log>div>a.log-remove {
 
 .logs-enter.logs-enter-active {
   opacity: 1;
+}
+
+.logs-leave {
+  opacity: 1;
+  transition: opacity .5s ease-in;
+}
+
+.logs-leave.index-leave-active {
+  opacity: 0.01;
 }
 
 .index-enter {
@@ -316,5 +334,23 @@ li.log>div>a.log-remove {
 }
 
 .index-leave.index-leave-active {
+  opacity: 0.01;
+}
+
+.peeker-enter {
+  opacity: 0.01;
+  transition: opacity .5s ease-in;
+}
+
+.peeker-enter.index-enter-active {
+  opacity: 1;
+}
+
+.peeker-leave {
+  opacity: 1;
+  transition: opacity .5s ease-in;
+}
+
+.peeker-leave.index-leave-active {
   opacity: 0.01;
 }

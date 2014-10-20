@@ -30,6 +30,12 @@ module.exports = React.createClass({
       }
       str += ", and " + this.props.log.others.length - 1;
     }
+    var removeLink;
+    if (this.props.showRemove) {
+        removeLink = (<a className="log-remove" onClick={this._handleRemove}>remove</a>);
+    } else {
+      showLink = (<div></div>);
+    }
     return (
       <li className="log clearfix">
         <div>
@@ -42,7 +48,7 @@ module.exports = React.createClass({
         <div className="pull-right">
         <span className="with-who">{withStr}</span>
         <span className="rel-time">{moment(this.props.log.time).fromNow()}</span>
-        <a className="log-remove" onClick={this._handleRemove}>remove</a>
+        {removeLink}
         </div>
       </li>
     )

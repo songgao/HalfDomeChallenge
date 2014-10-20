@@ -30,6 +30,9 @@ module.exports = React.createClass({
   },
   _handleSelect: function(user) {
     this.setState({showOptions: false, selected: user});
+    if(this.props.onSelectChange) {
+      process.nextTick(this.props.onSelectChange);
+    }
   },
   _handleChangeSelected: function(user) {
     this.setState({showOptions: true, selected: null}, function() {
@@ -73,7 +76,7 @@ module.exports = React.createClass({
       }
       return (
         <div className={this.state.showOptions ? 'person-picker dropdown open' : 'person-picker dropdown'}>
-          <input type="text" className="form-control" placeholder="Parter Name" ref="name" value={this.state.text} onChange={this._handleTextChange} ref="nameInputText" />
+          <input type="text" className="form-control" placeholder="Name" ref="name" value={this.state.text} onChange={this._handleTextChange} ref="nameInputText" />
           <ul className="dropdown-menu" role="menu">
           {people}
           </ul>
