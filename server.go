@@ -233,6 +233,33 @@ func (s *Server) handleLogNew(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleLogRemove(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		FBID    string        `json:"fb_id"`
+		FBToken string        `json:"fb_token"`
+		Payload bson.ObjectId `json:"payload"`
+	}
+	json.NewDecoder(r.Body).Decode(&req)
+	if req.FBID == "" || req.FBToken == "" || !req.Payload.Valid() {
+		json.NewEncoder(w).Encode(map[string]string{"error": "invalid request"})
+		return
+	}
+	isValid := s.fbValidator.IsValid(req.FBID, req.FBToken)
+	if !isValid {
+		json.NewEncoder(w).Encode(map[string]string{"error": "unauthorized"})
+		return
+	}
+	user := s.db.GetUserFB(req.FBID)
+	if user == nil {
+		json.NewEncoder(w).Encode(map[string]string{"error": "internal error"})
+		return
+	}
+	err := s.db.RemoveClimbingLog(user.ID, req.Payload)
+	if user == nil {
+		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		return
+	}
+	json.NewEncoder(w).Encode(map[string]string{"result": "ok"})
+	s.recentCache.TriggerUpdate()
 }
 
 func (s *Server) handleUserModify(w http.ResponseWriter, r *http.Request) {

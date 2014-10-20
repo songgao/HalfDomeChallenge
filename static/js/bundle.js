@@ -58,6 +58,12 @@ module.exports = {
       partner: partner,
     });
   },
+  removeLog: function(log) {
+    dispatcher.handleViewAction({
+      type: C.ActionTypes.ME_REMOVE_LOG,
+      log: log,
+    });
+  },
 };
 
 },{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../dispatcher":"/home/songgao/repo/ElCapChallenge/static/js/lib/dispatcher.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-pending-log.js":[function(require,module,exports){
@@ -606,8 +612,12 @@ var React = require('react/addons');
 var moment = require('moment');
 
 var C = require('../constants');
+var meActions = require('../actions/me_actions');
 
 module.exports = React.createClass({displayName: 'exports',
+  _handleRemove: function() {
+    meActions.removeLog(this.props.log);
+  },
   render: function() {
     var ffStr, withStr;
     var ratingStyle = {
@@ -639,14 +649,15 @@ module.exports = React.createClass({displayName: 'exports',
         ), 
         React.DOM.div({className: "pull-right"}, 
         React.DOM.span({className: "with-who"}, withStr), 
-        React.DOM.span({className: "rel-time"}, moment(this.props.log.time).fromNow())
+        React.DOM.span({className: "rel-time"}, moment(this.props.log.time).fromNow()), 
+        React.DOM.a({className: "log-remove", onClick: this._handleRemove}, "remove")
         )
       )
     )
   }
 });
 
-},{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","moment":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/moment/moment.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/me.js":[function(require,module,exports){
+},{"../actions/me_actions":"/home/songgao/repo/ElCapChallenge/static/js/lib/actions/me_actions.js","../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","moment":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/moment/moment.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/me.js":[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react/addons');
@@ -1261,6 +1272,7 @@ exports.ActionTypes = {
   FB_LOGOUT_CLICK : "FB_LOGOUT_CLICK",
   ME_UPDATE_CATEGORY : "ME_UPDATE_CATEGORY",
   ME_NEW_LOG : "ME_NEW_LOG",
+  ME_REMOVE_LOG : "ME_REMOVE_LOG",
   ADMIN_NEW_ROUTE : "ADMIN_NEW_ROUTE",
   ADMIN_PENDING_APPROVE : "ADMIN_PENDING_APPROVE",
   ADMIN_PENDING_DISCARD : "ADMIN_PENDING_DISCARD",
@@ -1577,12 +1589,27 @@ function Me() {
       this._updateCategory(payload.action.category);
     } else if (payload.action.type === C.ActionTypes.ME_NEW_LOG) {
       this._newLog(payload.action.route, payload.action.partner);
+    } else if (payload.action.type === C.ActionTypes.ME_REMOVE_LOG) {
+      this._removeLog(payload.action.log);
     }
   }.bind(this));
 
   fb_login.addChangeListener(this._onFbChange.bind(this));
 }
 util.inherits(Me, EventEmitter);
+
+Me.prototype._removeLog = function(log) {
+  if(!this.user) {
+    return
+  }
+  post('/api/log/remove', log.id, function(err, data) {
+    if (!err && data && !data.error) {
+      puller.now('/api/user?id=' + this.user.id, this._onUserPull.bind(this));
+    } else {
+      console.log(data);
+    }
+  }.bind(this));
+};
 
 Me.prototype._newLog = function(route, partner) {
   if(!this.user) {

@@ -4,8 +4,12 @@ var React = require('react/addons');
 var moment = require('moment');
 
 var C = require('../constants');
+var meActions = require('../actions/me_actions');
 
 module.exports = React.createClass({
+  _handleRemove: function() {
+    meActions.removeLog(this.props.log);
+  },
   render: function() {
     var ffStr, withStr;
     var ratingStyle = {
@@ -38,6 +42,7 @@ module.exports = React.createClass({
         <div className="pull-right">
         <span className="with-who">{withStr}</span>
         <span className="rel-time">{moment(this.props.log.time).fromNow()}</span>
+        <a className="log-remove" onClick={this._handleRemove}>remove</a>
         </div>
       </li>
     )

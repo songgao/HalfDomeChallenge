@@ -15,12 +15,27 @@ function Me() {
       this._updateCategory(payload.action.category);
     } else if (payload.action.type === C.ActionTypes.ME_NEW_LOG) {
       this._newLog(payload.action.route, payload.action.partner);
+    } else if (payload.action.type === C.ActionTypes.ME_REMOVE_LOG) {
+      this._removeLog(payload.action.log);
     }
   }.bind(this));
 
   fb_login.addChangeListener(this._onFbChange.bind(this));
 }
 util.inherits(Me, EventEmitter);
+
+Me.prototype._removeLog = function(log) {
+  if(!this.user) {
+    return
+  }
+  post('/api/log/remove', log.id, function(err, data) {
+    if (!err && data && !data.error) {
+      puller.now('/api/user?id=' + this.user.id, this._onUserPull.bind(this));
+    } else {
+      console.log(data);
+    }
+  }.bind(this));
+};
 
 Me.prototype._newLog = function(route, partner) {
   if(!this.user) {

@@ -15,4 +15,10 @@ module.exports = {
       partner: partner,
     });
   },
+  removeLog: function(log) {
+    dispatcher.handleViewAction({
+      type: C.ActionTypes.ME_REMOVE_LOG,
+      log: log,
+    });
+  },
 };
