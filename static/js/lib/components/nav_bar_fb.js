@@ -18,10 +18,10 @@ module.exports = React.createClass({
   componentWillUnmount: function() {
     fb.removeChangeListener(this._onChange);
   },
-  handleLogin: function(e) {
+  _handleLogin: function(e) {
     fb_action.loginButtonClick()
   },
-  handleLogout: function(e) {
+  _handleLogout: function(e) {
     fb_action.logoutButtonClick()
   },
   render: function() {
@@ -31,12 +31,12 @@ module.exports = React.createClass({
         <div>
         <p className="navbar-text">{this.state.profile.name}</p>
         <img src={picture_url} alt="Profile Picture" className="img-circle profile-picture"/>
-        <button onClick={this.handleLogout} className="btn btn-default">Logout</button>
+        <button onClick={this._handleLogout} className="btn btn-default">Logout</button>
         </div>
       );
     } else {
       return (
-        <button onClick={this.handleLogin} type="button" className="btn btn-primary navbar-btn">Log in with Facebook</button>
+        <button onClick={this._handleLogin} type="button" className="btn btn-primary navbar-btn">Login with Facebook</button>
       );
     }
   }

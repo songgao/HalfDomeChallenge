@@ -10,7 +10,6 @@ type Config struct {
 	FBAppID     string `json:"fb_app_id"`
 	FBAppSecret string `json:"fb_app_secret"`
 	ListenAddr  string `json:"listen_addr"`
-	LAddrHTTP   string `json:"laddr_http"`
 	LAddrHTTPS  string `json:"laddr_https"`
 	DBName      string `json:"db_name"`
 	DBAddr      string `json:"db_addr"`
@@ -30,9 +29,6 @@ func popDefaults(config *Config) (valid bool) {
 	if config.FBAppSecret == "" {
 		config.FBAppSecret = "<facebook app secret>"
 		valid = false
-	}
-	if config.LAddrHTTP == "" {
-		config.LAddrHTTP = "localhost:8080"
 	}
 	if config.LAddrHTTPS == "" {
 		config.LAddrHTTPS = "localhost:8443"

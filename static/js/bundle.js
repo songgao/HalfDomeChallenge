@@ -524,7 +524,24 @@ var React = require('react/addons');
 
 module.exports = React.createClass({displayName: 'exports',
   render: function() {
-    return null;
+    return (
+      React.DOM.div({className: "container-fluid home"}, 
+        React.DOM.div({className: "row jumbotron"}, 
+          React.DOM.div({className: "col-sm-12"}, 
+            React.DOM.h2(null, "Can you climb 58 pitches in two weeks?"), 
+            React.DOM.p(null, "We challenge you to climb the equivalent vertical footage of El Capitan's famous nose route. You have two weeks to complete the climb. Challenge begins Oct. 22. Visit the wall to learn more.")
+          )
+        ), 
+        React.DOM.div({className: "row home-nav-links"}, 
+          React.DOM.div({className: "col-sm-6 text-center"}, 
+            React.DOM.a({href: "#me", className: "btn btn-warning btn-lg", onClick: this._handleRecord}, "Start Record Your Pitches")
+          ), 
+          React.DOM.div({className: "col-sm-6 text-center"}, 
+            React.DOM.a({href: "#eagleseye", className: "btn btn-primary btn-lg", onClick: this._handleSee}, "See How Others Are Doing")
+          )
+        )
+      )
+    );
   }
 });
 
@@ -644,6 +661,7 @@ var C = require('../constants');
 var meStore = require('../stores/me');
 var routesStore = require('../stores/routes');
 var usersStore = require('../stores/users');
+var fbActions = require('../actions/fb_actions');
 
 module.exports = React.createClass({displayName: 'exports',
   getInitialState: function() {
@@ -680,6 +698,9 @@ module.exports = React.createClass({displayName: 'exports',
   _onUsersStoreChange: function() {
     this.setState({logs: this._generateLogs(meStore.logs)});
   },
+  _handleLogin: function() {
+    fbActions.loginButtonClick();
+  },
   componentDidMount: function() {
     meStore.addChangeListener(this._onMeStoreChange);
     routesStore.addChangeListener(this._onRoutesStoreChange);
@@ -692,6 +713,14 @@ module.exports = React.createClass({displayName: 'exports',
     usersStore.removeChangeListener(this._onUsersStoreChange);
   },
   render: function() {
+    if (!this.state.user) {
+      return (
+        React.DOM.div({className: "container-fluid center"}, 
+          React.DOM.h3(null, "Login to Start Record Your Pitches"), 
+          React.DOM.button({onClick: this._handleLogin, type: "button", className: "btn btn-primary"}, "Login with Facebook")
+        )
+      );
+    }
     var climber = {
       picture: this.state.user ? (this.state.user.picture_url + "?height=64") : "",
       percentage: (this.state.logs ? this.state.logs.length : 0) / C.TotalPitches,
@@ -723,7 +752,7 @@ module.exports = React.createClass({displayName: 'exports',
 });
 
 
-},{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../stores/me":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/me.js","../stores/routes":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/routes.js","../stores/users":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/users.js","./copyright":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/copyright.js","./floating_head":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/floating_head.js","./log":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/log.js","./me_info":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/me_info.js","./new_log":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/new_log.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/me_info.js":[function(require,module,exports){
+},{"../actions/fb_actions":"/home/songgao/repo/ElCapChallenge/static/js/lib/actions/fb_actions.js","../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../stores/me":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/me.js","../stores/routes":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/routes.js","../stores/users":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/users.js","./copyright":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/copyright.js","./floating_head":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/floating_head.js","./log":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/log.js","./me_info":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/me_info.js","./new_log":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/new_log.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/me_info.js":[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react/addons');
@@ -800,13 +829,16 @@ module.exports = React.createClass({displayName: 'exports',
   componentWillUnmount: function() {
     meStore.removeChangeListener(this._onMeStoreChange);
   },
+  _handleItemClick: function() {
+    $('#navbar-main').collapse('hide');
+  },
   render: function() {
     var items = tabs.map(function(item) {
       if (item.needAdmin && !this.state.isAdmin) {
         return null;
       }
       var cn = this.props.active === item.href ? 'active' : "";
-      return React.DOM.li({className: cn}, React.DOM.a({href: item.href}, item.text))
+      return React.DOM.li({className: cn}, React.DOM.a({href: item.href, onClick: this._handleItemClick}, item.text))
     }.bind(this));
     return (
       React.DOM.div({className: "navbar navbar-default navbar-fixed-top", id: "top"}, 
@@ -855,10 +887,10 @@ module.exports = React.createClass({displayName: 'exports',
   componentWillUnmount: function() {
     fb.removeChangeListener(this._onChange);
   },
-  handleLogin: function(e) {
+  _handleLogin: function(e) {
     fb_action.loginButtonClick()
   },
-  handleLogout: function(e) {
+  _handleLogout: function(e) {
     fb_action.logoutButtonClick()
   },
   render: function() {
@@ -868,12 +900,12 @@ module.exports = React.createClass({displayName: 'exports',
         React.DOM.div(null, 
         React.DOM.p({className: "navbar-text"}, this.state.profile.name), 
         React.DOM.img({src: picture_url, alt: "Profile Picture", className: "img-circle profile-picture"}), 
-        React.DOM.button({onClick: this.handleLogout, className: "btn btn-default"}, "Logout")
+        React.DOM.button({onClick: this._handleLogout, className: "btn btn-default"}, "Logout")
         )
       );
     } else {
       return (
-        React.DOM.button({onClick: this.handleLogin, type: "button", className: "btn btn-primary navbar-btn"}, "Log in with Facebook")
+        React.DOM.button({onClick: this._handleLogin, type: "button", className: "btn btn-primary navbar-btn"}, "Login with Facebook")
       );
     }
   }

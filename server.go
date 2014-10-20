@@ -56,13 +56,6 @@ func NewServer(db *DB, config *Config) *Server {
 }
 
 func (s *Server) ListenAndServe() error {
-	redirect := http.NewServeMux()
-	redirect.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		url := *r.URL
-		url.Scheme = "https"
-		http.Redirect(w, r, url.String(), http.StatusMovedPermanently)
-	})
-	go http.ListenAndServe(s.config.LAddrHTTP, redirect)
 	return http.ListenAndServeTLS(s.config.LAddrHTTPS, s.config.CACert, s.config.CAKey, s.mux)
 }
 

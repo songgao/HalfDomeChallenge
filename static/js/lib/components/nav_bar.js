@@ -29,13 +29,16 @@ module.exports = React.createClass({
   componentWillUnmount: function() {
     meStore.removeChangeListener(this._onMeStoreChange);
   },
+  _handleItemClick: function() {
+    $('#navbar-main').collapse('hide');
+  },
   render: function() {
     var items = tabs.map(function(item) {
       if (item.needAdmin && !this.state.isAdmin) {
         return null;
       }
       var cn = this.props.active === item.href ? 'active' : "";
-      return <li className={cn}><a href={item.href}>{item.text}</a></li>
+      return <li className={cn}><a href={item.href} onClick={this._handleItemClick}>{item.text}</a></li>
     }.bind(this));
     return (
       <div className="navbar navbar-default navbar-fixed-top" id="top">

@@ -12,6 +12,7 @@ var C = require('../constants');
 var meStore = require('../stores/me');
 var routesStore = require('../stores/routes');
 var usersStore = require('../stores/users');
+var fbActions = require('../actions/fb_actions');
 
 module.exports = React.createClass({
   getInitialState: function() {
@@ -48,6 +49,9 @@ module.exports = React.createClass({
   _onUsersStoreChange: function() {
     this.setState({logs: this._generateLogs(meStore.logs)});
   },
+  _handleLogin: function() {
+    fbActions.loginButtonClick();
+  },
   componentDidMount: function() {
     meStore.addChangeListener(this._onMeStoreChange);
     routesStore.addChangeListener(this._onRoutesStoreChange);
@@ -60,6 +64,14 @@ module.exports = React.createClass({
     usersStore.removeChangeListener(this._onUsersStoreChange);
   },
   render: function() {
+    if (!this.state.user) {
+      return (
+        <div className="container-fluid center">
+          <h3>Login to Start Record Your Pitches</h3>
+          <button onClick={this._handleLogin} type="button" className="btn btn-primary">Login with Facebook</button>
+        </div>
+      );
+    }
     var climber = {
       picture: this.state.user ? (this.state.user.picture_url + "?height=64") : "",
       percentage: (this.state.logs ? this.state.logs.length : 0) / C.TotalPitches,
