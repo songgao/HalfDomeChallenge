@@ -253,6 +253,10 @@ func (s *Server) handleLogRemove(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"error": "internal error"})
 		return
 	}
+	if !req.Payload.Valid() {
+		json.NewEncoder(w).Encode(map[string]string{"error": "invalid log id"})
+		return
+	}
 	err := s.db.RemoveClimbingLog(user.ID, req.Payload)
 	if user == nil {
 		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
@@ -277,6 +281,12 @@ func (s *Server) handleUserModify(w http.ResponseWriter, r *http.Request) {
 	if !isValid {
 		json.NewEncoder(w).Encode(map[string]string{"error": "unauthorized"})
 		return
+	}
+	for k, _ := range req.Payload {
+		if k != "category" {
+			json.NewEncoder(w).Encode(map[string]string{"error": "invalid update; only updating category is supported"})
+			return
+		}
 	}
 	err := s.db.UpdateUserFB(req.FBID, req.Payload)
 	if err != nil {
