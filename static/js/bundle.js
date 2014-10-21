@@ -189,7 +189,9 @@ module.exports = React.createClass({displayName: 'exports',
     });
     return (
       React.DOM.div(null, 
-        React.DOM.button({className: "btn btn-warning pull-right", onClick: this._handleApproveAll}, "Approve All"), 
+        React.DOM.div({className: "clearfix"}, 
+          React.DOM.button({className: "btn btn-warning pull-right", onClick: this._handleApproveAll}, "Approve All")
+        ), 
         React.DOM.ul({className: "pending-logs clearfix"}, 
           lis
         )

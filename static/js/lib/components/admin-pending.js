@@ -58,7 +58,9 @@ module.exports = React.createClass({
     });
     return (
       <div>
-        <button className="btn btn-warning pull-right" onClick={this._handleApproveAll}>Approve All</button>
+        <div className="clearfix">
+          <button className="btn btn-warning pull-right" onClick={this._handleApproveAll}>Approve All</button>
+        </div>
         <ul className="pending-logs clearfix">
           {lis}
         </ul>
