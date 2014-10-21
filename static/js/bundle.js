@@ -669,7 +669,7 @@ module.exports = React.createClass({displayName: 'exports',
     if (this.props.showRemove) {
         removeLink = (React.DOM.a({className: "log-remove", onClick: this._handleRemove}, "remove"));
     } else {
-      showLink = (React.DOM.div(null));
+      removeLink = (React.DOM.div(null));
     }
     return (
       React.DOM.li({className: "log clearfix"}, 
@@ -770,7 +770,7 @@ module.exports = React.createClass({displayName: 'exports',
       percentage: (this.state.logs ? this.state.logs.length : 0) / C.TotalPitches,
     };
     var logs = this.state.logs.map(function(log) {
-      return (Log({log: log}));
+      return (Log({log: log, showRemove: true}));
     });
     return (
       React.DOM.div({className: "container-fluid fullheight"}, 

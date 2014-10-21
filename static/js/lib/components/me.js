@@ -77,7 +77,7 @@ module.exports = React.createClass({
       percentage: (this.state.logs ? this.state.logs.length : 0) / C.TotalPitches,
     };
     var logs = this.state.logs.map(function(log) {
-      return (<Log log={log} />);
+      return (<Log log={log} showRemove={true}/>);
     });
     return (
       <div className="container-fluid fullheight">

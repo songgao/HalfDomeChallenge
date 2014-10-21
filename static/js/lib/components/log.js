@@ -34,7 +34,7 @@ module.exports = React.createClass({
     if (this.props.showRemove) {
         removeLink = (<a className="log-remove" onClick={this._handleRemove}>remove</a>);
     } else {
-      showLink = (<div></div>);
+      removeLink = (<div></div>);
     }
     return (
       <li className="log clearfix">
