@@ -20,7 +20,7 @@ module.exports = React.createClass({
       alert ("Please make sure you selected route");
       return
     }
-    actions.newLog(this.refs.routeSelector.state.selectedRef, this.refs.personPicker.state.selected);
+    actions.newLog(this.refs.routeSelector.state.selectedRef, this.refs.personPicker ? this.refs.personPicker.state.selected : null);
     $('#dialogNewLog').modal('hide');
   },
   componentDidMount: function() {
@@ -66,11 +66,12 @@ module.exports = React.createClass({
                     <label>Route</label>
                     <div><Selector options={routeOptions} defaultIndex={defaultIndex} ref="routeSelector" /></div>
                   </div>
-
+                  {/* Uncomment this to enable partners
                   <div className="form-group">
                     <label>Partner</label>
                     <PersonPicker ref="personPicker"/>
                   </div>
+                  */}
 
                 </form>
               </div>

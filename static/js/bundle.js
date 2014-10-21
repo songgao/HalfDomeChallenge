@@ -967,7 +967,7 @@ module.exports = React.createClass({displayName: 'exports',
       alert ("Please make sure you selected route");
       return
     }
-    actions.newLog(this.refs.routeSelector.state.selectedRef, this.refs.personPicker.state.selected);
+    actions.newLog(this.refs.routeSelector.state.selectedRef, this.refs.personPicker ? this.refs.personPicker.state.selected : null);
     $('#dialogNewLog').modal('hide');
   },
   componentDidMount: function() {
@@ -1012,12 +1012,13 @@ module.exports = React.createClass({displayName: 'exports',
                   React.DOM.div({className: "form-group"}, 
                     React.DOM.label(null, "Route"), 
                     React.DOM.div(null, Selector({options: routeOptions, defaultIndex: defaultIndex, ref: "routeSelector"}))
-                  ), 
-
-                  React.DOM.div({className: "form-group"}, 
-                    React.DOM.label(null, "Partner"), 
-                    PersonPicker({ref: "personPicker"})
                   )
+                  /* Uncomment this to enable partners
+                  <div className="form-group">
+                    <label>Partner</label>
+                    <PersonPicker ref="personPicker"/>
+                  </div>
+                  */
 
                 )
               ), 
