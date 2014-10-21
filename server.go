@@ -47,6 +47,7 @@ func NewServer(db *DB, config *Config) *Server {
 	server.mux.HandleFunc("/api/log/remove", server.handleLogRemove)
 	server.mux.HandleFunc("/api/user/modify", server.handleUserModify)
 	server.mux.HandleFunc("/api/admin/log/approve", server.handleAdminLogApprove)
+	server.mux.HandleFunc("/api/admin/log/approveAll", server.handleAdminLogApproveAll)
 	server.mux.HandleFunc("/api/admin/log/discard", server.handleAdminLogDiscard)
 	server.mux.HandleFunc("/api/admin/route/new", server.handleAdminRouteNew)
 
@@ -228,7 +229,6 @@ func (s *Server) handleLogNew(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		json.NewEncoder(w).Encode(map[string]string{"error": "internal error"})
 	}
-	s.recentCache.TriggerUpdate()
 	json.NewEncoder(w).Encode(map[string]string{"result": "ok"})
 }
 
@@ -293,6 +293,25 @@ func (s *Server) handleAdminUserModify(w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleAdminUserNew(w http.ResponseWriter, r *http.Request) {
 }
 
+func (s *Server) handleAdminLogApproveAll(w http.ResponseWriter, r *http.Request) {
+	req := new(struct {
+		FBID    string `json:"fb_id"`
+		FBToken string `json:"fb_token"`
+	})
+	json.NewDecoder(r.Body).Decode(req)
+	if !s.isAdmin(req.FBID, req.FBToken) {
+		json.NewEncoder(w).Encode(map[string]string{"error": "not admin"})
+		return
+	}
+	err := s.db.ApproveAll()
+	if err != nil {
+		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		return
+	}
+	s.recentCache.TriggerUpdate()
+	json.NewEncoder(w).Encode(map[string]string{"result": "ok"})
+}
+
 func (s *Server) handleAdminLogApprove(w http.ResponseWriter, r *http.Request) {
 	req := new(struct {
 		FBID    string        `json:"fb_id"`
@@ -312,10 +331,6 @@ func (s *Server) handleAdminLogApprove(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
 		return
-	}
-	log, err := s.db.GetLog(req.Payload)
-	for _, climber := range log.Climbers {
-		s.db.UpdateUserUpdatedTime(climber)
 	}
 	s.recentCache.TriggerUpdate()
 	json.NewEncoder(w).Encode(map[string]string{"result": "ok"})

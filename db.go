@@ -181,7 +181,51 @@ func (d *DB) GetLog(logID bson.ObjectId) (log ClimbingLog, err error) {
 func (d *DB) ApproveLog(logID bson.ObjectId) error {
 	c, s := d.c("climbing_logs")
 	defer s.Close()
-	return c.Update(bson.M{"_id": logID}, bson.M{"$set": bson.M{"pending": false}})
+	err := c.Update(bson.M{"_id": logID}, bson.M{"$set": bson.M{"pending": false}})
+	if err != nil {
+		return err
+	}
+	log, err := d.GetLog(logID)
+	if err != nil {
+		return err
+	}
+	for _, climber := range log.Climbers {
+		err = d.UpdateUserUpdatedTime(climber)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (d *DB) ApproveAll() error {
+	cl, sl := d.c("climbing_logs")
+	cu, su := d.c("users")
+	defer sl.Close()
+	defer su.Close()
+
+	var logs []ClimbingLog
+	err := cl.Find(bson.M{"pending": true}).All(&logs)
+	if err != nil {
+		return err
+	}
+	users := make(map[bson.ObjectId]bool)
+	for _, l := range logs {
+		for _, u := range l.Climbers {
+			users[u] = true
+		}
+	}
+	_, err = cl.UpdateAll(bson.M{"pending": true}, bson.M{"$set": bson.M{"pending": false}})
+	if err != nil {
+		return err
+	}
+	for uid := range users {
+		err = cu.Update(bson.M{"_id": uid}, bson.M{"$set": bson.M{"updated_time": time.Now()}})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (d *DB) RecentlyUpdatedUsers(count int) (users []User, err error) {

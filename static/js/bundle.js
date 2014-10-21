@@ -21,6 +21,11 @@ module.exports = {
       log: log
     });
   },
+  approveAll: function() {
+    dispatcher.handleViewAction({
+      type: C.ActionTypes.ADMIN_PENDING_APPROVE_ALL,
+    });
+  },
 };
 
 },{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../dispatcher":"/home/songgao/repo/ElCapChallenge/static/js/lib/dispatcher.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/actions/fb_actions.js":[function(require,module,exports){
@@ -133,6 +138,7 @@ var AdminPendingLog = require('./admin-pending-log');
 var usersStore = require('../stores/users');
 var routesStore = require('../stores/routes');
 var pendingLogsStore = require('../stores/pending_logs');
+var adminActions = require('../actions/admin_actions');
 
 module.exports = React.createClass({displayName: 'exports',
   getInitialState: function() {
@@ -174,20 +180,25 @@ module.exports = React.createClass({displayName: 'exports',
     routesStore.removeChangeListener(this._onRoutesStoreChange);
     usersStore.removeChangeListener(this._onUsersStoreChange);
   },
-  
+  _handleApproveAll: function() {
+    adminActions.approveAll();
+  },
   render: function() {
     var lis = this.state.logs.map(function(log) {
       return AdminPendingLog({route: log.route, climbers: log.climbers, log: log})
     });
     return (
-      React.DOM.ul({className: "pending-logs clearfix"}, 
-        lis
+      React.DOM.div(null, 
+        React.DOM.button({className: "btn btn-warning pull-right", onClick: this._handleApproveAll}, "Approve All"), 
+        React.DOM.ul({className: "pending-logs clearfix"}, 
+          lis
+        )
       )
     );
   }
 });
 
-},{"../stores/pending_logs":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/pending_logs.js","../stores/routes":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/routes.js","../stores/users":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/users.js","./admin-pending-log":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-pending-log.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-route.js":[function(require,module,exports){
+},{"../actions/admin_actions":"/home/songgao/repo/ElCapChallenge/static/js/lib/actions/admin_actions.js","../stores/pending_logs":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/pending_logs.js","../stores/routes":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/routes.js","../stores/users":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/users.js","./admin-pending-log":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-pending-log.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-route.js":[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react/addons');
@@ -1435,6 +1446,7 @@ exports.ActionTypes = {
   ME_REMOVE_LOG : "ME_REMOVE_LOG",
   ADMIN_NEW_ROUTE : "ADMIN_NEW_ROUTE",
   ADMIN_PENDING_APPROVE : "ADMIN_PENDING_APPROVE",
+  ADMIN_PENDING_APPROVE_ALL : "ADMIN_PENDING_APPROVE_ALL",
   ADMIN_PENDING_DISCARD : "ADMIN_PENDING_DISCARD",
   PEEKER_SELECT_USER : "PEEKER_SELECT_USER",
 };
@@ -1918,6 +1930,8 @@ function PendingLogs() {
   dispatcher.register(function(payload) {
     if(payload.action.type === C.ActionTypes.ADMIN_PENDING_APPROVE) {
       this._approve(payload.action.log);
+    } else if(payload.action.type === C.ActionTypes.ADMIN_PENDING_APPROVE_ALL) {
+      this._approveAll();
     } else if(payload.action.type === C.ActionTypes.ADMIN_PENDING_DISCARD) {
       this._discard(payload.action.log);
     }
@@ -1930,6 +1944,16 @@ util.inherits(PendingLogs, EventEmitter);
 
 PendingLogs.prototype._approve = function(log) {
   post('/api/admin/log/approve', log.id, function(err, data) {
+    if (!err && data && !data.error) {
+      puller.now('/api/logs/pending', this._onLogsPendingPull.bind(this));
+    } else {
+      console.log(data);
+    }
+  }.bind(this));
+};
+
+PendingLogs.prototype._approveAll = function() {
+  post('/api/admin/log/approveAll', null, function(err, data) {
     if (!err && data && !data.error) {
       puller.now('/api/logs/pending', this._onLogsPendingPull.bind(this));
     } else {

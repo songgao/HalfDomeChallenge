@@ -20,4 +20,9 @@ module.exports = {
       log: log
     });
   },
+  approveAll: function() {
+    dispatcher.handleViewAction({
+      type: C.ActionTypes.ADMIN_PENDING_APPROVE_ALL,
+    });
+  },
 };

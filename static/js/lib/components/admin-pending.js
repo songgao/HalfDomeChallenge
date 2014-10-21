@@ -7,6 +7,7 @@ var AdminPendingLog = require('./admin-pending-log');
 var usersStore = require('../stores/users');
 var routesStore = require('../stores/routes');
 var pendingLogsStore = require('../stores/pending_logs');
+var adminActions = require('../actions/admin_actions');
 
 module.exports = React.createClass({
   getInitialState: function() {
@@ -48,15 +49,20 @@ module.exports = React.createClass({
     routesStore.removeChangeListener(this._onRoutesStoreChange);
     usersStore.removeChangeListener(this._onUsersStoreChange);
   },
-  
+  _handleApproveAll: function() {
+    adminActions.approveAll();
+  },
   render: function() {
     var lis = this.state.logs.map(function(log) {
       return <AdminPendingLog route={log.route} climbers={log.climbers} log={log} />
     });
     return (
-      <ul className="pending-logs clearfix">
-        {lis}
-      </ul>
+      <div>
+        <button className="btn btn-warning pull-right" onClick={this._handleApproveAll}>Approve All</button>
+        <ul className="pending-logs clearfix">
+          {lis}
+        </ul>
+      </div>
     );
   }
 });
