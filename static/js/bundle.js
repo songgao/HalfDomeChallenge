@@ -117,7 +117,7 @@ module.exports = React.createClass({displayName: 'exports',
       React.DOM.span({style: routeStyle}, 
       this.props.route.setter, " | ", this.props.route.name, " | ", this.props.route.rating, " | ", this.props.route.ff ? "FF" : "AF", " | ", C.Nats.all[this.props.route.nats]
       ), 
-      moment(this.props.time).fromNow()
+      moment(this.props.log.time).fromNow(), " (", moment(this.props.log.time).format('llll'), ")"
       ))
     );
   }
@@ -556,7 +556,7 @@ module.exports = React.createClass({displayName: 'exports',
         ), 
         React.DOM.div({className: "row home-nav-links"}, 
           React.DOM.div({className: "col-sm-6 text-center"}, 
-            React.DOM.a({href: "#me", className: "btn btn-warning btn-lg", onClick: this._handleRecord}, "Start Record Your Pitches")
+            React.DOM.a({href: "#me", className: "btn btn-warning btn-lg", onClick: this._handleRecord}, "Start Recording Your Pitches")
           ), 
           React.DOM.div({className: "col-sm-6 text-center"}, 
             React.DOM.a({href: "#eagleseye", className: "btn btn-primary btn-lg", onClick: this._handleSee}, "See How Others Are Doing")
@@ -1304,12 +1304,24 @@ module.exports = React.createClass({displayName: 'exports',
   render: function() {
     var lis = this.props.options.map(function(option, index) {
       var onClick = function() { this._onSelect(index); }.bind(this);
-      return React.DOM.li(null, React.DOM.button({type: "button", className: "btn btn-link", onClick: onClick}, option.dom))
+      return (
+        React.DOM.li(null, 
+          React.DOM.button({type: "button", className: "btn btn-link", onClick: onClick}, 
+            option.dom
+          )
+        )
+      );
     }.bind(this));
+    var dropdown = (
+        React.DOM.div(null, 
+        this.props.options[this.state.selectedIndex].dom, 
+        React.DOM.span({className: "caret"})
+        )
+    );
     return (
       React.DOM.div({className: "btn-group selector-div"}, 
         React.DOM.button({type: "button", className: "btn btn-link dropdown-toggle", 'data-toggle': "dropdown"}, 
-          (!this.props.options || this.props.options.length === 0) ? "empty" : this.props.options[this.state.selectedIndex].dom
+          (!this.props.options || this.props.options.length === 0) ? "empty" : dropdown
         ), 
         React.DOM.ul({className: "dropdown-menu", role: "menu"}, 
           lis

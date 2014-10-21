@@ -22,12 +22,24 @@ module.exports = React.createClass({
   render: function() {
     var lis = this.props.options.map(function(option, index) {
       var onClick = function() { this._onSelect(index); }.bind(this);
-      return <li><button type="button" className="btn btn-link" onClick={onClick}>{option.dom}</button></li>
+      return (
+        <li>
+          <button type="button" className="btn btn-link" onClick={onClick}>
+            {option.dom}
+          </button>
+        </li>
+      );
     }.bind(this));
+    var dropdown = (
+        <div>
+        {this.props.options[this.state.selectedIndex].dom}
+        <span className="caret"></span>
+        </div>
+    );
     return (
       <div className="btn-group selector-div">
         <button type="button" className="btn btn-link dropdown-toggle" data-toggle="dropdown">
-          {(!this.props.options || this.props.options.length === 0) ? "empty" : this.props.options[this.state.selectedIndex].dom}
+          {(!this.props.options || this.props.options.length === 0) ? "empty" : dropdown}
         </button>
         <ul className="dropdown-menu" role="menu">
           {lis}

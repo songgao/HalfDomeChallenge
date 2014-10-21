@@ -14,7 +14,7 @@ module.exports = React.createClass({
         </div>
         <div className="row home-nav-links">
           <div className="col-sm-6 text-center">
-            <a href="#me" className="btn btn-warning btn-lg" onClick={this._handleRecord}>Start Record Your Pitches</a>
+            <a href="#me" className="btn btn-warning btn-lg" onClick={this._handleRecord}>Start Recording Your Pitches</a>
           </div>
           <div className="col-sm-6 text-center">
             <a href="#eagleseye" className="btn btn-primary btn-lg" onClick={this._handleSee}>See How Others Are Doing</a>

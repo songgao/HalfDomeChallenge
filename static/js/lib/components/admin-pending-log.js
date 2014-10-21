@@ -35,7 +35,7 @@ module.exports = React.createClass({
       <span style={routeStyle}>
       {this.props.route.setter} | {this.props.route.name} | {this.props.route.rating} | {this.props.route.ff ? "FF" : "AF"} | {C.Nats.all[this.props.route.nats]}
       </span>
-      {moment(this.props.time).fromNow()}
+      {moment(this.props.log.time).fromNow()} ({moment(this.props.log.time).format('llll')})
       </div></li>
     );
   }
