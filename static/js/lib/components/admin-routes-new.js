@@ -47,7 +47,7 @@ module.exports = React.createClass({
     });
     return (
       <div>
-        <button className="btn btn-default" data-toggle="modal" data-target="#dialogNewRoute">
+        <button className="btn btn-primary" data-toggle="modal" data-target="#dialogNewRoute">
           New Route
         </button>
         <div className="modal fade" id="dialogNewRoute" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" ref="dialogNewRoute">

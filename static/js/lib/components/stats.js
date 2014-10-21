@@ -74,7 +74,7 @@ module.exports = React.createClass({
     }.bind(this))
     return (
       <div className="container-fluid fullheight">
-        <div className="row el-cap fullheight">
+        <div className="row el-cap fullheight stats-div">
           <div className="col-md-6 gradient fullheight no-scroll">
             <Copyright />
             {heads}

@@ -286,7 +286,7 @@ module.exports = React.createClass({displayName: 'exports',
     });
     return (
       React.DOM.div(null, 
-        React.DOM.button({className: "btn btn-default", 'data-toggle': "modal", 'data-target': "#dialogNewRoute"}, 
+        React.DOM.button({className: "btn btn-primary", 'data-toggle': "modal", 'data-target': "#dialogNewRoute"}, 
           "New Route"
         ), 
         React.DOM.div({className: "modal fade", id: "dialogNewRoute", tabIndex: "-1", role: "dialog", 'aria-labelledby': "myModalLabel", 'aria-hidden': "true", ref: "dialogNewRoute"}, 
@@ -1331,7 +1331,7 @@ module.exports = React.createClass({displayName: 'exports',
     );
     return (
       React.DOM.div({className: "btn-group selector-div"}, 
-        React.DOM.button({type: "button", className: "btn btn-link dropdown-toggle", 'data-toggle': "dropdown"}, 
+        React.DOM.button({type: "button", className: "btn btn-default dropdown-toggle", 'data-toggle': "dropdown"}, 
           (!this.props.options || this.props.options.length === 0) ? "empty" : dropdown
         ), 
         React.DOM.ul({className: "dropdown-menu", role: "menu"}, 
@@ -1419,7 +1419,7 @@ module.exports = React.createClass({displayName: 'exports',
     }.bind(this))
     return (
       React.DOM.div({className: "container-fluid fullheight"}, 
-        React.DOM.div({className: "row el-cap fullheight"}, 
+        React.DOM.div({className: "row el-cap fullheight stats-div"}, 
           React.DOM.div({className: "col-md-6 gradient fullheight no-scroll"}, 
             Copyright(null), 
             heads

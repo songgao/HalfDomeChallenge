@@ -2,9 +2,13 @@
   background-color: rgba(255, 255, 255, .85);
 }
 
-div.home>div.home-nav-links {
-  padding-top: 64px;
-  padding-bottom: 64px;
+div.home>div.home-nav-links>div {
+  margin-top: 64px;
+  margin-bottom: 64px;
+}
+
+div.stats-div>div.with-scroll {
+  padding-top: 24px;
 }
 
 .center {
@@ -255,6 +259,9 @@ li.log>div>a.log-remove {
   margin-left: 4px;
   cursor: pointer;
   text-decoration: none;
+}
+
+.selector-div>button.dropdown-toggle {
 }
 
 .selector-div>button.dropdown-toggle span.caret {

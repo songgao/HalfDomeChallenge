@@ -38,7 +38,7 @@ module.exports = React.createClass({
     );
     return (
       <div className="btn-group selector-div">
-        <button type="button" className="btn btn-link dropdown-toggle" data-toggle="dropdown">
+        <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">
           {(!this.props.options || this.props.options.length === 0) ? "empty" : dropdown}
         </button>
         <ul className="dropdown-menu" role="menu">
