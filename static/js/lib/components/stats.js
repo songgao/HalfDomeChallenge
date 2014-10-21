@@ -61,11 +61,12 @@ module.exports = React.createClass({
   },
   render: function() {
     var count = this.state.climbers.length;
-    var heads = this.state.climbers.map(function(climber, index) {
+    var heads = !count ? [] : this.state.climbers.map(function(climber, index) {
       // 0 === latest; 1 == oldest
-      var recentness = (this.state.latestIndex > index ? (this.state.latestIndex - index) : (this.state.latestIndex + numHeads - index)) / numHeads;
+      var recentness = index / (count - 1);
       return <FloatingHead picture={climber.picture} percentage={climber.percentage} pos={index/count} recentness={recentness} />;
     }.bind(this));
+    heads.reverse(); // so that newer ones don't get covered by older ones
     var bars = this.state.climbers.map(function(climber) {
       if (!climber.logs || !climber.logs.length) {
         return <div></div>;
