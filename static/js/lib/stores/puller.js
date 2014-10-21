@@ -3,6 +3,7 @@ var async = require('async');
 function Puller() {
   this._cbs = [];
   this._intervalID = null;
+  this.versions = {};
 
   this._intervalID = window.setInterval(this._onPull.bind(this), 10000); // 5 seconds
 }
@@ -17,13 +18,25 @@ Puller.prototype._onPull = function() {
 };
 
 Puller.prototype.now = function(uri, callback) {
+    var url = uri;
+    if (typeof(this.versions[uri]) === 'number' && this.versions[uri] >= 0) {
+      if (url.indexOf("?") > -1) {
+        url += "&version=";
+      } else {
+        url += "?version=";
+      }
+      url += this.versions[uri].toString();
+    }
     $.ajax({
-      url:      uri,
+      url:      url,
       type:     'GET',
       dataType: 'json',
-    }).done(function(data){
-      callback(null, data);
-    }).fail(function(_, _, err) {
+    }).done(function(payload){
+      if (payload.updated) {
+        this.versions[uri] = payload.version || -1 ;
+        callback(null, payload.data);
+      }
+    }.bind(this)).fail(function(_, _, err) {
       callback(err);
     });
 };

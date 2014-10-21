@@ -61,15 +61,27 @@ func (s *Server) ListenAndServe() error {
 }
 
 func (s *Server) handleUsers(w http.ResponseWriter, r *http.Request) {
-	s.usersCache.Respond(w)
+	s.usersCache.Respond(w, r)
 }
 
 func (s *Server) handleRecent(w http.ResponseWriter, r *http.Request) {
-	s.recentCache.Respond(w)
+	s.recentCache.Respond(w, r)
 }
 
 func (s *Server) handleRoutes(w http.ResponseWriter, r *http.Request) {
-	s.routesCache.Respond(w)
+	s.routesCache.Respond(w, r)
+}
+
+func (s *Server) respondUnCached(w http.ResponseWriter, data interface{}) error {
+	resp := new(struct {
+		Updated bool        `json:"updated"`
+		Version int64       `json:"version"`
+		Data    interface{} `json:"data"`
+	})
+	resp.Updated = true
+	resp.Version = -1
+	resp.Data = data
+	return json.NewEncoder(w).Encode(resp)
 }
 
 func (s *Server) handleLogsPending(w http.ResponseWriter, r *http.Request) {
@@ -78,7 +90,7 @@ func (s *Server) handleLogsPending(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
 		return
 	}
-	json.NewEncoder(w).Encode(logs)
+	s.respondUnCached(w, logs)
 }
 
 func (s *Server) handleUser(w http.ResponseWriter, r *http.Request) {
@@ -92,13 +104,17 @@ func (s *Server) handleUser(w http.ResponseWriter, r *http.Request) {
 		Logs []ClimbingLog `json:"logs"`
 	})
 	var err error
+	if !bson.IsObjectIdHex(uid) {
+		json.NewEncoder(w).Encode(map[string]string{"error": "invalid 'id'"})
+		return
+	}
 	resp.User = s.db.GetUser(bson.ObjectIdHex(uid))
 	resp.Logs, err = s.db.ClimbingLogs(bson.ObjectIdHex(uid))
 	if resp.User == nil || err != nil {
 		json.NewEncoder(w).Encode(map[string]string{"error": "getting user info error"})
 		return
 	}
-	json.NewEncoder(w).Encode(resp)
+	s.respondUnCached(w, resp)
 }
 
 func (s *Server) isAdmin(FBID string, FBToken string) bool {

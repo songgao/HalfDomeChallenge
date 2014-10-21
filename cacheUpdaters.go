@@ -7,12 +7,12 @@ import (
 )
 
 type CacheUpdater interface {
-	Update(*DB) []byte
+	Update(*DB) *json.RawMessage
 }
 
 type UsersCacheUpdater int
 
-func (c UsersCacheUpdater) Update(db *DB) []byte {
+func (c UsersCacheUpdater) Update(db *DB) *json.RawMessage {
 	users, err := db.Users()
 	if err != nil {
 		fmt.Println(err)
@@ -23,7 +23,9 @@ func (c UsersCacheUpdater) Update(db *DB) []byte {
 		fmt.Println(err)
 		return nil
 	}
-	return ret
+	j := new(json.RawMessage)
+	j.UnmarshalJSON(ret)
+	return j
 }
 
 type RecentCacheUpdater int
@@ -33,7 +35,7 @@ type recentItem struct {
 	RouteIDs []bson.ObjectId `json:"route_ids"`
 }
 
-func (c RecentCacheUpdater) Update(db *DB) []byte {
+func (c RecentCacheUpdater) Update(db *DB) *json.RawMessage {
 	users, err := db.RecentlyUpdatedUsers(12)
 	if err != nil {
 		return nil
@@ -57,12 +59,14 @@ func (c RecentCacheUpdater) Update(db *DB) []byte {
 		fmt.Println(err)
 		return nil
 	}
-	return ret
+	j := new(json.RawMessage)
+	j.UnmarshalJSON(ret)
+	return j
 }
 
 type RoutesCacheUpdater int
 
-func (c RoutesCacheUpdater) Update(db *DB) []byte {
+func (c RoutesCacheUpdater) Update(db *DB) *json.RawMessage {
 	routes, err := db.Routes()
 	if err != nil {
 		fmt.Println(err)
@@ -73,5 +77,7 @@ func (c RoutesCacheUpdater) Update(db *DB) []byte {
 		fmt.Println(err)
 		return nil
 	}
-	return ret
+	j := new(json.RawMessage)
+	j.UnmarshalJSON(ret)
+	return j
 }

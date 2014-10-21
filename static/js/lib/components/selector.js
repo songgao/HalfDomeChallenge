@@ -32,7 +32,7 @@ module.exports = React.createClass({
     }.bind(this));
     var dropdown = (
         <div>
-        {this.props.options[this.state.selectedIndex].dom}
+        {this.props.options[this.state.selectedIndex] ? this.props.options[this.state.selectedIndex].dom : "empty O_O"}
         <span className="caret"></span>
         </div>
     );
