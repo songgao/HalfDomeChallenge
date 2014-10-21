@@ -50,6 +50,8 @@ func NewServer(db *DB, config *Config) *Server {
 	server.mux.HandleFunc("/api/admin/log/approveAll", server.handleAdminLogApproveAll)
 	server.mux.HandleFunc("/api/admin/log/discard", server.handleAdminLogDiscard)
 	server.mux.HandleFunc("/api/admin/route/new", server.handleAdminRouteNew)
+	server.mux.HandleFunc("/api/admin/route/enable", server.handleAdminRouteEnable)
+	server.mux.HandleFunc("/api/admin/route/disable", server.handleAdminRouteDisable)
 
 	server.mux.Handle("/", http.FileServer(http.Dir(config.UIPath)))
 
@@ -403,4 +405,52 @@ func (s *Server) handleAdminRouteNew(w http.ResponseWriter, r *http.Request) {
 	}
 	s.routesCache.TriggerUpdate()
 	json.NewEncoder(w).Encode(map[string]string{"result": "ok"})
+}
+
+func (s *Server) handleAdminRouteEnable(w http.ResponseWriter, r *http.Request) {
+	req := new(struct {
+		FBID    string        `json:"fb_id"`
+		FBToken string        `json:"fb_token"`
+		Payload bson.ObjectId `json:"payload"`
+	})
+	json.NewDecoder(r.Body).Decode(req)
+	if !s.isAdmin(req.FBID, req.FBToken) {
+		json.NewEncoder(w).Encode(map[string]string{"error": "not admin"})
+		return
+	}
+	if !req.Payload.Valid() {
+		json.NewEncoder(w).Encode(map[string]string{"error": "invalid log id"})
+		return
+	}
+	err := s.db.EnableRoute(req.Payload)
+	if err != nil {
+		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		return
+	}
+	json.NewEncoder(w).Encode(map[string]string{"result": "ok"})
+	s.routesCache.TriggerUpdate()
+}
+
+func (s *Server) handleAdminRouteDisable(w http.ResponseWriter, r *http.Request) {
+	req := new(struct {
+		FBID    string        `json:"fb_id"`
+		FBToken string        `json:"fb_token"`
+		Payload bson.ObjectId `json:"payload"`
+	})
+	json.NewDecoder(r.Body).Decode(req)
+	if !s.isAdmin(req.FBID, req.FBToken) {
+		json.NewEncoder(w).Encode(map[string]string{"error": "not admin"})
+		return
+	}
+	if !req.Payload.Valid() {
+		json.NewEncoder(w).Encode(map[string]string{"error": "invalid log id"})
+		return
+	}
+	err := s.db.DisableRoute(req.Payload)
+	if err != nil {
+		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		return
+	}
+	json.NewEncoder(w).Encode(map[string]string{"result": "ok"})
+	s.routesCache.TriggerUpdate()
 }

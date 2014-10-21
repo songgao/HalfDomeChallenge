@@ -26,6 +26,18 @@ module.exports = {
       type: C.ActionTypes.ADMIN_PENDING_APPROVE_ALL,
     });
   },
+  enableRoute: function(route) {
+    dispatcher.handleViewAction({
+      type: C.ActionTypes.ADMIN_ROUTE_ENABLE,
+      route: route
+    });
+  },
+  disableRoute: function(route) {
+    dispatcher.handleViewAction({
+      type: C.ActionTypes.ADMIN_ROUTE_DISABLE,
+      route: route
+    });
+  },
 };
 
 },{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../dispatcher":"/home/songgao/repo/ElCapChallenge/static/js/lib/dispatcher.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/actions/fb_actions.js":[function(require,module,exports){
@@ -207,8 +219,15 @@ var React = require('react/addons');
 var moment = require('moment');
 
 var C = require('../constants');
+var adminActions = require('../actions/admin_actions');
 
 module.exports = React.createClass({displayName: 'exports',
+  _handleEnable: function() {
+    adminActions.enableRoute(this.props.route);
+  },
+  _handleDisable: function() {
+    adminActions.disableRoute(this.props.route);
+  },
   render: function() {
     var tapeStyle = {
       "background-color": this.props.route.background_color,
@@ -223,6 +242,15 @@ module.exports = React.createClass({displayName: 'exports',
     var ffStyle = {
       "background-color": C.Rainbow(this.props.route.ff ? 1 : 0),
     };
+    var able, ableText;
+    if (this.props.route.enabled) {
+      able = (React.DOM.a({className: "admin-route-able", onClick: this._handleDisable}, "disable"));
+      ableText = "";
+    } else {
+      able = (React.DOM.a({className: "admin-route-able", onClick: this._handleEnable}, "re-enable"));
+      ableText = (React.DOM.span({className: "label label-danger"}, "disabled"));
+    }
+
     return (
       React.DOM.li({className: "admin-route clearfix"}, 
         React.DOM.div(null, 
@@ -231,14 +259,16 @@ module.exports = React.createClass({displayName: 'exports',
         React.DOM.span(null, " by ", this.props.route.setter), 
         React.DOM.span({className: "label", style: ratingStyle}, this.props.route.rating), 
         React.DOM.span({className: "label", style: ffStyle}, this.props.route.ff ? "FF" : "AF"), 
-        React.DOM.span({className: "label", style: natsStyle}, C.Nats.all[this.props.route.nats])
+        React.DOM.span({className: "label", style: natsStyle}, C.Nats.all[this.props.route.nats]), 
+        ableText, 
+        able
         )
       )
     )
   }
 });
 
-},{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","moment":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/moment/moment.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-routes-new.js":[function(require,module,exports){
+},{"../actions/admin_actions":"/home/songgao/repo/ElCapChallenge/static/js/lib/actions/admin_actions.js","../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","moment":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/moment/moment.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-routes-new.js":[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react/addons');
@@ -991,24 +1021,32 @@ module.exports = React.createClass({displayName: 'exports',
   },
   render: function() {
     var defaultIndex = 0;
-    var routeOptions = this.state.routes.map(function(route, index) {
-      if (route.rating === C.Ratings.all[0]) { // "cupcake"
-        defaultIndex = index;
+    var routeOptions = [];
+    if (this.state.routes && this.state.routes.length) {
+      for (var i = 0; i < this.state.routes.length; ++i) {
+        var route = this.state.routes[i];
+        console.log(route);
+        if (!route || !route.enabled) {
+          continue;
+        }
+        if (route.rating === C.Ratings.all[0]) { // "cupcake"
+          defaultIndex = index;
+        }
+        var style = {
+          "background-color": route.background_color,
+          "color": route.color,
+          "padding": "4px 8px 4px 8px",
+        };
+        routeOptions.push({
+          dom: (
+                React.DOM.span({style: style}, 
+                  route.setter, " | ", route.name, " | ", route.rating, " | ", route.ff ? "FF" : "AF", " | ", C.Nats.all[route.nats]
+                )
+               ),
+          ref: route,
+        });
       }
-      var style = {
-        "background-color": route.background_color,
-        "color": route.color,
-        "padding": "4px 8px 4px 8px",
-      };
-      return {
-        dom: (
-              React.DOM.span({style: style}, 
-                route.setter, " | ", route.name, " | ", route.rating, " | ", route.ff ? "FF" : "AF", " | ", C.Nats.all[route.nats]
-              )
-             ),
-        ref: route,
-      };
-    }.bind(this));
+    }
     return (
       React.DOM.div({className: "clearfix"}, 
         React.DOM.button({type: "button", className: "btn btn-warning pull-right", 'data-toggle': "modal", 'data-target': "#dialogNewLog"}, "New Pitch"), 
@@ -1447,6 +1485,8 @@ exports.ActionTypes = {
   ME_NEW_LOG : "ME_NEW_LOG",
   ME_REMOVE_LOG : "ME_REMOVE_LOG",
   ADMIN_NEW_ROUTE : "ADMIN_NEW_ROUTE",
+  ADMIN_ROUTE_ENABLE : "ADMIN_ROUTE_ENABLE",
+  ADMIN_ROUTE_DISABLE : "ADMIN_ROUTE_DISABLE",
   ADMIN_PENDING_APPROVE : "ADMIN_PENDING_APPROVE",
   ADMIN_PENDING_APPROVE_ALL : "ADMIN_PENDING_APPROVE_ALL",
   ADMIN_PENDING_DISCARD : "ADMIN_PENDING_DISCARD",
@@ -2105,6 +2145,10 @@ function Routes() {
   dispatcher.register(function(payload) {
     if(payload.action.type === C.ActionTypes.ADMIN_NEW_ROUTE) {
       this._newRoute(payload.action.route);
+    } else if(payload.action.type === C.ActionTypes.ADMIN_ROUTE_ENABLE) {
+      this._enableRoute(payload.action.route);
+    } else if(payload.action.type === C.ActionTypes.ADMIN_ROUTE_DISABLE) {
+      this._disableRoute(payload.action.route);
     }
   }.bind(this));
 
@@ -2130,6 +2174,22 @@ Routes.prototype.findOrMissing = function(id) {
 
 Routes.prototype._newRoute = function(route) {
   post('/api/admin/route/new', route, function(err, data) {
+    if (!err && data && !data.error) {
+      puller.now('/api/routes', this._onRoutesPull.bind(this));
+    }
+  }.bind(this));
+};
+
+Routes.prototype._enableRoute = function(route) {
+  post('/api/admin/route/enable', route.id, function(err, data) {
+    if (!err && data && !data.error) {
+      puller.now('/api/routes', this._onRoutesPull.bind(this));
+    }
+  }.bind(this));
+};
+
+Routes.prototype._disableRoute = function(route) {
+  post('/api/admin/route/disable', route.id, function(err, data) {
     if (!err && data && !data.error) {
       puller.now('/api/routes', this._onRoutesPull.bind(this));
     }

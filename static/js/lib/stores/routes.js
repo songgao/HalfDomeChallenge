@@ -11,6 +11,10 @@ function Routes() {
   dispatcher.register(function(payload) {
     if(payload.action.type === C.ActionTypes.ADMIN_NEW_ROUTE) {
       this._newRoute(payload.action.route);
+    } else if(payload.action.type === C.ActionTypes.ADMIN_ROUTE_ENABLE) {
+      this._enableRoute(payload.action.route);
+    } else if(payload.action.type === C.ActionTypes.ADMIN_ROUTE_DISABLE) {
+      this._disableRoute(payload.action.route);
     }
   }.bind(this));
 
@@ -36,6 +40,22 @@ Routes.prototype.findOrMissing = function(id) {
 
 Routes.prototype._newRoute = function(route) {
   post('/api/admin/route/new', route, function(err, data) {
+    if (!err && data && !data.error) {
+      puller.now('/api/routes', this._onRoutesPull.bind(this));
+    }
+  }.bind(this));
+};
+
+Routes.prototype._enableRoute = function(route) {
+  post('/api/admin/route/enable', route.id, function(err, data) {
+    if (!err && data && !data.error) {
+      puller.now('/api/routes', this._onRoutesPull.bind(this));
+    }
+  }.bind(this));
+};
+
+Routes.prototype._disableRoute = function(route) {
+  post('/api/admin/route/disable', route.id, function(err, data) {
     if (!err && data && !data.error) {
       puller.now('/api/routes', this._onRoutesPull.bind(this));
     }

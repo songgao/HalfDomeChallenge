@@ -25,4 +25,16 @@ module.exports = {
       type: C.ActionTypes.ADMIN_PENDING_APPROVE_ALL,
     });
   },
+  enableRoute: function(route) {
+    dispatcher.handleViewAction({
+      type: C.ActionTypes.ADMIN_ROUTE_ENABLE,
+      route: route
+    });
+  },
+  disableRoute: function(route) {
+    dispatcher.handleViewAction({
+      type: C.ActionTypes.ADMIN_ROUTE_DISABLE,
+      route: route
+    });
+  },
 };

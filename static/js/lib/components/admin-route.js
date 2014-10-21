@@ -4,8 +4,15 @@ var React = require('react/addons');
 var moment = require('moment');
 
 var C = require('../constants');
+var adminActions = require('../actions/admin_actions');
 
 module.exports = React.createClass({
+  _handleEnable: function() {
+    adminActions.enableRoute(this.props.route);
+  },
+  _handleDisable: function() {
+    adminActions.disableRoute(this.props.route);
+  },
   render: function() {
     var tapeStyle = {
       "background-color": this.props.route.background_color,
@@ -20,6 +27,15 @@ module.exports = React.createClass({
     var ffStyle = {
       "background-color": C.Rainbow(this.props.route.ff ? 1 : 0),
     };
+    var able, ableText;
+    if (this.props.route.enabled) {
+      able = (<a className="admin-route-able" onClick={this._handleDisable}>disable</a>);
+      ableText = "";
+    } else {
+      able = (<a className="admin-route-able" onClick={this._handleEnable}>re-enable</a>);
+      ableText = (<span className="label label-danger">disabled</span>);
+    }
+
     return (
       <li className="admin-route clearfix">
         <div>
@@ -29,6 +45,8 @@ module.exports = React.createClass({
         <span className="label" style={ratingStyle}>{this.props.route.rating}</span>
         <span className="label" style={ffStyle}>{this.props.route.ff ? "FF" : "AF"}</span>
         <span className="label" style={natsStyle}>{C.Nats.all[this.props.route.nats]}</span>
+        {ableText}
+        {able}
         </div>
       </li>
     )

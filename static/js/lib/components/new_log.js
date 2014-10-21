@@ -31,24 +31,32 @@ module.exports = React.createClass({
   },
   render: function() {
     var defaultIndex = 0;
-    var routeOptions = this.state.routes.map(function(route, index) {
-      if (route.rating === C.Ratings.all[0]) { // "cupcake"
-        defaultIndex = index;
+    var routeOptions = [];
+    if (this.state.routes && this.state.routes.length) {
+      for (var i = 0; i < this.state.routes.length; ++i) {
+        var route = this.state.routes[i];
+        console.log(route);
+        if (!route || !route.enabled) {
+          continue;
+        }
+        if (route.rating === C.Ratings.all[0]) { // "cupcake"
+          defaultIndex = index;
+        }
+        var style = {
+          "background-color": route.background_color,
+          "color": route.color,
+          "padding": "4px 8px 4px 8px",
+        };
+        routeOptions.push({
+          dom: (
+                <span style={style}>
+                  {route.setter} | {route.name} | {route.rating} | {route.ff ? "FF" : "AF"} | {C.Nats.all[route.nats]}
+                </span>
+               ),
+          ref: route,
+        });
       }
-      var style = {
-        "background-color": route.background_color,
-        "color": route.color,
-        "padding": "4px 8px 4px 8px",
-      };
-      return {
-        dom: (
-              <span style={style}>
-                {route.setter} | {route.name} | {route.rating} | {route.ff ? "FF" : "AF"} | {C.Nats.all[route.nats]}
-              </span>
-             ),
-        ref: route,
-      };
-    }.bind(this));
+    }
     return (
       <div className="clearfix">
         <button type="button" className="btn btn-warning pull-right" data-toggle="modal" data-target="#dialogNewLog">New Pitch</button>

@@ -157,6 +157,18 @@ func (d *DB) Routes() (routes []Route, err error) {
 	return
 }
 
+func (d *DB) EnableRoute(routeID bson.ObjectId) error {
+	c, s := d.c("routes")
+	defer s.Close()
+	return c.Update(bson.M{"_id": routeID}, bson.M{"$set": bson.M{"enabled": true}})
+}
+
+func (d *DB) DisableRoute(routeID bson.ObjectId) error {
+	c, s := d.c("routes")
+	defer s.Close()
+	return c.Update(bson.M{"_id": routeID}, bson.M{"$set": bson.M{"enabled": false}})
+}
+
 func (d *DB) ClimbingLogs(userID bson.ObjectId) (logs []ClimbingLog, err error) {
 	c, s := d.c("climbing_logs")
 	defer s.Close()

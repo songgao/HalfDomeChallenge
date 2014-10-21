@@ -250,12 +250,9 @@ ul.pending-logs>li>div>span {
   margin-top: -8px;
 }
 
-.log>div.pull-right>span,.log>div.pull-right>a.log-remove {
-  margin-left: 8px;
+li.log>div>a.log-remove,a.admin-route-able {
+  padding-left: 8px;
   font-size: .8em;
-}
-
-li.log>div>a.log-remove {
   margin-left: 4px;
   cursor: pointer;
   text-decoration: none;
