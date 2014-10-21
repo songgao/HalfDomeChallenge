@@ -523,16 +523,30 @@ module.exports = React.createClass({displayName: 'exports',
                 React.DOM.div({className: "row"}, 
                   React.DOM.div({className: "col-sm-4 category-description"}, 
                     React.DOM.button({type: "button", className: "btn btn-success", 'data-dismiss': "modal", onClick: this._handleUpdateCategory, id: "btn-category-beginner"}, "Beginner"), 
-                    React.DOM.p(null, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+                    React.DOM.ul(null, 
+                      React.DOM.li(null, "You may climb to the top using any hold/feet;"), 
+                      React.DOM.li(null, "Auto-belay (cupcake wall) is permitted.")
+                    )
                   ), 
                   React.DOM.div({className: "col-sm-4 category-description"}, 
                     React.DOM.button({type: "button", className: "btn btn-warning", 'data-dismiss': "modal", onClick: this._handleUpdateCategory, id: "btn-category-intermediate"}, "Intermediate"), 
-                    React.DOM.p(null, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+                    React.DOM.ul(null, 
+                      React.DOM.li(null, "You must climb set routes (no rainbow'ing);"), 
+                      React.DOM.li(null, "Cupcake/Auto-belay is NOT permitted;"), 
+                      React.DOM.li(null, "You may NOT climb the same route twice in a day.")
+                    )
                   ), 
                   React.DOM.div({className: "col-sm-4 category-description"}, 
                     React.DOM.button({type: "button", className: "btn btn-danger", 'data-dismiss': "modal", onClick: this._handleUpdateCategory, id: "btn-category-advanced"}, "Advanced"), 
-                    React.DOM.p(null, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+                    React.DOM.ul(null, 
+                      React.DOM.li(null, "You and your partner must lead/follow every route (pitch);"), 
+                      React.DOM.li(null, "You may climb the same route twice in a day;"), 
+                      React.DOM.li(null, "Rainbow'ing is NOT permitted.")
+                    )
                   )
+                ), 
+                React.DOM.div({className: "category-description"}, 
+                "For all categories: You must climb FULL pitch (inside wall is NOT permitted)."
                 )
               )
             )

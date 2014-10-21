@@ -187,9 +187,10 @@ div.me-info-chips {
   text-align: center;
 }
 
-.category-description > p {
-  margin-top: 8px;
-  text-align: justify;
+.category-description > ul {
+  margin-top: 16px;
+  text-align: left;
+  padding-left: 16px;
 }
 
 ul.logs,ul.admin-routes,ul.pending-logs {
