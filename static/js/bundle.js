@@ -128,8 +128,8 @@ module.exports = React.createClass({displayName: 'exports',
     };
     return (
       React.DOM.li(null, React.DOM.div(null, 
-      React.DOM.button({className: "btn btn-link", onClick: this.handleApprove}, "Approve"), 
-      React.DOM.button({className: "btn btn-link", onClick: this.handleDiscard}, "Discard"), 
+      React.DOM.a({className: "pointer", onClick: this.handleApprove}, "Approve"), 
+      React.DOM.a({className: "pointer", onClick: this.handleDiscard}, "Discard"), 
       people, 
       React.DOM.span({style: routeStyle}, 
       this.props.route.setter, " | ", this.props.route.name, " | ", this.props.route.rating, " | ", this.props.route.ff ? "FF" : "AF", " | ", C.Nats.all[this.props.route.nats]
@@ -244,10 +244,10 @@ module.exports = React.createClass({displayName: 'exports',
     };
     var able, ableText;
     if (this.props.route.enabled) {
-      able = (React.DOM.a({className: "admin-route-able", onClick: this._handleDisable}, "disable"));
+      able = (React.DOM.a({className: "pointer admin-route-able", onClick: this._handleDisable}, "disable"));
       ableText = "";
     } else {
-      able = (React.DOM.a({className: "admin-route-able", onClick: this._handleEnable}, "re-enable"));
+      able = (React.DOM.a({className: "pointer admin-route-able", onClick: this._handleEnable}, "re-enable"));
       ableText = (React.DOM.span({className: "label label-danger"}, "disabled"));
     }
 
@@ -498,19 +498,19 @@ module.exports = React.createClass({displayName: 'exports',
     var btn;
     if (!this.props.set) {
       btn = (
-        React.DOM.button({className: "btn btn-default", 'data-toggle': "modal", 'data-target': "#dialogCategory"}, 
+        React.DOM.a({className: "pointer", 'data-toggle': "modal", 'data-target': "#dialogCategory"}, 
           "Set Category"
         )
       );
     } else {
       btn = (
-        React.DOM.button({className: "btn btn-link", 'data-toggle': "modal", 'data-target': "#dialogCategory"}, 
+        React.DOM.a({className: "pointer", 'data-toggle': "modal", 'data-target': "#dialogCategory"}, 
           "change"
         )
       );
     }
     return (
-      React.DOM.span(null, 
+      React.DOM.div({className: "category-setter-div"}, 
         btn, 
         React.DOM.div({className: "modal fade", id: "dialogCategory", tabIndex: "-1", role: "dialog", 'aria-labelledby': "myModalLabel", 'aria-hidden': "true"}, 
           React.DOM.div({className: "modal-dialog"}, 
@@ -713,7 +713,7 @@ module.exports = React.createClass({displayName: 'exports',
     }
     var removeLink;
     if (this.props.showRemove) {
-        removeLink = (React.DOM.a({className: "log-remove", onClick: this._handleRemove}, "remove"));
+        removeLink = (React.DOM.a({className: "pointer log-remove", onClick: this._handleRemove}, "remove"));
     } else {
       removeLink = (React.DOM.div(null));
     }
@@ -865,7 +865,7 @@ module.exports = React.createClass({displayName: 'exports',
     } else if(this.props.user.category === C.Categories[2]) {
       category = React.DOM.span({className: "label label-danger category-label"}, this.props.user.category)
     } else {
-      category = (React.DOM.div(null));
+      category = (React.DOM.span(null));
       categorySet = false;
     }
     var chips = this.props.logs.map(function(log) {
@@ -876,8 +876,9 @@ module.exports = React.createClass({displayName: 'exports',
     }.bind(this));
     return (
       React.DOM.div({className: "panel panel-default me-info"}, 
-        React.DOM.div(null, 
-          React.DOM.h3(null, this.props.user.name, " ", category), 
+        React.DOM.div({className: "title-line"}, 
+          React.DOM.div(null, React.DOM.h3(null, this.props.user.name)), 
+          React.DOM.div({className: "category-label"}, category), 
           CategorySetter({set: categorySet})
         ), 
         React.DOM.div(null, " Joined ", moment(this.props.user.since).fromNow(), " | Finished: ", this.props.logs.length.toString() + ' / ' + C.TotalPitches.toString()), 

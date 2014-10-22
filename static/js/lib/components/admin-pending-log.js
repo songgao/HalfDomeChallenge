@@ -29,8 +29,8 @@ module.exports = React.createClass({
     };
     return (
       <li><div>
-      <button className="btn btn-link" onClick={this.handleApprove}>Approve</button>
-      <button className="btn btn-link" onClick={this.handleDiscard}>Discard</button>
+      <a className="pointer" onClick={this.handleApprove}>Approve</a>
+      <a className="pointer" onClick={this.handleDiscard}>Discard</a>
       {people}
       <span style={routeStyle}>
       {this.props.route.setter} | {this.props.route.name} | {this.props.route.rating} | {this.props.route.ff ? "FF" : "AF"} | {C.Nats.all[this.props.route.nats]}

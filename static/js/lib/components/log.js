@@ -32,7 +32,7 @@ module.exports = React.createClass({
     }
     var removeLink;
     if (this.props.showRemove) {
-        removeLink = (<a className="log-remove" onClick={this._handleRemove}>remove</a>);
+        removeLink = (<a className="pointer log-remove" onClick={this._handleRemove}>remove</a>);
     } else {
       removeLink = (<div></div>);
     }

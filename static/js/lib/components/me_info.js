@@ -20,7 +20,7 @@ module.exports = React.createClass({
     } else if(this.props.user.category === C.Categories[2]) {
       category = <span className="label label-danger category-label">{this.props.user.category}</span>
     } else {
-      category = (<div></div>);
+      category = (<span></span>);
       categorySet = false;
     }
     var chips = this.props.logs.map(function(log) {
@@ -31,8 +31,9 @@ module.exports = React.createClass({
     }.bind(this));
     return (
       <div className="panel panel-default me-info">
-        <div>
-          <h3>{this.props.user.name} {category}</h3>
+        <div className="title-line">
+          <div><h3>{this.props.user.name}</h3></div>
+          <div className="category-label">{category}</div>
           <CategorySetter set={categorySet} />
         </div>
         <div> Joined {moment(this.props.user.since).fromNow()} | Finished: {this.props.logs.length.toString() + ' / ' + C.TotalPitches.toString()}</div>

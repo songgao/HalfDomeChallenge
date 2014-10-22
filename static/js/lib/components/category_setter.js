@@ -20,19 +20,19 @@ module.exports = React.createClass({
     var btn;
     if (!this.props.set) {
       btn = (
-        <button className="btn btn-default" data-toggle="modal" data-target="#dialogCategory">
+        <a className="pointer" data-toggle="modal" data-target="#dialogCategory">
           Set Category
-        </button>
+        </a>
       );
     } else {
       btn = (
-        <button className="btn btn-link" data-toggle="modal" data-target="#dialogCategory">
+        <a className="pointer" data-toggle="modal" data-target="#dialogCategory">
           change
-        </button>
+        </a>
       );
     }
     return (
-      <span>
+      <div className="category-setter-div">
         {btn}
         <div className="modal fade" id="dialogCategory" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
           <div className="modal-dialog">
@@ -74,7 +74,7 @@ module.exports = React.createClass({
             </div>
           </div>
         </div>
-      </span>
+      </div>
       )
   }
 });

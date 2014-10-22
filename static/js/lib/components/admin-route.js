@@ -29,10 +29,10 @@ module.exports = React.createClass({
     };
     var able, ableText;
     if (this.props.route.enabled) {
-      able = (<a className="admin-route-able" onClick={this._handleDisable}>disable</a>);
+      able = (<a className="pointer admin-route-able" onClick={this._handleDisable}>disable</a>);
       ableText = "";
     } else {
-      able = (<a className="admin-route-able" onClick={this._handleEnable}>re-enable</a>);
+      able = (<a className="pointer admin-route-able" onClick={this._handleEnable}>re-enable</a>);
       ableText = (<span className="label label-danger">disabled</span>);
     }
 

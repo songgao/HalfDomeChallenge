@@ -180,13 +180,30 @@ div.stats-div>div.with-scroll {
   margin: 16px;
 }
 
-.me-info > div > h3 > span.category-label {
-  margin-left: 16px;
-  font-size: .5em;
+div.category-label>span {
+  font-size: 1.5em;
 }
 
-.me-info > div > h3 {
-  display: inline-block;
+div.category-label {
+  margin-top: 32px;
+}
+
+.me-info > div.title-line {
+  height: 71px;
+}
+
+.me-info > div.title-line > div > h3 {
+  margin-right: 16px;
+}
+
+.me-info > div.title-line > div {
+  height: 100%;
+  float: left;
+}
+
+.category-setter-div {
+  margin-top: 38px;
+  margin-left: 4px;
 }
 
 div.me-info-chips {
@@ -264,9 +281,19 @@ ul.pending-logs>li>div>span {
 li.log>div>a.log-remove,a.admin-route-able {
   padding-left: 8px;
   font-size: .8em;
-  margin-left: 4px;
+}
+
+a.pointer {
   cursor: pointer;
   text-decoration: none;
+  margin-left: 4px;
+}
+
+ul.pending-logs>li {
+  margin-top: 8px;
+}
+ul.pending-logs a.pointer {
+  margin-right: 8px;
 }
 
 .selector-div>button.dropdown-toggle {
