@@ -194,6 +194,7 @@ func (s *Server) createUserFromFacebook(FBID string, FBToken string) (*User, err
 	}
 
 	s.usersCache.TriggerUpdate()
+	s.recentCache.TriggerUpdate()
 
 	return user, nil
 }
