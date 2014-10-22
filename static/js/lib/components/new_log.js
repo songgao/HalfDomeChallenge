@@ -39,7 +39,7 @@ module.exports = React.createClass({
           continue;
         }
         if (route.rating === C.Ratings.all[0]) { // "cupcake"
-          defaultIndex = index;
+          defaultIndex = i;
         }
         var style = {
           "background-color": route.background_color,
