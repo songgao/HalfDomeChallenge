@@ -190,6 +190,7 @@ div.category-label {
 
 .me-info > div.title-line {
   height: 71px;
+  margin-bottom: 1px;
 }
 
 .me-info > div.title-line > div > h3 {
@@ -197,7 +198,6 @@ div.category-label {
 }
 
 .me-info > div.title-line > div {
-  height: 100%;
   float: left;
 }
 
