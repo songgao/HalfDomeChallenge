@@ -30,16 +30,12 @@ module.exports = React.createClass({
     routesStore.removeChangeListener(this._onRoutesChange);
   },
   render: function() {
-    var defaultIndex = 0;
     var routeOptions = [];
     if (this.state.routes && this.state.routes.length) {
       for (var i = 0; i < this.state.routes.length; ++i) {
         var route = this.state.routes[i];
         if (!route || !route.enabled) {
           continue;
-        }
-        if (route.rating === C.Ratings.all[0]) { // "cupcake"
-          defaultIndex = i;
         }
         var style = {
           "background-color": route.background_color,
@@ -55,6 +51,9 @@ module.exports = React.createClass({
           ref: route,
         });
       }
+      routeOptions.sort(function(a, b) {
+        return C.Ratings[a.ref.rating] - C.Ratings[b.ref.rating];
+      });
     }
     return (
       <div className="clearfix">
@@ -71,7 +70,7 @@ module.exports = React.createClass({
 
                   <div className="form-group">
                     <label>Route</label>
-                    <div><Selector options={routeOptions} defaultIndex={defaultIndex} ref="routeSelector" /></div>
+                    <div><Selector options={routeOptions} ref="routeSelector" /></div>
                   </div>
                   {/* Uncomment this to enable partners
                   <div className="form-group">

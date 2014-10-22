@@ -13,7 +13,8 @@ module.exports = React.createClass({
   },
   componentWillReceiveProps: function() {
     if(!this.state.selectedRef && this.props.options && this.props.options.length) {
-      this.setState({selectedRef: this.props.options[this.state.selectedIndex].ref});
+      var selectedIndex = this.props.defaultIndex ? this.props.defaultIndex : 0;
+      this.setState({selectedIndex: selectedIndex, selectedRef: this.props.options[selectedIndex].ref});
     }
   },
   _onSelect: function(index) {
