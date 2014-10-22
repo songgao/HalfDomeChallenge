@@ -82,7 +82,7 @@ module.exports = React.createClass({
     return (
       <div className="container-fluid fullheight">
         <div className="row el-cap fullheight">
-          <div className="col-md-6 gradient fullheight">
+          <div className="col-md-6 gradient fullheight no-scroll">
               <Copyright />
               <FloatingHead picture={climber.picture} percentage={climber.percentage} />
           </div>

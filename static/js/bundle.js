@@ -454,7 +454,7 @@ module.exports = React.createClass({displayName: 'exports',
     return (
       React.DOM.div({className: "container fullheight"}, 
         React.DOM.div({className: "jumbotron"}, 
-          React.DOM.h1(null, "Hey there SuperUser!"), 
+          React.DOM.h2(null, "Hey there SuperUser!"), 
           React.DOM.p(null, "With great power comes great responsibility. Be careful and WDE!")
         ), 
 
@@ -465,9 +465,9 @@ module.exports = React.createClass({displayName: 'exports',
         ), 
 
         React.DOM.div({className: "tab-content"}, 
-          React.DOM.div({className: "tab-pane active", id: "admin-pendings"}, AdminPending(null)), 
-          React.DOM.div({className: "tab-pane", id: "admin-routes"}, AdminRoutes(null)), 
-          React.DOM.div({className: "tab-pane", id: "admin-peeker"}, Peeker(null))
+          React.DOM.div({className: "admin-tab tab-pane active", id: "admin-pendings"}, AdminPending(null)), 
+          React.DOM.div({className: "admin-tab tab-pane", id: "admin-routes"}, AdminRoutes(null)), 
+          React.DOM.div({className: "admin-tab tab-pane", id: "admin-peeker"}, Peeker(null))
         )
       )
     );
@@ -821,7 +821,7 @@ module.exports = React.createClass({displayName: 'exports',
     return (
       React.DOM.div({className: "container-fluid fullheight"}, 
         React.DOM.div({className: "row el-cap fullheight"}, 
-          React.DOM.div({className: "col-md-6 gradient fullheight"}, 
+          React.DOM.div({className: "col-md-6 gradient fullheight no-scroll"}, 
               Copyright(null), 
               FloatingHead({picture: climber.picture, percentage: climber.percentage})
           ), 

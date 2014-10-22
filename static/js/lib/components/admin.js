@@ -11,7 +11,7 @@ module.exports = React.createClass({
     return (
       <div className="container fullheight">
         <div className="jumbotron">
-          <h1>Hey there SuperUser!</h1>
+          <h2>Hey there SuperUser!</h2>
           <p>With great power comes great responsibility. Be careful and WDE!</p>
         </div>
 
@@ -22,9 +22,9 @@ module.exports = React.createClass({
         </ul>
 
         <div className="tab-content">
-          <div className="tab-pane active" id="admin-pendings"><AdminPending /></div>
-          <div className="tab-pane" id="admin-routes"><AdminRoutes /></div>
-          <div className="tab-pane" id="admin-peeker"><Peeker /></div>
+          <div className="admin-tab tab-pane active" id="admin-pendings"><AdminPending /></div>
+          <div className="admin-tab tab-pane" id="admin-routes"><AdminRoutes /></div>
+          <div className="admin-tab tab-pane" id="admin-peeker"><Peeker /></div>
         </div>
       </div>
     );
