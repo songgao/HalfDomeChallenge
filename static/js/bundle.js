@@ -881,7 +881,7 @@ module.exports = React.createClass({displayName: 'exports',
           React.DOM.div({className: "category-label"}, category), 
           CategorySetter({set: categorySet})
         ), 
-        React.DOM.div(null, "Joined ", moment(this.props.user.since).fromNow(), " | Finished: ", this.props.logs.length.toString() + ' / ' + C.TotalPitches.toString()), 
+        React.DOM.div({className: "clearfix"}, "Joined ", moment(this.props.user.since).fromNow(), " | Finished: ", this.props.logs.length.toString() + ' / ' + C.TotalPitches.toString()), 
         React.DOM.div({className: "me-info-chips"}, chips)
       )
     );

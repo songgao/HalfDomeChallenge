@@ -36,7 +36,7 @@ module.exports = React.createClass({
           <div className="category-label">{category}</div>
           <CategorySetter set={categorySet} />
         </div>
-        <div>Joined {moment(this.props.user.since).fromNow()} | Finished: {this.props.logs.length.toString() + ' / ' + C.TotalPitches.toString()}</div>
+        <div className="clearfix">Joined {moment(this.props.user.since).fromNow()} | Finished: {this.props.logs.length.toString() + ' / ' + C.TotalPitches.toString()}</div>
         <div className="me-info-chips">{chips}</div>
       </div>
     );
