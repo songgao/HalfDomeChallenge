@@ -566,7 +566,7 @@ module.exports = React.createClass({displayName: 'exports',
   render: function() {
     return (
       React.DOM.div({className: "copyright"}, 
-        "Photo of Yosemite El Capital Mountain adapted from ", React.DOM.a({href: "https://en.wikipedia.org/wiki/User:Mikemurphy"}, "Mike Murphy"), "'s work, licensed under ", React.DOM.a({href: "http://creativecommons.org/licenses/by-sa/3.0/"}, "CC BY-SA 3.0")
+        "Photo of Yosemite El Capitan Mountain adapted from ", React.DOM.a({href: "https://en.wikipedia.org/wiki/User:Mikemurphy"}, "Mike Murphy"), "'s work, licensed under ", React.DOM.a({href: "http://creativecommons.org/licenses/by-sa/3.0/"}, "CC BY-SA 3.0")
       )
     );
   }
