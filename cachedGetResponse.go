@@ -52,7 +52,6 @@ func (c *CachedGetResponse) Respond(w http.ResponseWriter, r *http.Request) {
 	}
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	fmt.Printf("version(unparsed): %s; version: %v; c.version: %v\n", r.URL.Query().Get("version"), version, c.version)
 	if version < c.version {
 		w.Write(c.response)
 	} else {
