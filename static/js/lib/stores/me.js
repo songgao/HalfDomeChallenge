@@ -20,6 +20,8 @@ function Me() {
     }
   }.bind(this));
 
+  this._boundOnUserPull = this._onUserPull.bind(this);
+  this._pulling = false;
   fb_login.addChangeListener(this._onFbChange.bind(this));
 }
 util.inherits(Me, EventEmitter);
@@ -30,7 +32,7 @@ Me.prototype._removeLog = function(log) {
   }
   post('/api/log/remove', log.id, function(err, data) {
     if (!err && data && !data.error) {
-      puller.now('/api/user?id=' + this.user.id, this._onUserPull.bind(this));
+      puller.now('/api/user?id=' + this.user.id, this._boundOnUserPull);
     } else {
       console.log(data);
     }
@@ -46,7 +48,7 @@ Me.prototype._newLog = function(route, partner) {
     "climbers_id": partner ? [this.user.id, partner.id] : [this.user.id],
   }, function(err, data) {
     if (!err && data && !data.error) {
-      puller.now('/api/user?id=' + this.user.id, this._onUserPull.bind(this));
+      puller.now('/api/user?id=' + this.user.id, this._boundOnUserPull);
     } else {
       console.log(data);
     }
@@ -71,6 +73,10 @@ Me.prototype._setNull = function() {
   if (change) {
     this.emit('change');
   }
+  if (this._pulling) {
+    puller.removePull(this._boundOnUserPull);
+    this._pulling = false;
+  }
 }
 
 Me.prototype._fetchUserData = function() {
@@ -80,8 +86,11 @@ Me.prototype._fetchUserData = function() {
       this._setNull();
       return;
     }
-    puller.pull('/api/user?id=' + data.user_id, this._onUserPull.bind(this));
-    puller.now('/api/user?id=' + data.user_id, this._onUserPull.bind(this));
+    if (!this._pulling) {
+      puller.pull('/api/user?id=' + data.user_id, this._boundOnUserPull);
+      this._pulling = true;
+      puller.now('/api/user?id=' + data.user_id, this._boundOnUserPull);
+    }
   }.bind(this));
 };
 
@@ -98,7 +107,7 @@ Me.prototype._onUserPull = function(err, data) {
 Me.prototype._updateCategory = function(updated) {
   post('/api/user/modify', {'category': updated}, function(err, data) {
     if (!err && data && data.result === 'ok') {
-      puller.now('/api/user?id=' + this.user.id, this._onUserPull.bind(this));
+      puller.now('/api/user?id=' + this.user.id, this._boundOnUserPull);
     }
   }.bind(this));
 };

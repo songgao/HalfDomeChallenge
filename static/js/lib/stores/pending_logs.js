@@ -4,6 +4,7 @@ var dispatcher = require('../dispatcher');
 var post = require('./authedPost');
 var puller = require('./puller');
 var C = require('../constants');
+var meStore = require('./me');
 
 function PendingLogs() {
   this.logs = [];
@@ -18,15 +19,32 @@ function PendingLogs() {
     }
   }.bind(this));
 
-  puller.pull('/api/logs/pending', this._onLogsPendingPull.bind(this));
-  puller.now('/api/logs/pending', this._onLogsPendingPull.bind(this));
+  this._boundOnLogsPendingPull = this._onLogsPendingPull.bind(this);
+  this._pulling = false;
+  meStore.addChangeListener(this._onMeChange.bind(this));
+  this._onMeChange();
 }
 util.inherits(PendingLogs, EventEmitter);
+
+PendingLogs.prototype._onMeChange = function() {
+  if (meStore.user && meStore.user.is_admin) {
+    if (!this._pulling) {
+      puller.pull('/api/logs/pending', this._boundOnLogsPendingPull);
+      this._pulling = true;
+      puller.now('/api/logs/pending', this._boundOnLogsPendingPull);
+    }
+  } else {
+    if (this._pulling) {
+      puller.removePull(this._boundOnLogsPendingPull);
+      this._pulling = false;
+    }
+  }
+};
 
 PendingLogs.prototype._approve = function(log) {
   post('/api/admin/log/approve', log.id, function(err, data) {
     if (!err && data && !data.error) {
-      puller.now('/api/logs/pending', this._onLogsPendingPull.bind(this));
+      puller.now('/api/logs/pending', this._boundOnLogsPendingPull);
     } else {
       console.log(data);
     }
@@ -36,7 +54,7 @@ PendingLogs.prototype._approve = function(log) {
 PendingLogs.prototype._approveAll = function() {
   post('/api/admin/log/approveAll', null, function(err, data) {
     if (!err && data && !data.error) {
-      puller.now('/api/logs/pending', this._onLogsPendingPull.bind(this));
+      puller.now('/api/logs/pending', this._boundOnLogsPendingPull);
     } else {
       console.log(data);
     }
@@ -46,7 +64,7 @@ PendingLogs.prototype._approveAll = function() {
 PendingLogs.prototype._discard = function(log) {
   post('/api/admin/log/discard', log.id, function(err, data) {
     if (!err && data && !data.error) {
-      puller.now('/api/logs/pending', this._onLogsPendingPull.bind(this));
+      puller.now('/api/logs/pending', this._boundOnLogsPendingPull);
     } else {
       console.log(data);
     }

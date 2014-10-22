@@ -35,7 +35,6 @@ module.exports = React.createClass({
     if (this.state.routes && this.state.routes.length) {
       for (var i = 0; i < this.state.routes.length; ++i) {
         var route = this.state.routes[i];
-        console.log(route);
         if (!route || !route.enabled) {
           continue;
         }

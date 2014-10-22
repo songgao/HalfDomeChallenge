@@ -1039,7 +1039,6 @@ module.exports = React.createClass({displayName: 'exports',
     if (this.state.routes && this.state.routes.length) {
       for (var i = 0; i < this.state.routes.length; ++i) {
         var route = this.state.routes[i];
-        console.log(route);
         if (!route || !route.enabled) {
           continue;
         }
@@ -1823,6 +1822,8 @@ function Me() {
     }
   }.bind(this));
 
+  this._boundOnUserPull = this._onUserPull.bind(this);
+  this._pulling = false;
   fb_login.addChangeListener(this._onFbChange.bind(this));
 }
 util.inherits(Me, EventEmitter);
@@ -1833,7 +1834,7 @@ Me.prototype._removeLog = function(log) {
   }
   post('/api/log/remove', log.id, function(err, data) {
     if (!err && data && !data.error) {
-      puller.now('/api/user?id=' + this.user.id, this._onUserPull.bind(this));
+      puller.now('/api/user?id=' + this.user.id, this._boundOnUserPull);
     } else {
       console.log(data);
     }
@@ -1849,7 +1850,7 @@ Me.prototype._newLog = function(route, partner) {
     "climbers_id": partner ? [this.user.id, partner.id] : [this.user.id],
   }, function(err, data) {
     if (!err && data && !data.error) {
-      puller.now('/api/user?id=' + this.user.id, this._onUserPull.bind(this));
+      puller.now('/api/user?id=' + this.user.id, this._boundOnUserPull);
     } else {
       console.log(data);
     }
@@ -1874,6 +1875,10 @@ Me.prototype._setNull = function() {
   if (change) {
     this.emit('change');
   }
+  if (this._pulling) {
+    puller.removePull(this._boundOnUserPull);
+    this._pulling = false;
+  }
 }
 
 Me.prototype._fetchUserData = function() {
@@ -1883,8 +1888,11 @@ Me.prototype._fetchUserData = function() {
       this._setNull();
       return;
     }
-    puller.pull('/api/user?id=' + data.user_id, this._onUserPull.bind(this));
-    puller.now('/api/user?id=' + data.user_id, this._onUserPull.bind(this));
+    if (!this._pulling) {
+      puller.pull('/api/user?id=' + data.user_id, this._boundOnUserPull);
+      this._pulling = true;
+      puller.now('/api/user?id=' + data.user_id, this._boundOnUserPull);
+    }
   }.bind(this));
 };
 
@@ -1901,7 +1909,7 @@ Me.prototype._onUserPull = function(err, data) {
 Me.prototype._updateCategory = function(updated) {
   post('/api/user/modify', {'category': updated}, function(err, data) {
     if (!err && data && data.result === 'ok') {
-      puller.now('/api/user?id=' + this.user.id, this._onUserPull.bind(this));
+      puller.now('/api/user?id=' + this.user.id, this._boundOnUserPull);
     }
   }.bind(this));
 };
@@ -1979,6 +1987,7 @@ var dispatcher = require('../dispatcher');
 var post = require('./authedPost');
 var puller = require('./puller');
 var C = require('../constants');
+var meStore = require('./me');
 
 function PendingLogs() {
   this.logs = [];
@@ -1993,15 +2002,32 @@ function PendingLogs() {
     }
   }.bind(this));
 
-  puller.pull('/api/logs/pending', this._onLogsPendingPull.bind(this));
-  puller.now('/api/logs/pending', this._onLogsPendingPull.bind(this));
+  this._boundOnLogsPendingPull = this._onLogsPendingPull.bind(this);
+  this._pulling = false;
+  meStore.addChangeListener(this._onMeChange.bind(this));
+  this._onMeChange();
 }
 util.inherits(PendingLogs, EventEmitter);
+
+PendingLogs.prototype._onMeChange = function() {
+  if (meStore.user && meStore.user.is_admin) {
+    if (!this._pulling) {
+      puller.pull('/api/logs/pending', this._boundOnLogsPendingPull);
+      this._pulling = true;
+      puller.now('/api/logs/pending', this._boundOnLogsPendingPull);
+    }
+  } else {
+    if (this._pulling) {
+      puller.removePull(this._boundOnLogsPendingPull);
+      this._pulling = false;
+    }
+  }
+};
 
 PendingLogs.prototype._approve = function(log) {
   post('/api/admin/log/approve', log.id, function(err, data) {
     if (!err && data && !data.error) {
-      puller.now('/api/logs/pending', this._onLogsPendingPull.bind(this));
+      puller.now('/api/logs/pending', this._boundOnLogsPendingPull);
     } else {
       console.log(data);
     }
@@ -2011,7 +2037,7 @@ PendingLogs.prototype._approve = function(log) {
 PendingLogs.prototype._approveAll = function() {
   post('/api/admin/log/approveAll', null, function(err, data) {
     if (!err && data && !data.error) {
-      puller.now('/api/logs/pending', this._onLogsPendingPull.bind(this));
+      puller.now('/api/logs/pending', this._boundOnLogsPendingPull);
     } else {
       console.log(data);
     }
@@ -2021,7 +2047,7 @@ PendingLogs.prototype._approveAll = function() {
 PendingLogs.prototype._discard = function(log) {
   post('/api/admin/log/discard', log.id, function(err, data) {
     if (!err && data && !data.error) {
-      puller.now('/api/logs/pending', this._onLogsPendingPull.bind(this));
+      puller.now('/api/logs/pending', this._boundOnLogsPendingPull);
     } else {
       console.log(data);
     }
@@ -2047,7 +2073,7 @@ PendingLogs.prototype.removeChangeListener = function(callback) {
 
 module.exports = new PendingLogs();
 
-},{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../dispatcher":"/home/songgao/repo/ElCapChallenge/static/js/lib/dispatcher.js","./authedPost":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/authedPost.js","./puller":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/puller.js","events":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","util":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/util/util.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/puller.js":[function(require,module,exports){
+},{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../dispatcher":"/home/songgao/repo/ElCapChallenge/static/js/lib/dispatcher.js","./authedPost":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/authedPost.js","./me":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/me.js","./puller":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/puller.js","events":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","util":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/util/util.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/puller.js":[function(require,module,exports){
 var async = require('async');
 
 function Puller() {
@@ -2069,7 +2095,7 @@ Puller.prototype._onPull = function() {
 
 Puller.prototype.now = function(uri, callback) {
     var url = uri;
-    if (typeof(this.versions[uri]) === 'number' && this.versions[uri] >= 0) {
+    if (this.versions[uri] && this.versions[uri] >= 0) {
       if (url.indexOf("?") > -1) {
         url += "&version=";
       } else {

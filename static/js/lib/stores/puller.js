@@ -19,7 +19,7 @@ Puller.prototype._onPull = function() {
 
 Puller.prototype.now = function(uri, callback) {
     var url = uri;
-    if (typeof(this.versions[uri]) === 'number' && this.versions[uri] >= 0) {
+    if (this.versions[uri] && this.versions[uri] >= 0) {
       if (url.indexOf("?") > -1) {
         url += "&version=";
       } else {
