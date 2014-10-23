@@ -448,9 +448,34 @@ var React = require('react/addons');
 var AdminPending = require('./admin-pending');
 var AdminRoutes = require('./admin-routes');
 var Peeker = require('./peeker');
+var meStore = require('../stores/me');
 
 module.exports = React.createClass({displayName: 'exports',
+  getInitialState: function() {
+    return {isAdmin: false};
+  },
+  _onMeStoreChange: function() {
+    if (meStore.user) {
+      this.setState({isAdmin: meStore.user.is_admin ? true : false});
+    } else {
+      this.setState({isAdmin: false});
+    }
+  },
+  componentDidMount: function() {
+    meStore.addChangeListener(this._onMeStoreChange);
+    this._onMeStoreChange();
+  },
+  componentWillUnmount: function() {
+    meStore.removeChangeListener(this._onMeStoreChange);
+  },
   render: function() {
+    if (!this.state.isAdmin) {
+      return (
+        React.DOM.div({className: "container-fluid center"}, 
+          React.DOM.h3(null, "Login as an Admin to use this page")
+        )
+      );
+    }
     return (
       React.DOM.div({className: "container fullheight"}, 
         React.DOM.div({className: "jumbotron"}, 
@@ -475,7 +500,7 @@ module.exports = React.createClass({displayName: 'exports',
 });
 
 
-},{"./admin-pending":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-pending.js","./admin-routes":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-routes.js","./peeker":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/peeker.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/category_setter.js":[function(require,module,exports){
+},{"../stores/me":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/me.js","./admin-pending":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-pending.js","./admin-routes":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-routes.js","./peeker":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/peeker.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/category_setter.js":[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react/addons');
