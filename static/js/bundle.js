@@ -1103,7 +1103,6 @@ module.exports = React.createClass({displayName: 'exports',
 /** @jsx React.DOM */
 
 var React = require('react/addons');
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var moment = require('moment');
 
 var Log = require('./log');
@@ -1208,9 +1207,7 @@ module.exports = React.createClass({displayName: 'exports',
           React.DOM.div({className: "me-info-chips"}, chips), 
           React.DOM.hr(null), 
           React.DOM.ul({className: "logs clearfix"}, 
-          ReactCSSTransitionGroup({transitionName: "peeker"}, 
             logs
-          )
           )
         )
       )

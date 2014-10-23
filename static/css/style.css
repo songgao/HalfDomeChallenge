@@ -343,7 +343,7 @@ ul.pending-logs a.pointer {
   margin-bottom: 8px;
 }
 
-.adminRoutes-enter {
+.admin-enter {
   opacity: 0.01;
   transition: opacity .5s ease-in;
 }
@@ -394,23 +394,5 @@ ul.pending-logs a.pointer {
 }
 
 .index-leave.index-leave-active {
-  opacity: 0.01;
-}
-
-.peeker-enter {
-  opacity: 0.01;
-  transition: opacity .5s ease-in;
-}
-
-.peeker-enter.index-enter-active {
-  opacity: 1;
-}
-
-.peeker-leave {
-  opacity: 1;
-  transition: opacity .5s ease-in;
-}
-
-.peeker-leave.index-leave-active {
   opacity: 0.01;
 }
