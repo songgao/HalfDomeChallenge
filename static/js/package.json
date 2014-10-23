@@ -10,9 +10,9 @@
     "react": "^0.11.2",
     "flux": "^2.0.1",
     "moment": "^2.8.3",
+    "require-sdk": "^0.0.2",
     "chroma-js": "^0.5.9",
     "browserify": ">=5.5.0",
-    "watchify": "^2.0.0",
     "reactify": "^0.14.0"
   }
 }

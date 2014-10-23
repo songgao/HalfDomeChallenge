@@ -9,6 +9,7 @@ var Home = require('./home');
 var Stats = require('./stats');
 var Me = require('./me');
 var Admin = require('./admin');
+var HiddenGems = require('./hidden-gems');
 
 var routes = {
   '#home': Home,
@@ -45,6 +46,7 @@ module.exports = React.createClass({
         <ReactCSSTransitionGroup transitionName="index">
           <O_O key={active}/>
         </ReactCSSTransitionGroup>
+        <HiddenGems />
       </div>
     );
   },
