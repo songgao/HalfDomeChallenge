@@ -539,7 +539,7 @@ module.exports = React.createClass({displayName: 'exports',
                   React.DOM.div({className: "col-sm-4 category-description"}, 
                     React.DOM.button({type: "button", className: "btn btn-danger", 'data-dismiss': "modal", onClick: this._handleUpdateCategory, id: "btn-category-advanced"}, "Advanced"), 
                     React.DOM.ul(null, 
-                      React.DOM.li(null, "You and your partner must lead/follow every route (pitch);"), 
+                      React.DOM.li(null, "You and your partner must lead every route (pitch);"), 
                       React.DOM.li(null, "You may climb the same route twice in a day;"), 
                       React.DOM.li(null, "Rainbow'ing is NOT permitted.")
                     )
@@ -2082,7 +2082,7 @@ function Puller() {
   this._intervalID = null;
   this.versions = {};
 
-  this._intervalID = window.setInterval(this._onPull.bind(this), 10000); // 5 seconds
+  this._intervalID = window.setInterval(this._onPull.bind(this), 7000); // 7 seconds
 }
 
 Puller.prototype._onPull = function() {

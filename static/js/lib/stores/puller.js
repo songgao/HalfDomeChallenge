@@ -5,7 +5,7 @@ function Puller() {
   this._intervalID = null;
   this.versions = {};
 
-  this._intervalID = window.setInterval(this._onPull.bind(this), 10000); // 5 seconds
+  this._intervalID = window.setInterval(this._onPull.bind(this), 7000); // 7 seconds
 }
 
 Puller.prototype._onPull = function() {

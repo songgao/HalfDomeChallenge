@@ -61,7 +61,7 @@ module.exports = React.createClass({
                   <div className="col-sm-4 category-description">
                     <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={this._handleUpdateCategory} id="btn-category-advanced">Advanced</button>
                     <ul>
-                      <li>You and your partner must lead/follow every route (pitch);</li>
+                      <li>You and your partner must lead every route (pitch);</li>
                       <li>You may climb the same route twice in a day;</li>
                       <li>Rainbow&#39;ing is NOT permitted.</li>
                     </ul>
