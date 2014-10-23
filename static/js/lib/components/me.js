@@ -91,9 +91,7 @@ module.exports = React.createClass({
             <hr />
             <NewLog ref="newLog"/>
             <ul className="logs clearfix">
-            <ReactCSSTransitionGroup transitionName="logs">
               {logs}
-            </ReactCSSTransitionGroup>
             </ul>
           </div>
         </div>

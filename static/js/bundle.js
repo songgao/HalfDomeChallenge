@@ -431,9 +431,7 @@ module.exports = React.createClass({displayName: 'exports',
       React.DOM.div({className: "admin-routes-parent"}, 
         AdminRoutesNew(null), 
         React.DOM.ul({className: "admin-routes"}, 
-        ReactCSSTransitionGroup({transitionName: "adminRoutes"}, 
           routes
-        )
         )
       )
     );
@@ -786,9 +784,7 @@ module.exports = React.createClass({displayName: 'exports',
     return (
       React.DOM.div({id: "O_O"}, 
         NavBar({active: active}), 
-        ReactCSSTransitionGroup({transitionName: "index"}, 
-          O_O({key: active})
-        ), 
+          O_O({key: active}), 
         HiddenGems(null)
       )
     );
@@ -947,9 +943,7 @@ module.exports = React.createClass({displayName: 'exports',
             React.DOM.hr(null), 
             NewLog({ref: "newLog"}), 
             React.DOM.ul({className: "logs clearfix"}, 
-            ReactCSSTransitionGroup({transitionName: "logs"}, 
               logs
-            )
             )
           )
         )

@@ -29,9 +29,7 @@ module.exports = React.createClass({
       <div className='admin-routes-parent'>
         <AdminRoutesNew />
         <ul className="admin-routes">
-        <ReactCSSTransitionGroup transitionName="adminRoutes">
           {routes}
-        </ReactCSSTransitionGroup>
         </ul>
       </div>
     );

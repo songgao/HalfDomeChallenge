@@ -43,9 +43,7 @@ module.exports = React.createClass({
     return (
       <div id='O_O'>
         <NavBar active={active} />
-        <ReactCSSTransitionGroup transitionName="index">
           <O_O key={active}/>
-        </ReactCSSTransitionGroup>
         <HiddenGems />
       </div>
     );

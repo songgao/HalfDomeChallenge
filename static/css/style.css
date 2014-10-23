@@ -78,10 +78,6 @@ div.stats-div>div.with-scroll {
   background-color: black;
 }
 
-#hidden-gems>div#player {
-  margin-top: 32px;
-}
-
 #hidden-gems>button.close {
   color: #dddddd;
   margin-right: 8px;
@@ -360,58 +356,4 @@ ul.pending-logs a.pointer {
 
 .swear-to-aubie {
   margin-bottom: 8px;
-}
-
-.admin-enter {
-  opacity: 0.01;
-  transition: opacity .5s ease-in;
-}
-
-.adminRoutes-enter.adminRoutes-enter-active {
-  opacity: 1;
-}
-
-.adminRoutes-leave {
-  opacity: 1;
-  transition: opacity .5s ease-in;
-}
-
-.adminRoutes-leave.index-leave-active {
-  opacity: 0.01;
-}
-
-.logs-enter {
-  opacity: 0.01;
-  transition: opacity .5s ease-in;
-}
-
-.logs-enter.logs-enter-active {
-  opacity: 1;
-}
-
-.logs-leave {
-  opacity: 1;
-  transition: opacity .5s ease-in;
-}
-
-.logs-leave.index-leave-active {
-  opacity: 0.01;
-}
-
-.index-enter {
-  opacity: 0.01;
-  transition: opacity .5s ease-in;
-}
-
-.index-enter.index-enter-active {
-  opacity: 1;
-}
-
-.index-leave {
-  opacity: 1;
-  transition: opacity .5s ease-in;
-}
-
-.index-leave.index-leave-active {
-  opacity: 0.01;
 }
