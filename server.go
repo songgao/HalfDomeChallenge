@@ -59,7 +59,12 @@ func NewServer(db *DB, config *Config) *Server {
 }
 
 func (s *Server) ListenAndServe() error {
-	return http.ListenAndServeTLS(s.config.LAddrHTTPS, s.config.CACert, s.config.CAKey, s.mux)
+	return (&http.Server{
+		Addr:         s.config.LAddrHTTPS,
+		Handler:      s.mux,
+		ReadTimeout:  32 * time.Second,
+		WriteTimeout: 32 * time.Second,
+	}).ListenAndServeTLS(s.config.CACert, s.config.CAKey)
 }
 
 func (s *Server) handleUsers(w http.ResponseWriter, r *http.Request) {
