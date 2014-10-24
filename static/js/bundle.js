@@ -807,7 +807,7 @@ module.exports = React.createClass({displayName: 'exports',
   render: function() {
     var ffStr, withStr;
     var ratingStyle = {
-      "background-color": C.Rainbow(this.props.log.route.rating / (C.Ratings.all.length - 1)),
+      "background-color": C.Rainbow(C.Ratings[this.props.log.route.rating] / (C.Ratings.all.length - 1)),
     };
     var natsStyle = {
       "background-color": C.Rainbow(this.props.log.route.nats / (C.Nats.all.length - 1)),
