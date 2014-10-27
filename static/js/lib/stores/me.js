@@ -48,7 +48,13 @@ Me.prototype._newLog = function(route, partner) {
     "climbers_id": partner ? [this.user.id, partner.id] : [this.user.id],
   }, function(err, data) {
     if (!err && data && !data.error) {
-      puller.now('/api/user?id=' + this.user.id, this._boundOnUserPull);
+      puller.now('/api/user?id=' + this.user.id, function(err, data) {
+        this._onUserPull(err, data);
+        if (this.logs.length === C.TotalPitches) {
+          // this has to happen here, only right after submitting new log
+          this.emit('finish');
+        }
+      }.bind(this));
     } else {
       console.log(data);
     }
@@ -118,6 +124,14 @@ Me.prototype.addChangeListener = function(callback) {
 
 Me.prototype.removeChangeListener = function(callback) {
   this.removeListener('change', callback);
+};
+
+Me.prototype.addFinishListener = function(callback) {
+  this.on('finish', callback);
+};
+
+Me.prototype.removeFinishListener = function(callback) {
+  this.removeListener('finish', callback);
 };
 
 module.exports = new Me();

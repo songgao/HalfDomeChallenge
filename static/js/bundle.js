@@ -624,6 +624,8 @@ module.exports = React.createClass({displayName: 'exports',
 (function (process){
 /** @jsx React.DOM */
 
+var meStore = require('../stores/me');
+
 var youtubeSDK = require('require-sdk')('https://www.youtube.com/iframe_api', 'YT');
 window.onYouTubeIframeAPIReady = youtubeSDK.trigger();
 var youtube, player;
@@ -661,11 +663,6 @@ module.exports = React.createClass({displayName: 'exports',
       });
     }
   },
-  componentWillUnmount: function() {
-    if (player && player.destroy) {
-      player.destroy();
-    }
-  },
   _onPlayerReady: function(e) {
     e.target.setPlaybackQuality('large');
     e.target.playVideo();
@@ -674,6 +671,9 @@ module.exports = React.createClass({displayName: 'exports',
     if (e.data == youtube.PlayerState.ENDED) {
       this.setState({keys: ""});
     }
+  },
+  _onMeFinish: function() {
+    this.setState({keys: triggerKeys});
   },
   _handleKeyPress: function(e) {
     var newKeys = this.state.keys + String.fromCharCode(e.which).toLowerCase();
@@ -688,9 +688,14 @@ module.exports = React.createClass({displayName: 'exports',
   },
   componentDidMount: function() {
     document.onkeypress = this._handleKeyPress;
+    meStore.addFinishListener(this._onMeFinish);
   },
   componentWillUnmount: function() {
     document.onkeypress = null;
+    if (player && player.destroy) {
+      player.destroy();
+    }
+    meStore.removeFinishListener(this._onMeFinish);
   },
   render: function() {
     if (this.state.keys !== triggerKeys) {
@@ -710,7 +715,7 @@ module.exports = React.createClass({displayName: 'exports',
 });
 
 }).call(this,require('_process'))
-},{"_process":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/process/browser.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js","require-sdk":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/require-sdk/index.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/home.js":[function(require,module,exports){
+},{"../stores/me":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/me.js","_process":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/process/browser.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js","require-sdk":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/require-sdk/index.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/home.js":[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react/addons');
@@ -980,6 +985,7 @@ module.exports = React.createClass({displayName: 'exports',
       category = (React.DOM.span(null));
       categorySet = false;
     }
+
     var chips = this.props.logs.map(function(log) {
       var chipStyle = {
         "background-color": C.Rainbow(C.Ratings[log.route.rating] / (C.Ratings.all.length - 1)),
@@ -987,6 +993,15 @@ module.exports = React.createClass({displayName: 'exports',
       return React.DOM.div({className: "rainbow-chip", style: chipStyle});
     }.bind(this));
     chips.reverse();
+
+    var aubie;
+    if (this.props.logs.length >= C.TotalPitches) {
+      aubie = (
+          React.DOM.img({className: "aubie", src: "/images/aubie.png"})
+      );
+    } else {
+      aubie = (React.DOM.span(null));
+    }
     return (
       React.DOM.div({className: "panel panel-default me-info"}, 
         React.DOM.div({className: "title-line"}, 
@@ -994,6 +1009,7 @@ module.exports = React.createClass({displayName: 'exports',
           React.DOM.div({className: "category-label"}, category), 
           CategorySetter({set: categorySet})
         ), 
+        aubie, 
         React.DOM.div(null, "Joined ", moment(this.props.user.since).fromNow(), " | Finished: ", this.props.logs.length.toString() + ' / ' + C.TotalPitches.toString()), 
         React.DOM.div({className: "me-info-chips"}, chips)
       )
@@ -1962,7 +1978,13 @@ Me.prototype._newLog = function(route, partner) {
     "climbers_id": partner ? [this.user.id, partner.id] : [this.user.id],
   }, function(err, data) {
     if (!err && data && !data.error) {
-      puller.now('/api/user?id=' + this.user.id, this._boundOnUserPull);
+      puller.now('/api/user?id=' + this.user.id, function(err, data) {
+        this._onUserPull(err, data);
+        if (this.logs.length === C.TotalPitches) {
+          // this has to happen here, only right after submitting new log
+          this.emit('finish');
+        }
+      }.bind(this));
     } else {
       console.log(data);
     }
@@ -2032,6 +2054,14 @@ Me.prototype.addChangeListener = function(callback) {
 
 Me.prototype.removeChangeListener = function(callback) {
   this.removeListener('change', callback);
+};
+
+Me.prototype.addFinishListener = function(callback) {
+  this.on('finish', callback);
+};
+
+Me.prototype.removeFinishListener = function(callback) {
+  this.removeListener('finish', callback);
 };
 
 module.exports = new Me();

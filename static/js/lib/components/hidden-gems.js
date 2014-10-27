@@ -1,5 +1,7 @@
 /** @jsx React.DOM */
 
+var meStore = require('../stores/me');
+
 var youtubeSDK = require('require-sdk')('https://www.youtube.com/iframe_api', 'YT');
 window.onYouTubeIframeAPIReady = youtubeSDK.trigger();
 var youtube, player;
@@ -37,11 +39,6 @@ module.exports = React.createClass({
       });
     }
   },
-  componentWillUnmount: function() {
-    if (player && player.destroy) {
-      player.destroy();
-    }
-  },
   _onPlayerReady: function(e) {
     e.target.setPlaybackQuality('large');
     e.target.playVideo();
@@ -50,6 +47,9 @@ module.exports = React.createClass({
     if (e.data == youtube.PlayerState.ENDED) {
       this.setState({keys: ""});
     }
+  },
+  _onMeFinish: function() {
+    this.setState({keys: triggerKeys});
   },
   _handleKeyPress: function(e) {
     var newKeys = this.state.keys + String.fromCharCode(e.which).toLowerCase();
@@ -64,9 +64,14 @@ module.exports = React.createClass({
   },
   componentDidMount: function() {
     document.onkeypress = this._handleKeyPress;
+    meStore.addFinishListener(this._onMeFinish);
   },
   componentWillUnmount: function() {
     document.onkeypress = null;
+    if (player && player.destroy) {
+      player.destroy();
+    }
+    meStore.removeFinishListener(this._onMeFinish);
   },
   render: function() {
     if (this.state.keys !== triggerKeys) {

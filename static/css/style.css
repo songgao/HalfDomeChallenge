@@ -357,3 +357,10 @@ ul.pending-logs a.pointer {
 .swear-to-aubie {
   margin-bottom: 8px;
 }
+
+.aubie {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  height: 133px;
+}

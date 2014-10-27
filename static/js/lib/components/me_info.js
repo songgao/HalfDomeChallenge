@@ -23,6 +23,7 @@ module.exports = React.createClass({
       category = (<span></span>);
       categorySet = false;
     }
+
     var chips = this.props.logs.map(function(log) {
       var chipStyle = {
         "background-color": C.Rainbow(C.Ratings[log.route.rating] / (C.Ratings.all.length - 1)),
@@ -30,6 +31,15 @@ module.exports = React.createClass({
       return <div className = "rainbow-chip" style={chipStyle}></div>;
     }.bind(this));
     chips.reverse();
+
+    var aubie;
+    if (this.props.logs.length >= C.TotalPitches) {
+      aubie = (
+          <img className="aubie" src="/images/aubie.png" />
+      );
+    } else {
+      aubie = (<span></span>);
+    }
     return (
       <div className="panel panel-default me-info">
         <div className="title-line">
@@ -37,6 +47,7 @@ module.exports = React.createClass({
           <div className="category-label">{category}</div>
           <CategorySetter set={categorySet} />
         </div>
+        {aubie}
         <div>Joined {moment(this.props.user.since).fromNow()} | Finished: {this.props.logs.length.toString() + ' / ' + C.TotalPitches.toString()}</div>
         <div className="me-info-chips">{chips}</div>
       </div>
