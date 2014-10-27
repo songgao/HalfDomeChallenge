@@ -4,8 +4,9 @@ var React = require('react/addons');
 
 module.exports = React.createClass({
   render: function() {
+    var headPerc = this.props.percentage <= 1 ? this.props.percentage : 1;
     var floatingHeadStyle = {
-      top: Math.round((1-this.props.percentage)*95).toString() + '%',
+      top: Math.round((1-headPerc)*95).toString() + '%',
       // if pos is not specified, this is the only floating head being
       // displayed, thus simply put in the optimal position
       left: this.props.pos ? (Math.round(this.props.pos * 70).toString() + '%') : '30%' ,

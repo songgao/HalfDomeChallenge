@@ -29,6 +29,7 @@ module.exports = React.createClass({
       }
       return <div className = "rainbow-chip" style={chipStyle}></div>;
     }.bind(this));
+    chips.reverse();
     return (
       <div className="panel panel-default me-info">
         <div className="title-line">

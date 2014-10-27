@@ -602,8 +602,9 @@ var React = require('react/addons');
 
 module.exports = React.createClass({displayName: 'exports',
   render: function() {
+    var headPerc = this.props.percentage <= 1 ? this.props.percentage : 1;
     var floatingHeadStyle = {
-      top: Math.round((1-this.props.percentage)*95).toString() + '%',
+      top: Math.round((1-headPerc)*95).toString() + '%',
       // if pos is not specified, this is the only floating head being
       // displayed, thus simply put in the optimal position
       left: this.props.pos ? (Math.round(this.props.pos * 70).toString() + '%') : '30%' ,
@@ -985,6 +986,7 @@ module.exports = React.createClass({displayName: 'exports',
       }
       return React.DOM.div({className: "rainbow-chip", style: chipStyle});
     }.bind(this));
+    chips.reverse();
     return (
       React.DOM.div({className: "panel panel-default me-info"}, 
         React.DOM.div({className: "title-line"}, 
@@ -1427,7 +1429,13 @@ var C = require('../constants');
 
 module.exports = React.createClass({displayName: 'exports',
   render: function() {
-    var chips = this.props.logs.map(function(log) {
+    var slice;
+    if (this.props.logs.length > C.TotalPitches) {
+      slice = this.props.logs.slice(-C.TotalPitches);
+    } else {
+      slice = this.props.logs;
+    }
+    var chips = slice.map(function(log) {
       var chipStyle = {
         "background-color": C.Rainbow(log / (C.Ratings.all.length - 1)),
       };

@@ -6,7 +6,13 @@ var C = require('../constants');
 
 module.exports = React.createClass({
   render: function() {
-    var chips = this.props.logs.map(function(log) {
+    var slice;
+    if (this.props.logs.length > C.TotalPitches) {
+      slice = this.props.logs.slice(-C.TotalPitches);
+    } else {
+      slice = this.props.logs;
+    }
+    var chips = slice.map(function(log) {
       var chipStyle = {
         "background-color": C.Rainbow(log / (C.Ratings.all.length - 1)),
       };
