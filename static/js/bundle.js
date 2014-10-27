@@ -1831,16 +1831,18 @@ FBLogin.prototype._init = function() {
   }(document, 'script', 'facebook-jssdk'));
 };
 
+FBLogin.prototype._onFBAuthChanged = function(response) {
+  this.login_status = response;
+  if(this.login_status.status === 'connected') {
+    this._changeState(_FB_STATES.LOGGED_IN);
+  } else {
+    this._changeState(_FB_STATES.LOGGED_OUT);
+  }
+};
+
 FBLogin.prototype._fb_loaded = function() {
-  var self = this;
-  FB.getLoginStatus(function(response) {
-    self.login_status = response;
-    if(self.login_status.status === 'connected') {
-      self._changeState(_FB_STATES.LOGGED_IN);
-    } else {
-      self._changeState(_FB_STATES.LOGGED_OUT);
-    }
-  });
+  FB.Event.subscribe("auth.authResponseChanged", this._onFBAuthChanged.bind(this));
+  FB.getLoginStatus(this._onFBAuthChanged.bind(this));
 };
 
 FBLogin.prototype._logged_out = function() {
@@ -1850,11 +1852,10 @@ FBLogin.prototype._logged_out = function() {
 };
 
 FBLogin.prototype._logged_in = function() {
-  var self = this;
   FB.api('/me', function(response) {
-    self.fb_profile = response;
-    self._changeState(_FB_STATES.USER_PROFILE_ACQUIRED);
-  });
+    this.fb_profile = response;
+    this._changeState(_FB_STATES.USER_PROFILE_ACQUIRED);
+  }.bind(this));
 };
 
 FBLogin.prototype.logout = function() {
@@ -1867,22 +1868,16 @@ FBLogin.prototype.logout = function() {
 }
 
 FBLogin.prototype.login = function() {
-  var self = this;
-  if(self._state !== _FB_STATES.LOGGED_IN && self._state !== _FB_STATES.USER_PROFILE_ACQUIRED && self._state !== _FB_STATES.LOGGED_OUT) {
+  if(this._state !== _FB_STATES.LOGGED_IN && this._state !== _FB_STATES.USER_PROFILE_ACQUIRED && this._state !== _FB_STATES.LOGGED_OUT) {
     return;
   }
 
-  if(self._state === _FB_STATES.LOGGED_OUT) {
-    FB.login(function(response) {
-      self.login_status = response;
-      if(self.login_status.status === 'connected') {
-        self._changeState(_FB_STATES.LOGGED_IN);
-      }
-    }, {
+  if(this._state === _FB_STATES.LOGGED_OUT) {
+    FB.login(this._onFBAuthChanged.bind(this), {
       scope: 'public_profile,email',
     });
   } else { // in case already logged in, re-fetch user profile
-    self._changeState(_FB_STATES.LOGGED_IN);
+    this._changeState(_FB_STATES.LOGGED_IN);
   }
 };
 
