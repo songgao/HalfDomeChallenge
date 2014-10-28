@@ -6,6 +6,8 @@ var C = require('../constants');
 function Users() {
   this.users = [];
 
+  this.setMaxListeners(16);
+
   puller.pull('/api/users', this._onUsersPull.bind(this));
   puller.now('/api/users', this._onUsersPull.bind(this));
 }

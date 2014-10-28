@@ -9,6 +9,7 @@ var tabs = [
   {href: '#eagleseye', text: "Eagle's-eye View"},
   {href: '#me'       , text: "Me"},
   {href: '#admin'    , text: "Admin", needAdmin: true },
+  {href: '#report'   , text: "Report", needAdmin: true },
 ];
 
 module.exports = React.createClass({

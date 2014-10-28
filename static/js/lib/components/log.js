@@ -36,6 +36,12 @@ module.exports = React.createClass({
     } else {
       removeLink = (<div></div>);
     }
+    var t;
+    if (this.props.absTime) {
+      t = moment(this.props.log.time).format('llll');
+    } else {
+      t = moment(this.props.log.time).fromNow();
+    }
     return (
       <li className="log clearfix">
         <div>
@@ -47,7 +53,7 @@ module.exports = React.createClass({
         </div>
         <div className="pull-right">
         <span className="with-who">{withStr}</span>
-        <span className="rel-time">{moment(this.props.log.time).fromNow()}</span>
+        <span className="rel-time">{t}</span>
         {removeLink}
         </div>
       </li>

@@ -364,3 +364,25 @@ ul.pending-logs a.pointer {
   right: 16px;
   height: 133px;
 }
+
+.report {
+  padding-top: 64px;
+}
+
+.report img.img-circle {
+  height: 100px;
+  margin-right: 24px;
+}
+
+.report div.print {
+  line-height: 24px;
+  height: 24px;
+}
+
+.report div.print > span {
+  vertical-align: middle;
+}
+
+.report div.print > button {
+  margin-left: 24px;
+}

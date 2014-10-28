@@ -10,6 +10,8 @@ function Me() {
   this.user = null;
   this.logs = [];
 
+  this.setMaxListeners(16);
+
   dispatcher.register(function(payload) {
     if(payload.action.type === C.ActionTypes.ME_UPDATE_CATEGORY) {
       this._updateCategory(payload.action.category);

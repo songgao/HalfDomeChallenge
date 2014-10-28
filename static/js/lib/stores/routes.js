@@ -8,6 +8,8 @@ var C = require('../constants');
 function Routes() {
   this.routes = [];
 
+  this.setMaxListeners(16);
+
   dispatcher.register(function(payload) {
     if(payload.action.type === C.ActionTypes.ADMIN_NEW_ROUTE) {
       this._newRoute(payload.action.route);

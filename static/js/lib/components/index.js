@@ -9,6 +9,7 @@ var Home = require('./home');
 var Stats = require('./stats');
 var Me = require('./me');
 var Admin = require('./admin');
+var Report = require('./report');
 var HiddenGems = require('./hidden-gems');
 
 var routes = {
@@ -16,6 +17,7 @@ var routes = {
   '#eagleseye': Stats,
   '#me': Me,
   '#admin': Admin,
+  '#report': Report,
 };
 
 module.exports = React.createClass({

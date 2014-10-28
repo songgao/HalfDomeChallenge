@@ -96,6 +96,18 @@ module.exports = {
   },
 };
 
+},{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../dispatcher":"/home/songgao/repo/ElCapChallenge/static/js/lib/dispatcher.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/actions/report_actions.js":[function(require,module,exports){
+var dispatcher = require('../dispatcher');
+var C = require('../constants');
+
+module.exports = {
+  startFetching: function() {
+    dispatcher.handleViewAction({
+      type: C.ActionTypes.REPORT_FETCH,
+    });
+  },
+};
+
 },{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../dispatcher":"/home/songgao/repo/ElCapChallenge/static/js/lib/dispatcher.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin-pending-log.js":[function(require,module,exports){
 /** @jsx React.DOM */
 
@@ -756,6 +768,7 @@ var Home = require('./home');
 var Stats = require('./stats');
 var Me = require('./me');
 var Admin = require('./admin');
+var Report = require('./report');
 var HiddenGems = require('./hidden-gems');
 
 var routes = {
@@ -763,6 +776,7 @@ var routes = {
   '#eagleseye': Stats,
   '#me': Me,
   '#admin': Admin,
+  '#report': Report,
 };
 
 module.exports = React.createClass({displayName: 'exports',
@@ -797,7 +811,7 @@ module.exports = React.createClass({displayName: 'exports',
   },
 });
 
-},{"./admin":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin.js","./hidden-gems":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/hidden-gems.js","./home":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/home.js","./me":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/me.js","./nav_bar":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/nav_bar.js","./stats":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/stats.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/log.js":[function(require,module,exports){
+},{"./admin":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/admin.js","./hidden-gems":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/hidden-gems.js","./home":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/home.js","./me":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/me.js","./nav_bar":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/nav_bar.js","./report":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/report.js","./stats":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/stats.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/log.js":[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react/addons');
@@ -836,6 +850,12 @@ module.exports = React.createClass({displayName: 'exports',
     } else {
       removeLink = (React.DOM.div(null));
     }
+    var t;
+    if (this.props.absTime) {
+      t = moment(this.props.log.time).format('llll');
+    } else {
+      t = moment(this.props.log.time).fromNow();
+    }
     return (
       React.DOM.li({className: "log clearfix"}, 
         React.DOM.div(null, 
@@ -847,7 +867,7 @@ module.exports = React.createClass({displayName: 'exports',
         ), 
         React.DOM.div({className: "pull-right"}, 
         React.DOM.span({className: "with-who"}, withStr), 
-        React.DOM.span({className: "rel-time"}, moment(this.props.log.time).fromNow()), 
+        React.DOM.span({className: "rel-time"}, t), 
         removeLink
         )
       )
@@ -1029,6 +1049,7 @@ var tabs = [
   {href: '#eagleseye', text: "Eagle's-eye View"},
   {href: '#me'       , text: "Me"},
   {href: '#admin'    , text: "Admin", needAdmin: true },
+  {href: '#report'   , text: "Report", needAdmin: true },
 ];
 
 module.exports = React.createClass({displayName: 'exports',
@@ -1475,7 +1496,152 @@ module.exports = React.createClass({displayName: 'exports',
   }
 });
 
-},{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/selector.js":[function(require,module,exports){
+},{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/report-item.js":[function(require,module,exports){
+/** @jsx React.DOM */
+
+var React = require('react/addons');
+var moment = require('moment')
+
+var Log = require('./log');
+var C = require('../constants');
+var routesStore = require('../stores/routes');
+var usersStore = require('../stores/users');
+
+module.exports = React.createClass({displayName: 'exports',
+  _generateLogs: function() {
+    if (!this.props.logs || !this.props.logs.length || !this.props.user) {
+      return [];
+    }
+    var logs = this.props.logs.map(function(log) {
+      var others = [];
+      for (var i = 0; i < log.climbers.length; ++i) {
+        if (log.climbers[i] !== this.props.user.id) {
+          others.push(usersStore.findOrMissing(log.climbers[i]).name);
+        }
+      }
+      return {
+        id: log.id,
+        time: log.time,
+        route: routesStore.findOrMissing(log.route),
+        pending: log.pending,
+        others: others
+      };
+    }.bind(this));
+    return logs;
+  },
+  render: function() {
+    var logs = this._generateLogs().map(function(log) {
+      return (Log({log: log, showRemove: false, absTime: true}));
+    });
+    return (
+      React.DOM.div(null, 
+        React.DOM.hr(null), 
+        React.DOM.img({src: this.props.user.picture_url + '?height=128&width=128', className: "pull-left img-circle"}), 
+        React.DOM.h4(null, this.props.user.name), 
+        React.DOM.div(null, "Category: ", this.props.user.category), 
+        React.DOM.div(null, "Joined ", moment(this.props.user.since).format('llll')), 
+        React.DOM.div(null, "Finished: ", logs.length.toString() + ' / ' + C.TotalPitches.toString() + ' (' + Math.round(logs.length / C.TotalPitches * 100).toString() + '%)'), 
+        React.DOM.ul({className: "logs clearfix"}, 
+          logs
+        )
+      )
+    );
+  }
+});
+
+},{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../stores/routes":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/routes.js","../stores/users":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/users.js","./log":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/log.js","moment":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/moment/moment.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/report.js":[function(require,module,exports){
+/** @jsx React.DOM */
+
+var React = require('react/addons');
+var moment = require('moment');
+
+var meStore = require('../stores/me');
+var reportStore = require('../stores/report');
+var reportActions = require('../actions/report_actions');
+var ReportItem = require('./report-item');
+
+module.exports = React.createClass({displayName: 'exports',
+  getInitialState: function() {
+    return {isAdmin: false, progress: 0, finished: false, report: null};
+  },
+  _onMeStoreChange: function() {
+    if (meStore.user) {
+      this.setState({isAdmin: meStore.user.is_admin ? true : false});
+    } else {
+      this.setState({isAdmin: false});
+    }
+  },
+  _onReportStoreProgress: function(progress) {
+    this.setState({progress: progress});
+  },
+  _onReportStoreFinish: function() {
+    this.setState({finished: true, report: reportStore.latest, progress: 0});
+  },
+  _handleStartFetching: function() {
+    this.setState({report: null, finished: false, progress: 0});
+    reportActions.startFetching();
+  },
+  componentDidMount: function() {
+    meStore.addChangeListener(this._onMeStoreChange);
+    reportStore.addProgressListener(this._onReportStoreProgress);
+    reportStore.addFinishListener(this._onReportStoreFinish);
+    this._onMeStoreChange();
+  },
+  componentWillUnmount: function() {
+    meStore.removeChangeListener(this._onMeStoreChange);
+    reportStore.removeProgressListener(this._onReportStoreProgress);
+    reportStore.removeFinishListener(this._onReportStoreFinish);
+  },
+  _handlePrint: function() {
+    window.print();
+  },
+  render: function() {
+    var content;
+    var progressBarStyle = {visibility: this.state.progress === 0 ? "hidden" : "visible"};
+    var buttonDisabled = this.state.progress !== 0;
+    if (!this.state.isAdmin) {
+      buttonDisabled = true;
+      content = (
+        React.DOM.h3(null, "Login as an Admin to use this page")
+      );
+    } else if (!this.state.report) {
+      var percent = (Math.round(this.state.progress * 5) * 20).toString();
+    } else {
+      var data = this.state.report.data;
+      data.sort(function(a, b) {
+        if (a.user.name.toLowerCase() > b.user.name.toLowerCase()) {
+          return 1;
+        } else if (a.user.name.toLowerCase() < b.user.name.toLowerCase()) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
+      var items = data.map(function(entry) {
+        return ReportItem({user: entry.user, logs: entry.logs});
+      });
+      content = ( 
+          React.DOM.div(null, 
+            React.DOM.div({className: "print"}, "Report generated at ", moment(this.state.report.finishedAt).format('llll'), React.DOM.button({type: "button", className: "btn btn-default btn-xs", onClick: this._handlePrint}, "Print")), 
+            items
+          )
+      );
+    }
+
+    return (
+      React.DOM.div({className: "report"}, 
+        React.DOM.div({className: "progress", style: progressBarStyle}, React.DOM.div({className: "progress-bar", role: "progressbar", 'aria-valuenow': percent, 'aria-valuemin': "0", 'aria-valuemax': "100", style:  {"width": percent + "%"} })), 
+        React.DOM.div({className: "container"}, 
+          React.DOM.button({className: "btn btn-primary pull-right", disabled: buttonDisabled, onClick: this._handleStartFetching}, "Generate Report Now"), 
+          content
+        )
+      )
+    );
+  }
+});
+
+
+},{"../actions/report_actions":"/home/songgao/repo/ElCapChallenge/static/js/lib/actions/report_actions.js","../stores/me":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/me.js","../stores/report":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/report.js","./report-item":"/home/songgao/repo/ElCapChallenge/static/js/lib/components/report-item.js","moment":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/moment/moment.js","react/addons":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/react/addons.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/components/selector.js":[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react/addons');
@@ -1636,6 +1802,7 @@ exports.ActionTypes = {
   ADMIN_PENDING_APPROVE : "ADMIN_PENDING_APPROVE",
   ADMIN_PENDING_APPROVE_ALL : "ADMIN_PENDING_APPROVE_ALL",
   ADMIN_PENDING_DISCARD : "ADMIN_PENDING_DISCARD",
+  REPORT_FETCH: "REPORT_FETCH",
   PEEKER_SELECT_USER : "PEEKER_SELECT_USER",
 };
 
@@ -1939,6 +2106,8 @@ var C = require('../constants');
 function Me() {
   this.user = null;
   this.logs = [];
+
+  this.setMaxListeners(16);
 
   dispatcher.register(function(payload) {
     if(payload.action.type === C.ActionTypes.ME_UPDATE_CATEGORY) {
@@ -2313,7 +2482,131 @@ Recent.prototype.removeChangeListener = function(callback) {
 
 module.exports = new Recent();
 
-},{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../dispatcher":"/home/songgao/repo/ElCapChallenge/static/js/lib/dispatcher.js","./authedPost":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/authedPost.js","./puller":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/puller.js","events":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","util":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/util/util.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/routes.js":[function(require,module,exports){
+},{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../dispatcher":"/home/songgao/repo/ElCapChallenge/static/js/lib/dispatcher.js","./authedPost":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/authedPost.js","./puller":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/puller.js","events":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","util":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/util/util.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/report.js":[function(require,module,exports){
+(function (process){
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
+var async = require('async');
+
+var dispatcher = require('../dispatcher');
+var puller = require('./puller');
+var C = require('../constants');
+var meStore = require('./me');
+var usersStore = require('./users');
+
+var _REPORT_STATUS = {
+  INIT     : "INIT",
+  IDLE     : "IDLE",
+  FETCHING : "FETCHING",
+};
+
+function Report() {
+  this._state = null;
+  this.context = {};
+  this.latest = null;
+
+  dispatcher.register(function(payload) {
+    if( payload.action.type === C.ActionTypes.REPORT_FETCH &&
+        this._state === _REPORT_STATUS.IDLE ) {
+      this._changeState(_REPORT_STATUS.FETCHING);
+    }
+  }.bind(this));
+
+  usersStore.addChangeListener(this._onDepStoreChange.bind(this));
+  meStore.addChangeListener(this._onDepStoreChange.bind(this));
+
+  this.on(_REPORT_STATUS.INIT, this._init.bind(this));
+  this.on(_REPORT_STATUS.FETCHING, this._fetching.bind(this));
+
+  this._changeState(_REPORT_STATUS.INIT);
+}
+util.inherits(Report, EventEmitter);
+
+Report.prototype._changeState = function(to) {
+  this._state = to;
+  this.emit(to);
+};
+
+Report.prototype._init = function() {
+  if (this.context.me && this.context.me.is_admin && this.context.users && this.context.users.length) {
+    this._changeState(_REPORT_STATUS.IDLE);
+  }
+};
+
+Report.prototype._onDepStoreChange = function() {
+  this.context.users = usersStore.users;
+  this.context.me = meStore.user;
+  if (this._state === _REPORT_STATUS.FETCHING) {
+    this.once(_REPORT_STATUS.IDLE, function() {
+      this._changeState(_REPORT_STATUS.INIT);
+    }.bind(this));
+  } else {
+    process.nextTick(function() {
+      this._changeState(_REPORT_STATUS.INIT);
+    }.bind(this));
+  }
+};
+
+Report.prototype._fetching = function() {
+  var users = this.context.users;
+  var d = [];
+  var count = 0;
+  async.eachSeries(users, function(user, callback) {
+    if (!user) {
+      callback('null user');
+      return;
+    }
+    puller.now('/api/user?id=' + user.id, function(err, data) {
+      if (err) {
+        callback(err);
+        return;
+      }
+      if (!data) {
+        callback('empty data returned');
+        return
+      }
+      if (data.error) {
+        callback(data.error);
+        return
+      }
+      d.push(data);
+      this.emit('progress', (++count) / users.length);
+      callback(null);
+    }.bind(this));
+  }.bind(this), function(err) {
+    if (!err) {
+      this.latest = {
+        finishedAt: new Date(),
+        data: d
+      };
+    } else {
+      this.latest = null;
+    }
+    this._changeState(_REPORT_STATUS.IDLE)
+    this.emit('finish');
+  }.bind(this));
+};
+
+Report.prototype.addProgressListener = function(callback) {
+  this.on('progress', callback);
+};
+
+Report.prototype.removeProgressListener = function(callback) {
+  this.removeListener('progress', callback);
+};
+
+Report.prototype.addFinishListener = function(callback) {
+  this.on('finish', callback);
+};
+
+Report.prototype.removeFinishListener = function(callback) {
+  this.removeListener('finish', callback);
+};
+
+module.exports = new Report();
+
+}).call(this,require('_process'))
+},{"../constants":"/home/songgao/repo/ElCapChallenge/static/js/lib/constants.js","../dispatcher":"/home/songgao/repo/ElCapChallenge/static/js/lib/dispatcher.js","./me":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/me.js","./puller":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/puller.js","./users":"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/users.js","_process":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/process/browser.js","async":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/async/lib/async.js","events":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/events/events.js","util":"/home/songgao/repo/ElCapChallenge/static/js/node_modules/watchify/node_modules/browserify/node_modules/util/util.js"}],"/home/songgao/repo/ElCapChallenge/static/js/lib/stores/routes.js":[function(require,module,exports){
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 var dispatcher = require('../dispatcher');
@@ -2323,6 +2616,8 @@ var C = require('../constants');
 
 function Routes() {
   this.routes = [];
+
+  this.setMaxListeners(16);
 
   dispatcher.register(function(payload) {
     if(payload.action.type === C.ActionTypes.ADMIN_NEW_ROUTE) {
@@ -2405,6 +2700,8 @@ var C = require('../constants');
 
 function Users() {
   this.users = [];
+
+  this.setMaxListeners(16);
 
   puller.pull('/api/users', this._onUsersPull.bind(this));
   puller.now('/api/users', this._onUsersPull.bind(this));
