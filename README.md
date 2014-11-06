@@ -8,7 +8,9 @@ The website allows climbers to login with Facebook and record their pitches usin
 
 ## What does it look like?
 
-Take a look at `screenshots` directory to see what it looks like.
+Here's a screenshot for "Eagle's-eye View" but take a look at `screenshots` directory for other views.
+
+![Eagle's-eye View](https://raw.githubusercontent.com/songgao/ElCapChallenge/master/screenshots/eagleseye.png)
 
 ## What is it built with?
 
