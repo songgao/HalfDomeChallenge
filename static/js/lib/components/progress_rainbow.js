@@ -16,10 +16,7 @@ module.exports = React.createClass({
       var chipStyle = {
         backgroundColor: C.Rainbow(log / (C.Ratings.all.length - 1)),
       };
-      if (!log || !log.id) {
-        return <div key={index}></div>
-      }
-      return <div key={log.id} className="rainbow-chip" style={chipStyle}></div>;
+      return <div key={index.toString() + ":" + log.toString()} className="rainbow-chip" style={chipStyle}></div>;
     });
     return (
       <div className="row progress-rainbow">

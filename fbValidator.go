@@ -67,15 +67,18 @@ func (v *FBValidator) updateTokenCache(FBToken string) {
 	defer v.mu.Unlock()
 	response, err := http.Get(fmt.Sprintf("https://graph.facebook.com/debug_token?input_token=%s&access_token=%s", FBToken, v.appToken))
 	if err != nil {
+		fmt.Printf("calling debug_token error: %v\n", err)
 		delete(v.tokens, FBToken)
 		return
 	}
 	var resp fbTokenDebuggerResponse
-	if nil != json.NewDecoder(response.Body).Decode(&resp) {
+	if err = json.NewDecoder(response.Body).Decode(&resp); err != nil {
+		fmt.Printf("decoding response from debug_token error: %v\n", err)
 		delete(v.tokens, FBToken)
 		return
 	}
 	if !resp.Data.IsValid {
+		fmt.Printf("invalid FBToken: %v\n", FBToken)
 		delete(v.tokens, FBToken)
 		return
 	}

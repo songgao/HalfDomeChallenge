@@ -7,21 +7,43 @@ var actions = require('../actions/admin_actions');
 var C = require('../constants');
 
 module.exports = React.createClass({
-  _handleNewRoute: function(e) {
-    var nats = this.refs.natsOn.props.value;
-    if (this.refs.natsOff.state.checked) {
-      nats = this.refs.natsOff.props.value;
-    } else if (this.refs.natsFeetOnly.state.checked) {
-      nats = this.refs.natsFeetOnly.props.value;
+  getInitialState: function() {
+    return {
+      name: "",
+      rating: null,
+      nats: 1,
+      ff: true,
+      setter: "",
+      tape: null,
     }
+  },
+  _handleNameOnChange: function(e) {
+    this.setState({name: e.target.value});
+  },
+  _handleRatingOnSelect: function(e) {
+    this.setState({rating: e.selectedRef});
+  },
+  _handleNATSOnChange: function(e) {
+    this.setState({nats: parseInt(e.target.value)});
+  },
+  _handleFFOnChange: function(e) {
+    this.setState({ff: e.target.value === 'true' });
+  },
+  _handleSetterOnChange: function(e) {
+    this.setState({setter: e.target.value});
+  },
+  _handleTapeOnSelect: function(e) {
+    this.setState({tape: e.selectedRef});
+  },
+  _handleNewRoute: function(e) {
     var route = {
-      name: this.refs.name.state.value,
-      rating: this.refs.ratingSelector.state.selectedRef,
-      nats: nats,
-      ff: this.refs.ff.state.checked,
-      setter: this.refs.setter.state.value,
-      background_color: this.refs.tapeSelector.state.selectedRef.background_color,
-      color: this.refs.tapeSelector.state.selectedRef.color,
+      name: this.state.name,
+      rating: this.state.rating,
+      nats: this.state.nats,
+      ff: this.state.ff,
+      setter: this.state.setter,
+      background_color: this.state.tape.background_color,
+      color: this.state.tape.color,
       enabled: true,
     };
     if(!(route.name && route.setter)) {
@@ -63,28 +85,28 @@ module.exports = React.createClass({
                   <div className="form-group">
                     <label htmlFor="new-route-name" className="col-sm-3 control-label">Name</label>
                     <div className="col-sm-9">
-                      <input type="text" className="form-control" id="new-route-name" placeholder="Route Name" ref="name" />
+                      <input type="text" className="form-control" id="new-route-name" placeholder="Route Name" ref="name" value={this.state.name} onChange={this._handleNameOnChange} />
                     </div>
                   </div>
 
                   <div className="form-group">
                     <label htmlFor="new-route-setter" className="col-sm-3 control-label">Set By</label>
                     <div className="col-sm-9">
-                      <input type="text" className="form-control" id="new-route-setter" placeholder="Setter Name / Initials" ref="setter"/>
+                      <input type="text" className="form-control" id="new-route-setter" placeholder="Setter Name / Initials" ref="setter" value={this.state.setter} onChange={this._handleSetterOnChange} />
                     </div>
                   </div>
 
                   <div className="form-group">
                     <label htmlFor="new-route-rating" className="col-sm-3 control-label">Rating</label>
                     <div className="col-sm-9">
-                      <Selector options={ratingOptions} defaultIndex={C.Ratings["5.9-"]} ref="ratingSelector"/>
+                      <Selector options={ratingOptions} selectedRef={this.state.rating} ref="ratingSelector" onSelect={this._handleRatingOnSelect} />
                     </div>
                   </div>
 
                   <div className="form-group">
                     <label htmlFor="new-route-tape" className="col-sm-3 control-label">Tape Color</label>
                     <div className="col-sm-9">
-                      <Selector options={tapeOptions} ref="tapeSelector" />
+                      <Selector options={tapeOptions} selectedRef={this.state.tape} ref="tapeSelector" onSelect={this._handleTapeOnSelect} />
                     </div>
                   </div>
 
@@ -92,13 +114,13 @@ module.exports = React.createClass({
                     <label htmlFor="new-route-nats" className="col-sm-3 control-label">Natural Features</label>
                     <div className="col-sm-9">
                       <label className="radio-inline">
-                        <input type="radio" name="new-route-nats" id="new-route-nats-on" value={1} defaultChecked={true} ref="natsOn" />Nats ON
+                        <input type="radio" name="new-route-nats" id="new-route-nats-on" value={1} checked={this.state.nats===1} ref="natsOn" onChange={this._handleNATSOnChange} />Nats ON
                       </label>
                       <label className="radio-inline">
-                        <input type="radio" name="new-route-nats" id="new-route-nats-off" value={3} ref="natsOff" />Nats OFF
+                        <input type="radio" name="new-route-nats" id="new-route-nats-off" value={3} checked={this.state.nats===3} ref="natsOff" onChange={this._handleNATSOnChange} />Nats OFF
                       </label>
                       <label className="radio-inline">
-                        <input type="radio" name="new-route-nats" id="new-route-nats-feet-only" value={2} ref="natsFeetOnly" />Nats Feet Only
+                        <input type="radio" name="new-route-nats" id="new-route-nats-feet-only" value={2} checked={this.state.nats===2} ref="natsFeetOnly" onChange={this._handleNATSOnChange} />Nats Feet Only
                       </label>
                     </div>
                   </div>
@@ -107,10 +129,10 @@ module.exports = React.createClass({
                     <label htmlFor="new-route-ff" className="col-sm-3 control-label">Follow Feet?</label>
                     <div className="col-sm-9">
                       <label className="radio-inline">
-                        <input type="radio" name="new-route-ff" id="new-route-ff-ff" value={true} defaultChecked={true} ref="ff" />FF
+                        <input type="radio" name="new-route-ff" id="new-route-ff-ff" value={true} checked={this.state.ff===true} defaultChecked={true} ref="ff" onChange={this._handleFFOnChange} />FF
                       </label>
                       <label className="radio-inline">
-                        <input type="radio" name="new-route-ff" id="new-route-ff-af" value={false} ref="af" />AF
+                        <input type="radio" name="new-route-ff" id="new-route-ff-af" value={false} checked={this.state.ff===false} ref="af" onChange={this._handleFFOnChange} />AF
                       </label>
                     </div>
                   </div>

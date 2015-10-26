@@ -10,18 +10,21 @@ var actions = require('../actions/me_actions');
 
 module.exports = React.createClass({
   getInitialState: function() {
-    return {routes: routesStore.routes}
+    return {routes: routesStore.routes, route: null}
   },
   _onRoutesChange: function() {
     this.setState( {routes: routesStore.routes} );
   },
   _handleNewLog: function() {
-    if (!this.refs.routeSelector.state.selectedRef) {
+    if (!this.state.route) {
       alert ("Please make sure you selected route");
       return
     }
-    actions.newLog(this.refs.routeSelector.state.selectedRef, this.refs.personPicker ? this.refs.personPicker.state.selected : null);
+    actions.newLog(this.state.route, this.refs.personPicker ? this.refs.personPicker.state.selected : null);
     $('#dialogNewLog').modal('hide');
+  },
+  _handleRouteOnSelect: function(e) {
+    this.setState({route: e.selectedRef});
   },
   componentDidMount: function() {
     routesStore.addChangeListener(this._onRoutesChange);
@@ -70,7 +73,7 @@ module.exports = React.createClass({
 
                   <div key="route" className="form-group">
                     <label key="label">Route</label>
-                    <div key="selector"><Selector options={routeOptions} ref="routeSelector" /></div>
+                    <div key="selector"><Selector options={routeOptions} selectedRef={this.state.route} ref="routeSelector" onSelect={this._handleRouteOnSelect} /></div>
                   </div>
                   {/* Uncomment this to enable partners
                   <div key="partner" className="form-group">

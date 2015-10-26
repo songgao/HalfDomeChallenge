@@ -36,7 +36,7 @@ Me.prototype._removeLog = function(log) {
     if (!err && data && !data.error) {
       puller.now('/api/user?id=' + this.user.id, this._boundOnUserPull);
     } else {
-      console.log(data);
+      console.log('/api/log/remove error: ' + JSON.stringify(data));
     }
   }.bind(this));
 };
@@ -58,7 +58,7 @@ Me.prototype._newLog = function(route, partner) {
         }
       }.bind(this));
     } else {
-      console.log(data);
+      console.log('/api/log/new error: ' + JSON.stringify(data));
     }
   }.bind(this));
 };
@@ -90,7 +90,7 @@ Me.prototype._setNull = function() {
 Me.prototype._fetchUserData = function() {
   post("/api/auth", null, function(err, data) {
     if (err || !data || data.error) {
-      console.log(data);
+      console.log('/api/auth error: ' + JSON.stringify(err) + ' | ' + JSON.stringify(data) );
       this._setNull();
       return;
     }

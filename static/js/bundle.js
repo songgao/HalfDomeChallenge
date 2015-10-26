@@ -290,21 +290,43 @@ var actions = require('../actions/admin_actions');
 var C = require('../constants');
 
 module.exports = React.createClass({displayName: "exports",
-  _handleNewRoute: function(e) {
-    var nats = this.refs.natsOn.props.value;
-    if (this.refs.natsOff.state.checked) {
-      nats = this.refs.natsOff.props.value;
-    } else if (this.refs.natsFeetOnly.state.checked) {
-      nats = this.refs.natsFeetOnly.props.value;
+  getInitialState: function() {
+    return {
+      name: "",
+      rating: null,
+      nats: 1,
+      ff: true,
+      setter: "",
+      tape: null,
     }
+  },
+  _handleNameOnChange: function(e) {
+    this.setState({name: e.target.value});
+  },
+  _handleRatingOnSelect: function(e) {
+    this.setState({rating: e.selectedRef});
+  },
+  _handleNATSOnChange: function(e) {
+    this.setState({nats: parseInt(e.target.value)});
+  },
+  _handleFFOnChange: function(e) {
+    this.setState({ff: e.target.value === 'true' });
+  },
+  _handleSetterOnChange: function(e) {
+    this.setState({setter: e.target.value});
+  },
+  _handleTapeOnSelect: function(e) {
+    this.setState({tape: e.selectedRef});
+  },
+  _handleNewRoute: function(e) {
     var route = {
-      name: this.refs.name.state.value,
-      rating: this.refs.ratingSelector.state.selectedRef,
-      nats: nats,
-      ff: this.refs.ff.state.checked,
-      setter: this.refs.setter.state.value,
-      background_color: this.refs.tapeSelector.state.selectedRef.background_color,
-      color: this.refs.tapeSelector.state.selectedRef.color,
+      name: this.state.name,
+      rating: this.state.rating,
+      nats: this.state.nats,
+      ff: this.state.ff,
+      setter: this.state.setter,
+      background_color: this.state.tape.background_color,
+      color: this.state.tape.color,
       enabled: true,
     };
     if(!(route.name && route.setter)) {
@@ -346,28 +368,28 @@ module.exports = React.createClass({displayName: "exports",
                   React.createElement("div", {className: "form-group"}, 
                     React.createElement("label", {htmlFor: "new-route-name", className: "col-sm-3 control-label"}, "Name"), 
                     React.createElement("div", {className: "col-sm-9"}, 
-                      React.createElement("input", {type: "text", className: "form-control", id: "new-route-name", placeholder: "Route Name", ref: "name"})
+                      React.createElement("input", {type: "text", className: "form-control", id: "new-route-name", placeholder: "Route Name", ref: "name", value: this.state.name, onChange: this._handleNameOnChange})
                     )
                   ), 
 
                   React.createElement("div", {className: "form-group"}, 
                     React.createElement("label", {htmlFor: "new-route-setter", className: "col-sm-3 control-label"}, "Set By"), 
                     React.createElement("div", {className: "col-sm-9"}, 
-                      React.createElement("input", {type: "text", className: "form-control", id: "new-route-setter", placeholder: "Setter Name / Initials", ref: "setter"})
+                      React.createElement("input", {type: "text", className: "form-control", id: "new-route-setter", placeholder: "Setter Name / Initials", ref: "setter", value: this.state.setter, onChange: this._handleSetterOnChange})
                     )
                   ), 
 
                   React.createElement("div", {className: "form-group"}, 
                     React.createElement("label", {htmlFor: "new-route-rating", className: "col-sm-3 control-label"}, "Rating"), 
                     React.createElement("div", {className: "col-sm-9"}, 
-                      React.createElement(Selector, {options: ratingOptions, defaultIndex: C.Ratings["5.9-"], ref: "ratingSelector"})
+                      React.createElement(Selector, {options: ratingOptions, selectedRef: this.state.rating, ref: "ratingSelector", onSelect: this._handleRatingOnSelect})
                     )
                   ), 
 
                   React.createElement("div", {className: "form-group"}, 
                     React.createElement("label", {htmlFor: "new-route-tape", className: "col-sm-3 control-label"}, "Tape Color"), 
                     React.createElement("div", {className: "col-sm-9"}, 
-                      React.createElement(Selector, {options: tapeOptions, ref: "tapeSelector"})
+                      React.createElement(Selector, {options: tapeOptions, selectedRef: this.state.tape, ref: "tapeSelector", onSelect: this._handleTapeOnSelect})
                     )
                   ), 
 
@@ -375,13 +397,13 @@ module.exports = React.createClass({displayName: "exports",
                     React.createElement("label", {htmlFor: "new-route-nats", className: "col-sm-3 control-label"}, "Natural Features"), 
                     React.createElement("div", {className: "col-sm-9"}, 
                       React.createElement("label", {className: "radio-inline"}, 
-                        React.createElement("input", {type: "radio", name: "new-route-nats", id: "new-route-nats-on", value: 1, defaultChecked: true, ref: "natsOn"}), "Nats ON"
+                        React.createElement("input", {type: "radio", name: "new-route-nats", id: "new-route-nats-on", value: 1, checked: this.state.nats===1, ref: "natsOn", onChange: this._handleNATSOnChange}), "Nats ON"
                       ), 
                       React.createElement("label", {className: "radio-inline"}, 
-                        React.createElement("input", {type: "radio", name: "new-route-nats", id: "new-route-nats-off", value: 3, ref: "natsOff"}), "Nats OFF"
+                        React.createElement("input", {type: "radio", name: "new-route-nats", id: "new-route-nats-off", value: 3, checked: this.state.nats===3, ref: "natsOff", onChange: this._handleNATSOnChange}), "Nats OFF"
                       ), 
                       React.createElement("label", {className: "radio-inline"}, 
-                        React.createElement("input", {type: "radio", name: "new-route-nats", id: "new-route-nats-feet-only", value: 2, ref: "natsFeetOnly"}), "Nats Feet Only"
+                        React.createElement("input", {type: "radio", name: "new-route-nats", id: "new-route-nats-feet-only", value: 2, checked: this.state.nats===2, ref: "natsFeetOnly", onChange: this._handleNATSOnChange}), "Nats Feet Only"
                       )
                     )
                   ), 
@@ -390,10 +412,10 @@ module.exports = React.createClass({displayName: "exports",
                     React.createElement("label", {htmlFor: "new-route-ff", className: "col-sm-3 control-label"}, "Follow Feet?"), 
                     React.createElement("div", {className: "col-sm-9"}, 
                       React.createElement("label", {className: "radio-inline"}, 
-                        React.createElement("input", {type: "radio", name: "new-route-ff", id: "new-route-ff-ff", value: true, defaultChecked: true, ref: "ff"}), "FF"
+                        React.createElement("input", {type: "radio", name: "new-route-ff", id: "new-route-ff-ff", value: true, checked: this.state.ff===true, defaultChecked: true, ref: "ff", onChange: this._handleFFOnChange}), "FF"
                       ), 
                       React.createElement("label", {className: "radio-inline"}, 
-                        React.createElement("input", {type: "radio", name: "new-route-ff", id: "new-route-ff-af", value: false, ref: "af"}), "AF"
+                        React.createElement("input", {type: "radio", name: "new-route-ff", id: "new-route-ff-af", value: false, checked: this.state.ff===false, ref: "af", onChange: this._handleFFOnChange}), "AF"
                       )
                     )
                   )
@@ -1165,18 +1187,21 @@ var actions = require('../actions/me_actions');
 
 module.exports = React.createClass({displayName: "exports",
   getInitialState: function() {
-    return {routes: routesStore.routes}
+    return {routes: routesStore.routes, route: null}
   },
   _onRoutesChange: function() {
     this.setState( {routes: routesStore.routes} );
   },
   _handleNewLog: function() {
-    if (!this.refs.routeSelector.state.selectedRef) {
+    if (!this.state.route) {
       alert ("Please make sure you selected route");
       return
     }
-    actions.newLog(this.refs.routeSelector.state.selectedRef, this.refs.personPicker ? this.refs.personPicker.state.selected : null);
+    actions.newLog(this.state.route, this.refs.personPicker ? this.refs.personPicker.state.selected : null);
     $('#dialogNewLog').modal('hide');
+  },
+  _handleRouteOnSelect: function(e) {
+    this.setState({route: e.selectedRef});
   },
   componentDidMount: function() {
     routesStore.addChangeListener(this._onRoutesChange);
@@ -1225,7 +1250,7 @@ module.exports = React.createClass({displayName: "exports",
 
                   React.createElement("div", {key: "route", className: "form-group"}, 
                     React.createElement("label", {key: "label"}, "Route"), 
-                    React.createElement("div", {key: "selector"}, React.createElement(Selector, {options: routeOptions, ref: "routeSelector"}))
+                    React.createElement("div", {key: "selector"}, React.createElement(Selector, {options: routeOptions, selectedRef: this.state.route, ref: "routeSelector", onSelect: this._handleRouteOnSelect}))
                   )
                   /* Uncomment this to enable partners
                   <div key="partner" className="form-group">
@@ -1475,10 +1500,7 @@ module.exports = React.createClass({displayName: "exports",
       var chipStyle = {
         backgroundColor: C.Rainbow(log / (C.Ratings.all.length - 1)),
       };
-      if (!log || !log.id) {
-        return React.createElement("div", {key: index})
-      }
-      return React.createElement("div", {key: log.id, className: "rainbow-chip", style: chipStyle});
+      return React.createElement("div", {key: index.toString() + ":" + log.toString(), className: "rainbow-chip", style: chipStyle});
     });
     return (
       React.createElement("div", {className: "row progress-rainbow"}, 
@@ -1649,26 +1671,19 @@ module.exports = React.createClass({displayName: "exports",
 var React = require('react');
 
 module.exports = React.createClass({displayName: "exports",
-  getInitialState: function() {
-    var ret = {}
-    ret.selectedIndex = this.props.defaultIndex ? this.props.defaultIndex : 0;
-    if(this.props.options && this.props.options.length) {
-      ret.selectedRef = this.props.options[ret.selectedIndex].ref;
-    }
-    return ret;
-  },
-  componentWillReceiveProps: function() {
-    if(!this.state.selectedRef && this.props.options && this.props.options.length) {
-      var selectedIndex = this.props.defaultIndex ? this.props.defaultIndex : 0;
-      this.setState({selectedIndex: selectedIndex, selectedRef: this.props.options[selectedIndex].ref});
-    }
-  },
   _onSelect: function(index) {
-    this.setState({selectedIndex: index, selectedRef: this.props.options[index].ref});
+    var s = {selectedIndex: index, selectedRef: this.props.options[index].ref};
+    if (this.props.onSelect) {
+      this.props.onSelect(s);
+    }
   },
   render: function() {
+    var selectedIndex = -1;
     var lis = this.props.options.map(function(option, index) {
       var onClick = function() { this._onSelect(index); }.bind(this);
+      if (option.ref === this.props.selectedRef) {
+        selectedIndex = index;
+      }
       return (
         React.createElement("li", {key: index}, 
           React.createElement("button", {type: "button", className: "btn btn-link", onClick: onClick}, 
@@ -1679,7 +1694,7 @@ module.exports = React.createClass({displayName: "exports",
     }.bind(this));
     var dropdown = (
         React.createElement("div", null, 
-        this.props.options[this.state.selectedIndex] ? this.props.options[this.state.selectedIndex].dom : "empty O_O", 
+        (selectedIndex > -1 && this.props.options[selectedIndex]) ? this.props.options[selectedIndex].dom : "empty O_O", 
         React.createElement("span", {className: "caret"})
         )
     );
@@ -2138,7 +2153,7 @@ Me.prototype._removeLog = function(log) {
     if (!err && data && !data.error) {
       puller.now('/api/user?id=' + this.user.id, this._boundOnUserPull);
     } else {
-      console.log(data);
+      console.log('/api/log/remove error: ' + JSON.stringify(data));
     }
   }.bind(this));
 };
@@ -2160,7 +2175,7 @@ Me.prototype._newLog = function(route, partner) {
         }
       }.bind(this));
     } else {
-      console.log(data);
+      console.log('/api/log/new error: ' + JSON.stringify(data));
     }
   }.bind(this));
 };
@@ -2192,7 +2207,7 @@ Me.prototype._setNull = function() {
 Me.prototype._fetchUserData = function() {
   post("/api/auth", null, function(err, data) {
     if (err || !data || data.error) {
-      console.log(data);
+      console.log('/api/auth error: ' + JSON.stringify(err) + ' | ' + JSON.stringify(data) );
       this._setNull();
       return;
     }
@@ -2205,7 +2220,6 @@ Me.prototype._fetchUserData = function() {
 };
 
 Me.prototype._onUserPull = function(err, data) {
-  console.log('pull');
   if (err) {
     console.log(err);
     return;
