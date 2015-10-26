@@ -2205,6 +2205,11 @@ Me.prototype._fetchUserData = function() {
 };
 
 Me.prototype._onUserPull = function(err, data) {
+  console.log('pull');
+  if (err) {
+    console.log(err);
+    return;
+  }
   if (!data || data.error) {
     this._setNull();
     return;
@@ -2428,8 +2433,8 @@ Puller.prototype.now = function(uri, callback) {
         this.versions[uri] = payload.version || -1 ;
         callback(null, payload.data);
       }
-    }.bind(this)).fail(function(_, _, err) {
-      callback(err);
+    }.bind(this)).fail(function(_, textStatus, err) {
+      callback('ajax fail: ' + textStatus);
     });
 };
 

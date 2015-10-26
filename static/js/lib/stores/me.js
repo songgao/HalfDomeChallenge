@@ -103,6 +103,10 @@ Me.prototype._fetchUserData = function() {
 };
 
 Me.prototype._onUserPull = function(err, data) {
+  if (err) {
+    console.log(err);
+    return;
+  }
   if (!data || data.error) {
     this._setNull();
     return;
