@@ -26,7 +26,7 @@ module.exports = React.createClass({
 
     var chips = this.props.logs.map(function(log) {
       var chipStyle = {
-        backgroundColor: C.Rainbow(C.Ratings[log.route.rating] / (C.Ratings.all.length - 1)),
+        backgroundColor: C.Rainbow[this.props.user.category](C.Ratings[log.route.rating] / (C.Ratings.all.length - 1)),
       }
       return <div key={log.id} className = "rainbow-chip" style={chipStyle}></div>;
     }.bind(this));

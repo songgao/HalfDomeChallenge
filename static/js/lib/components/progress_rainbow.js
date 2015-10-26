@@ -14,10 +14,10 @@ module.exports = React.createClass({
     }
     var chips = slice.map(function(log, index) {
       var chipStyle = {
-        backgroundColor: C.Rainbow(log / (C.Ratings.all.length - 1)),
+        backgroundColor: C.Rainbow[this.props.category](log / (C.Ratings.all.length - 1)),
       };
       return <div key={index.toString() + ":" + log.toString()} className="rainbow-chip" style={chipStyle}></div>;
-    });
+    }.bind(this));
     return (
       <div className="row progress-rainbow">
         <div className="col-sm-12">

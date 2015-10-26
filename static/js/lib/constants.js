@@ -1,5 +1,11 @@
 exports.TotalPitches = 58;
 
+exports.Categories = {
+  BEGINNER: "Beginner",
+  INTERMEDIATE: "Intermediate",
+  ADVANCED: "Advanced",
+};
+
 exports.ActionTypes = {
   FB_LOGIN_CLICK : "FB_LOGIN_CLICK",
   FB_LOGOUT_CLICK : "FB_LOGOUT_CLICK",
@@ -76,5 +82,10 @@ exports.Nats = {
   'NATS OFF':          3,
 };
 
-exports.Rainbow = require('chroma-js').scale(['#aab390', '#354042']);
+exports.Rainbow = {
+  Beginner    : require('chroma-js').scale(['#B1DF95', '#1C4A00']), // green
+  Intermediate: require('chroma-js').scale(['#FFECAA', '#554200']), // yellow
+  Advanced    : require('chroma-js').scale(['#FFAAAA', '#550000']), // red
+  NATS_FF     : require('chroma-js').scale(['#7788AA', '#061639']), // blue
+};
 

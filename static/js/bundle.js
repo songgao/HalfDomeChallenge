@@ -246,13 +246,13 @@ module.exports = React.createClass({displayName: "exports",
       borderColor: this.props.route.color,
     };
     var ratingStyle = {
-      backgroundColor: C.Rainbow(C.Ratings[this.props.route.rating] / (C.Ratings.all.length - 1)),
+      backgroundColor: C.Rainbow.Intermediate(C.Ratings[this.props.route.rating] / (C.Ratings.all.length - 1)),
     };
     var natsStyle = {
-      backgroundColor: C.Rainbow(this.props.route.nats / (C.Nats.all.length - 1)),
+      backgroundColor: C.Rainbow.NATS_FF(this.props.route.nats / (C.Nats.all.length - 1)),
     };
     var ffStyle = {
-      backgroundColor: C.Rainbow(this.props.route.ff ? 1 : 0),
+      backgroundColor: C.Rainbow.NATS_FF(this.props.route.ff ? 1 : 0),
     };
     var able, ableText;
     if (this.props.route.enabled) {
@@ -850,13 +850,13 @@ module.exports = React.createClass({displayName: "exports",
   render: function() {
     var ffStr, withStr;
     var ratingStyle = {
-      backgroundColor: C.Rainbow(C.Ratings[this.props.log.route.rating] / (C.Ratings.all.length - 1)),
+      backgroundColor: C.Rainbow[this.props.category](C.Ratings[this.props.log.route.rating] / (C.Ratings.all.length - 1)),
     };
     var natsStyle = {
-      backgroundColor: C.Rainbow(this.props.log.route.nats / (C.Nats.all.length - 1)),
+      backgroundColor: C.Rainbow.NATS_FF(this.props.log.route.nats / (C.Nats.all.length - 1)),
     };
     var ffStyle = {
-      backgroundColor: C.Rainbow(this.props.log.route.ff ? 1 : 0),
+      backgroundColor: C.Rainbow.NATS_FF(this.props.log.route.ff ? 1 : 0),
     };
     if(this.props.log.others.length === 1) {
       withStr = " with " + this.props.log.others[0];
@@ -978,8 +978,8 @@ module.exports = React.createClass({displayName: "exports",
       percentage: (this.state.logs ? this.state.logs.length : 0) / C.TotalPitches,
     };
     var logs = this.state.logs.map(function(log) {
-      return (React.createElement(Log, {key: log.id, log: log, showRemove: true}));
-    });
+      return (React.createElement(Log, {key: log.id, log: log, category: this.state.user.category, showRemove: true}));
+    }.bind(this));
     return (
       React.createElement("div", {className: "container-fluid fullheight"}, 
         React.createElement("div", {className: "row el-cap fullheight"}, 
@@ -1030,7 +1030,7 @@ module.exports = React.createClass({displayName: "exports",
 
     var chips = this.props.logs.map(function(log) {
       var chipStyle = {
-        backgroundColor: C.Rainbow(C.Ratings[log.route.rating] / (C.Ratings.all.length - 1)),
+        backgroundColor: C.Rainbow[this.props.user.category](C.Ratings[log.route.rating] / (C.Ratings.all.length - 1)),
       }
       return React.createElement("div", {key: log.id, className: "rainbow-chip", style: chipStyle});
     }.bind(this));
@@ -1369,7 +1369,7 @@ module.exports = React.createClass({displayName: "exports",
     }
     var chips = this.state.logs.map(function(log) {
       var chipStyle = {
-        backgroundColor: C.Rainbow(C.Ratings[log.route.rating] / (C.Ratings.all.length - 1)),
+        backgroundColor: C.Rainbow[this.state.user.category](C.Ratings[log.route.rating] / (C.Ratings.all.length - 1)),
       }
       return React.createElement("div", {className: "rainbow-chip", style: chipStyle});
     }.bind(this));
@@ -1498,10 +1498,10 @@ module.exports = React.createClass({displayName: "exports",
     }
     var chips = slice.map(function(log, index) {
       var chipStyle = {
-        backgroundColor: C.Rainbow(log / (C.Ratings.all.length - 1)),
+        backgroundColor: C.Rainbow[this.props.category](log / (C.Ratings.all.length - 1)),
       };
       return React.createElement("div", {key: index.toString() + ":" + log.toString(), className: "rainbow-chip", style: chipStyle});
-    });
+    }.bind(this));
     return (
       React.createElement("div", {className: "row progress-rainbow"}, 
         React.createElement("div", {className: "col-sm-12"}, 
@@ -1749,6 +1749,7 @@ module.exports = React.createClass({displayName: "exports",
       return {
         picture: user.picture_url + "?height=64&width=64",
         name: user.name,
+        category: user.category,
         logs: logs,
         id: user.id,
         percentage: logs.length / C.TotalPitches,
@@ -1789,7 +1790,7 @@ module.exports = React.createClass({displayName: "exports",
       if (!climber.id || !climber.logs || !climber.logs.length) {
         return React.createElement("div", {key: index});
       }
-      return React.createElement(ProgressRainbow, {key: climber.id, name: climber.name, picture: climber.picture, percentage: climber.percentage, logs: climber.logs})
+      return React.createElement(ProgressRainbow, {key: climber.id, name: climber.name, picture: climber.picture, percentage: climber.percentage, logs: climber.logs, category: climber.category})
     }.bind(this))
     return (
       React.createElement("div", {className: "container-fluid fullheight"}, 
@@ -1809,6 +1810,12 @@ module.exports = React.createClass({displayName: "exports",
 
 },{"../constants":31,"../stores/recent":40,"../stores/routes":42,"../stores/users":43,"./copyright":13,"./floating_head":14,"./progress_rainbow":26,"react":218}],31:[function(require,module,exports){
 exports.TotalPitches = 58;
+
+exports.Categories = {
+  BEGINNER: "Beginner",
+  INTERMEDIATE: "Intermediate",
+  ADVANCED: "Advanced",
+};
 
 exports.ActionTypes = {
   FB_LOGIN_CLICK : "FB_LOGIN_CLICK",
@@ -1886,7 +1893,12 @@ exports.Nats = {
   'NATS OFF':          3,
 };
 
-exports.Rainbow = require('chroma-js').scale(['#aab390', '#354042']);
+exports.Rainbow = {
+  Beginner    : require('chroma-js').scale(['#B1DF95', '#1C4A00']), // green
+  Intermediate: require('chroma-js').scale(['#FFECAA', '#554200']), // yellow
+  Advanced    : require('chroma-js').scale(['#FFAAAA', '#550000']), // red
+  NATS_FF     : require('chroma-js').scale(['#7788AA', '#061639']), // blue
+};
 
 },{"chroma-js":51}],32:[function(require,module,exports){
 var Dispatcher = require('flux').Dispatcher;

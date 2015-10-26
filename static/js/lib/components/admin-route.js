@@ -19,13 +19,13 @@ module.exports = React.createClass({
       borderColor: this.props.route.color,
     };
     var ratingStyle = {
-      backgroundColor: C.Rainbow(C.Ratings[this.props.route.rating] / (C.Ratings.all.length - 1)),
+      backgroundColor: C.Rainbow.Intermediate(C.Ratings[this.props.route.rating] / (C.Ratings.all.length - 1)),
     };
     var natsStyle = {
-      backgroundColor: C.Rainbow(this.props.route.nats / (C.Nats.all.length - 1)),
+      backgroundColor: C.Rainbow.NATS_FF(this.props.route.nats / (C.Nats.all.length - 1)),
     };
     var ffStyle = {
-      backgroundColor: C.Rainbow(this.props.route.ff ? 1 : 0),
+      backgroundColor: C.Rainbow.NATS_FF(this.props.route.ff ? 1 : 0),
     };
     var able, ableText;
     if (this.props.route.enabled) {

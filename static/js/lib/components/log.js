@@ -13,13 +13,13 @@ module.exports = React.createClass({
   render: function() {
     var ffStr, withStr;
     var ratingStyle = {
-      backgroundColor: C.Rainbow(C.Ratings[this.props.log.route.rating] / (C.Ratings.all.length - 1)),
+      backgroundColor: C.Rainbow[this.props.category](C.Ratings[this.props.log.route.rating] / (C.Ratings.all.length - 1)),
     };
     var natsStyle = {
-      backgroundColor: C.Rainbow(this.props.log.route.nats / (C.Nats.all.length - 1)),
+      backgroundColor: C.Rainbow.NATS_FF(this.props.log.route.nats / (C.Nats.all.length - 1)),
     };
     var ffStyle = {
-      backgroundColor: C.Rainbow(this.props.log.route.ff ? 1 : 0),
+      backgroundColor: C.Rainbow.NATS_FF(this.props.log.route.ff ? 1 : 0),
     };
     if(this.props.log.others.length === 1) {
       withStr = " with " + this.props.log.others[0];

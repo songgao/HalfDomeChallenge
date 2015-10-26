@@ -35,6 +35,7 @@ module.exports = React.createClass({
       return {
         picture: user.picture_url + "?height=64&width=64",
         name: user.name,
+        category: user.category,
         logs: logs,
         id: user.id,
         percentage: logs.length / C.TotalPitches,
@@ -75,7 +76,7 @@ module.exports = React.createClass({
       if (!climber.id || !climber.logs || !climber.logs.length) {
         return <div key={index}></div>;
       }
-      return <ProgressRainbow key={climber.id} name={climber.name} picture={climber.picture} percentage={climber.percentage} logs={climber.logs} />
+      return <ProgressRainbow key={climber.id} name={climber.name} picture={climber.picture} percentage={climber.percentage} logs={climber.logs} category={climber.category} />
     }.bind(this))
     return (
       <div className="container-fluid fullheight">
