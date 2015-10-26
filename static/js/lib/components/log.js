@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
+var React = require('react');
 var moment = require('moment');
 
 var C = require('../constants');
@@ -13,13 +13,13 @@ module.exports = React.createClass({
   render: function() {
     var ffStr, withStr;
     var ratingStyle = {
-      "background-color": C.Rainbow(C.Ratings[this.props.log.route.rating] / (C.Ratings.all.length - 1)),
+      backgroundColor: C.Rainbow(C.Ratings[this.props.log.route.rating] / (C.Ratings.all.length - 1)),
     };
     var natsStyle = {
-      "background-color": C.Rainbow(this.props.log.route.nats / (C.Nats.all.length - 1)),
+      backgroundColor: C.Rainbow(this.props.log.route.nats / (C.Nats.all.length - 1)),
     };
     var ffStyle = {
-      "background-color": C.Rainbow(this.props.log.route.ff ? 1 : 0),
+      backgroundColor: C.Rainbow(this.props.log.route.ff ? 1 : 0),
     };
     if(this.props.log.others.length === 1) {
       withStr = " with " + this.props.log.others[0];

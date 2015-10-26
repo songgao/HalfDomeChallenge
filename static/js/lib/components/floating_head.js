@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
+var React = require('react');
 
 module.exports = React.createClass({
   render: function() {
@@ -15,8 +15,8 @@ module.exports = React.createClass({
     var percentageStr = Math.round(this.props.percentage * 100).toString() + '%';
     return (
       <div style={floatingHeadStyle} className="floating-head">
-        <img src={this.props.picture} className="img-circle" />
-        <span>{percentageStr} done</span>
+        <img key="img" src={this.props.picture} className="img-circle" />
+        <span key="percent">{percentageStr + " done"}</span>
       </div>
     );
   },

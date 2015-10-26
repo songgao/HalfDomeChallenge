@@ -70,9 +70,9 @@ exports.Tapes = [
 ];
 
 exports.Nats = {
-  all: ['unknown', 'NATS ON', 'NATS Partially ON', 'NATS OFF'],
+  all: ['unknown', 'NATS ON', 'NATS FEET ONLY', 'NATS OFF'],
   'NATS ON':           1,
-  'NATS Partially ON':  2,
+  'NATS FEET ONLY':  2,
   'NATS OFF':          3,
 };
 

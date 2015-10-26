@@ -7,12 +7,15 @@
   "author": "Song Gao <song@gao.io>",
   "dependencies": {
     "async": "^0.9.0",
-    "react": "^0.11.2",
+    "react": "^0.14.0",
     "flux": "^2.0.1",
     "moment": "^2.8.3",
     "require-sdk": "^0.0.2",
     "chroma-js": "^0.5.9",
     "browserify": ">=5.5.0",
-    "reactify": "^0.14.0"
+    "reactify": "^1.1.1",
+    "watchify": "~3.4.0",
+    "react-addons-css-transition-group": "^0.14.0",
+    "react-dom": "^0.14.0"
   }
 }

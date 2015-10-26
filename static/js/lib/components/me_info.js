@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
+var React = require('react');
 var moment = require('moment');
 
 var C = require('../constants');
@@ -26,9 +26,9 @@ module.exports = React.createClass({
 
     var chips = this.props.logs.map(function(log) {
       var chipStyle = {
-        "background-color": C.Rainbow(C.Ratings[log.route.rating] / (C.Ratings.all.length - 1)),
+        backgroundColor: C.Rainbow(C.Ratings[log.route.rating] / (C.Ratings.all.length - 1)),
       }
-      return <div className = "rainbow-chip" style={chipStyle}></div>;
+      return <div key={log.id} className = "rainbow-chip" style={chipStyle}></div>;
     }.bind(this));
     chips.reverse();
 
@@ -42,14 +42,14 @@ module.exports = React.createClass({
     }
     return (
       <div className="panel panel-default me-info">
-        <div className="title-line">
-          <div><h3>{this.props.user.name}</h3></div>
-          <div className="category-label">{category}</div>
-          <CategorySetter set={categorySet} />
+        <div key="titleline" className="title-line">
+          <div key="user-name"><h3>{this.props.user.name}</h3></div>
+          <div key="category" className="category-label">{category}</div>
+          <CategorySetter key="setter" set={categorySet} />
         </div>
         {aubie}
-        <div>Joined {moment(this.props.user.since).fromNow()} | Finished: {this.props.logs.length.toString() + ' / ' + C.TotalPitches.toString()}</div>
-        <div className="me-info-chips">{chips}</div>
+        <div key="joined">Joined {moment(this.props.user.since).fromNow()} | Finished: {this.props.logs.length.toString() + ' / ' + C.TotalPitches.toString()}</div>
+        <div key="chips" className="me-info-chips">{chips}</div>
       </div>
     );
   }

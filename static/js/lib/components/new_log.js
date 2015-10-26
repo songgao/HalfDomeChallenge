@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
+var React = require('react');
 
 var C = require('../constants');
 var routesStore = require('../stores/routes');
@@ -38,9 +38,9 @@ module.exports = React.createClass({
           continue;
         }
         var style = {
-          "background-color": route.background_color,
-          "color": route.color,
-          "padding": "4px 8px 4px 8px",
+          backgroundColor: route.background_color,
+          color: route.color,
+          padding: "4px 8px 4px 8px",
         };
         routeOptions.push({
           dom: (
@@ -57,34 +57,34 @@ module.exports = React.createClass({
     }
     return (
       <div className="clearfix">
-        <button type="button" className="btn btn-warning pull-right" data-toggle="modal" data-target="#dialogNewLog">New Pitch</button>
-        <div className="modal fade" id="dialogNewLog" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" ref="dialogNewLog">
+        <button key="newpitch" type="button" className="btn btn-warning pull-right" data-toggle="modal" data-target="#dialogNewLog">New Pitch</button>
+        <div key="modal" className="modal fade" id="dialogNewLog" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" ref="dialogNewLog">
           <div className="modal-dialog">
             <div className="modal-content">
-              <div className="modal-header">
-                <button type="button" className="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span className="sr-only">Close</span></button>
-                <h4 className="modal-title">Record a New Pitch</h4>
+              <div key="header" className="modal-header">
+                <button key="button" type="button" className="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span className="sr-only">Close</span></button>
+                <h4 key="h4" className="modal-title">Record a New Pitch</h4>
               </div>
-              <div className="modal-body container-fluid">
+              <div key="body" className="modal-body container-fluid">
                 <form role="form">
 
-                  <div className="form-group">
-                    <label>Route</label>
-                    <div><Selector options={routeOptions} ref="routeSelector" /></div>
+                  <div key="route" className="form-group">
+                    <label key="label">Route</label>
+                    <div key="selector"><Selector options={routeOptions} ref="routeSelector" /></div>
                   </div>
                   {/* Uncomment this to enable partners
-                  <div className="form-group">
-                    <label>Partner</label>
-                    <PersonPicker ref="personPicker"/>
+                  <div key="partner" className="form-group">
+                    <label key="label">Partner</label>
+                    <PersonPicker key="picker" ref="personPicker"/>
                   </div>
                   */}
 
                 </form>
               </div>
-              <div className="modal-footer">
-                <div className="swear-to-aubie">By clicking submit, I swear to Mr. Aubie that I did climb the route at Auburn University Recreation Center following the route specs.</div>
-                <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" className="btn btn-primary" onClick={this._handleNewLog}>Create</button>
+              <div key="footer" className="modal-footer">
+                <div key="swear" className="swear-to-aubie">By clicking submit, I swear to Mr. Aubie that I did climb the route at Auburn University Recreation Center following the route specs.</div>
+                <button key="close" type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+                <button key="create" type="button" className="btn btn-primary" onClick={this._handleNewLog}>Create</button>
               </div>
             </div>
           </div>

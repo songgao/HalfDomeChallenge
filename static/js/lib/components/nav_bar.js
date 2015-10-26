@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
+var React = require('react');
 var NavBarFB = require('./nav_bar_fb');
 var meStore = require('../stores/me');
 
@@ -39,25 +39,25 @@ module.exports = React.createClass({
         return null;
       }
       var cn = this.props.active === item.href ? 'active' : "";
-      return <li className={cn}><a href={item.href} onClick={this._handleItemClick}>{item.text}</a></li>
+      return <li key={item.href} className={cn}><a href={item.href} onClick={this._handleItemClick}>{item.text}</a></li>
     }.bind(this));
     return (
       <div className="navbar navbar-default navbar-fixed-top" id="top">
         <div className="container">
-          <div className="navbar-header">
-            <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-main">
-              <span className="sr-only">Toggle navigation</span>
-              <span className="icon-bar"></span>
-              <span className="icon-bar"></span>
-              <span className="icon-bar"></span>
+          <div key="header" className="navbar-header">
+            <button key="nav_button" type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-main">
+              <span key="toggle" className="sr-only">Toggle navigation</span>
+              <span key="1" className="icon-bar"></span>
+              <span key="2" className="icon-bar"></span>
+              <span key="3" className="icon-bar"></span>
             </button>
-            <a className="navbar-brand" href="#">El Cap Challenge</a>
+            <a key="logo" className="navbar-brand" href="#">El Cap Challenge</a>
           </div>
-          <div className="collapse navbar-collapse" id="navbar-main">
-            <ul className="nav navbar-nav">
+          <div key="main" className="collapse navbar-collapse" id="navbar-main">
+            <ul key="nav" className="nav navbar-nav">
             {items}
             </ul>
-            <div className="navbar-right">
+            <div key="fb" className="navbar-right">
               <NavBarFB />
             </div>
           </div>

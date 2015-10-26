@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
+var React = require('react');
 
 var fb_action = require('../actions/fb_actions');
 var fb = require('../stores/fb_login').fb_login;

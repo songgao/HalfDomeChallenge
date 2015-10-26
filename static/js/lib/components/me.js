@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+var React = require('react');
+var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 
 var FloatingHead = require('./floating_head');
 var Copyright = require('./copyright');
@@ -67,8 +67,8 @@ module.exports = React.createClass({
     if (!this.state.user) {
       return (
         <div className="container-fluid center">
-          <h3>Login to Start Record Your Pitches</h3>
-          <button onClick={this._handleLogin} type="button" className="btn btn-primary">Login with Facebook</button>
+          <h3 key="h3">Login to Start Record Your Pitches</h3>
+          <button key="fb" onClick={this._handleLogin} type="button" className="btn btn-primary">Login with Facebook</button>
         </div>
       );
     }
@@ -77,20 +77,20 @@ module.exports = React.createClass({
       percentage: (this.state.logs ? this.state.logs.length : 0) / C.TotalPitches,
     };
     var logs = this.state.logs.map(function(log) {
-      return (<Log log={log} showRemove={true}/>);
+      return (<Log key={log.id} log={log} showRemove={true}/>);
     });
     return (
       <div className="container-fluid fullheight">
         <div className="row el-cap fullheight">
-          <div className="col-md-6 gradient fullheight no-scroll">
-              <Copyright />
-              <FloatingHead picture={climber.picture} percentage={climber.percentage} />
+          <div key="copyright" className="col-md-6 gradient fullheight no-scroll">
+              <Copyright key="copyright"/>
+              <FloatingHead key="head" picture={climber.picture} percentage={climber.percentage} />
           </div>
-          <div className="col-md-6 fullheight with-scroll">
-            <MeInfo user={this.state.user} logs={this.state.logs}/>
-            <hr />
-            <NewLog ref="newLog"/>
-            <ul className="logs clearfix">
+          <div key="main" className="col-md-6 fullheight with-scroll">
+            <MeInfo key="me" user={this.state.user} logs={this.state.logs}/>
+            <hr key="hr" />
+            <NewLog key="new" ref="newLog"/>
+            <ul key="logs" className="logs clearfix">
               {logs}
             </ul>
           </div>

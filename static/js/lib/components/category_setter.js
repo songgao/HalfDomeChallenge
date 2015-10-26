@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
+var React = require('react');
 
 var actions = require('../actions/me_actions');
 
@@ -35,7 +35,7 @@ module.exports = React.createClass({
       <div className="category-setter-div">
         {btn}
         <div className="modal fade" id="dialogCategory" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-          <div className="modal-dialog">
+          <div className="modal-dialog modal-lg">
             <div className="modal-content">
               <div className="modal-header">
                 <button type="button" className="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span className="sr-only">Close</span></button>
@@ -46,29 +46,32 @@ module.exports = React.createClass({
                   <div className="col-sm-4 category-description">
                     <button type="button" className="btn btn-success" data-dismiss="modal" onClick={this._handleUpdateCategory} id="btn-category-beginner">Beginner</button>
                     <ul>
-                      <li>You may climb to the top using any hold/feet;</li>
-                      <li>Auto-belay (cupcake wall) is permitted.</li>
+                      <li>You may climb to the top using any hold/feet (rainbow);</li>
+                      <li>Auto-belay is permitted;</li>
+                      <li>If you are top-rope skills verified, you are not eligible for this category.</li>
                     </ul>
                   </div>
                   <div className="col-sm-4 category-description">
                     <button type="button" className="btn btn-warning" data-dismiss="modal" onClick={this._handleUpdateCategory} id="btn-category-intermediate">Intermediate</button>
                     <ul>
-                      <li>You must climb set routes (no&nbsp;rainbow&#39;ing);</li>
-                      <li>Cupcake/Auto-belay is NOT permitted;</li>
-                      <li>You may NOT climb the same route twice in a day.</li>
+                      <li>Must be top-rope skills verified;</li>
+                      <li>You may climb to the top using any hold/feet (rainbow);</li>
+                      <li>You may climb the same route multiple times in a day;</li>
+                      <li>Auto-belay is not permitted.</li>
                     </ul>
                   </div>
                   <div className="col-sm-4 category-description">
                     <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={this._handleUpdateCategory} id="btn-category-advanced">Advanced</button>
                     <ul>
-                      <li>You and your partner must lead every route (pitch);</li>
+                      <li>Must be lead verified;</li>
+                      <li>You and your partner must lead every route;</li>
                       <li>You may climb the same route multiple times in a day;</li>
                       <li>Rainbow&#39;ing is NOT permitted.</li>
                     </ul>
                   </div>
                 </div>
                 <div className="category-description">
-                For all categories: You must climb FULL pitch (inside wall is NOT permitted).
+                For all categories: routes on inside walls count as half-pitch.
                 </div>
               </div>
             </div>

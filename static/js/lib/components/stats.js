@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
+var React = require('react');
 
 var FloatingHead = require('./floating_head');
 var Copyright = require('./copyright');
@@ -36,6 +36,7 @@ module.exports = React.createClass({
         picture: user.picture_url + "?height=64&width=64",
         name: user.name,
         logs: logs,
+        id: user.id,
         percentage: logs.length / C.TotalPitches,
       }
     }.bind(this))
@@ -62,25 +63,28 @@ module.exports = React.createClass({
   render: function() {
     var count = this.state.climbers.length;
     var heads = !count ? [] : this.state.climbers.map(function(climber, index) {
+      if (!climber || !climber.id) {
+        return <div key={index}></div>
+      }
       // 0 === latest; 1 == oldest
       var recentness = index / (count - 1);
-      return <FloatingHead picture={climber.picture} percentage={climber.percentage} pos={index/count} recentness={recentness} />;
+      return <FloatingHead key={climber.id} picture={climber.picture} percentage={climber.percentage} pos={index/count} recentness={recentness} />;
     }.bind(this));
     heads.reverse(); // so that newer ones don't get covered by older ones
-    var bars = this.state.climbers.map(function(climber) {
-      if (!climber.logs || !climber.logs.length) {
-        return <div></div>;
+    var bars = this.state.climbers.map(function(climber, index) {
+      if (!climber.id || !climber.logs || !climber.logs.length) {
+        return <div key={index}></div>;
       }
-      return <ProgressRainbow name={climber.name} picture={climber.picture} percentage={climber.percentage} logs={climber.logs} />
+      return <ProgressRainbow key={climber.id} name={climber.name} picture={climber.picture} percentage={climber.percentage} logs={climber.logs} />
     }.bind(this))
     return (
       <div className="container-fluid fullheight">
         <div className="row el-cap fullheight stats-div">
-          <div className="col-md-6 gradient fullheight no-scroll">
-            <Copyright />
+          <div key="left" className="col-md-6 gradient fullheight no-scroll">
+            <Copyright key="copyright" />
             {heads}
           </div>
-          <div className="col-md-6 fullheight with-scroll">
+          <div key="bars" className="col-md-6 fullheight with-scroll">
             {bars}
           </div>
         </div>

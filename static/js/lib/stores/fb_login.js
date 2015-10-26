@@ -43,7 +43,7 @@ FBLogin.prototype._init = function() {
 
   window.fbAsyncInit = function() {
     FB.init({
-      appId      : '353718688129355',
+      appId      : '461372140719141',
       cookie     : true,
       xfbml      : false,
       version    : 'v2.1'

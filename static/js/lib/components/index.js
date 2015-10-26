@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+var React = require('react');
+var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 
 var NavBar = require('./nav_bar');
 
@@ -44,9 +44,9 @@ module.exports = React.createClass({
     }
     return (
       <div id='O_O'>
-        <NavBar active={active} />
-          <O_O key={active}/>
-        <HiddenGems />
+        <NavBar key="navbar" active={active} />
+        <O_O key={active} />
+        <HiddenGems key="hidden-gems" />
       </div>
     );
   },

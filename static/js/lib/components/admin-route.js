@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
+var React = require('react');
 var moment = require('moment');
 
 var C = require('../constants');
@@ -15,17 +15,17 @@ module.exports = React.createClass({
   },
   render: function() {
     var tapeStyle = {
-      "background-color": this.props.route.background_color,
-      "border-color": this.props.route.color,
+      backgroundColor: this.props.route.background_color,
+      borderColor: this.props.route.color,
     };
     var ratingStyle = {
-      "background-color": C.Rainbow(C.Ratings[this.props.route.rating] / (C.Ratings.all.length - 1)),
+      backgroundColor: C.Rainbow(C.Ratings[this.props.route.rating] / (C.Ratings.all.length - 1)),
     };
     var natsStyle = {
-      "background-color": C.Rainbow(this.props.route.nats / (C.Nats.all.length - 1)),
+      backgroundColor: C.Rainbow(this.props.route.nats / (C.Nats.all.length - 1)),
     };
     var ffStyle = {
-      "background-color": C.Rainbow(this.props.route.ff ? 1 : 0),
+      backgroundColor: C.Rainbow(this.props.route.ff ? 1 : 0),
     };
     var able, ableText;
     if (this.props.route.enabled) {

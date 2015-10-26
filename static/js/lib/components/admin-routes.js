@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+var React = require('react');
+var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 
 var C = require('../constants');
 var AdminRoutesNew = require('./admin-routes-new');

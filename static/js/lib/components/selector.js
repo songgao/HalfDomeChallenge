@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
+var React = require('react');
 
 module.exports = React.createClass({
   getInitialState: function() {
@@ -24,7 +24,7 @@ module.exports = React.createClass({
     var lis = this.props.options.map(function(option, index) {
       var onClick = function() { this._onSelect(index); }.bind(this);
       return (
-        <li>
+        <li key={index}>
           <button type="button" className="btn btn-link" onClick={onClick}>
             {option.dom}
           </button>
@@ -39,10 +39,10 @@ module.exports = React.createClass({
     );
     return (
       <div className="btn-group selector-div">
-        <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <button key="button" type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">
           {(!this.props.options || this.props.options.length === 0) ? "empty" : dropdown}
         </button>
-        <ul className="dropdown-menu" role="menu">
+        <ul key="menu" className="dropdown-menu" role="menu">
           {lis}
         </ul>
       </div>

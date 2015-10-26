@@ -13,7 +13,7 @@ youtubeSDK(function(err, y) {
   youtube = y;
 });
 
-var React = require('react/addons');
+var React = require('react');
 
 var triggerKeys = "wareagle";
 module.exports = React.createClass({

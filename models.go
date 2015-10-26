@@ -9,7 +9,7 @@ import (
 const (
 	_ = iota
 	NatsON
-	NatsPartiallyON
+	NatsFeetOnly
 	NatsOFF
 )
 
@@ -43,7 +43,7 @@ type Route struct {
 
 	Name            string `bson:"name" json:"name"`
 	Rating          string `bson:"rating" json:"rating"` // on of Ratings
-	NaturalFeatures int    `bson:"nats" json:"nats"`     // NatsON, NatsOFF, NatsPartiallyON
+	NaturalFeatures int    `bson:"nats" json:"nats"`     // NatsON, NatsOFF, NatsFeetOnly
 	FollowFeet      bool   `bson:"ff" json:"ff"`
 	Setter          string `bson:"setter" json:"setter"`
 

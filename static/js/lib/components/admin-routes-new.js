@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
+var React = require('react');
 
 var Selector = require('./selector');
 var actions = require('../actions/admin_actions');
@@ -11,8 +11,8 @@ module.exports = React.createClass({
     var nats = this.refs.natsOn.props.value;
     if (this.refs.natsOff.state.checked) {
       nats = this.refs.natsOff.props.value;
-    } else if (this.refs.natsPartial.state.checked) {
-      nats = this.refs.natsPartial.props.value;
+    } else if (this.refs.natsFeetOnly.state.checked) {
+      nats = this.refs.natsFeetOnly.props.value;
     }
     var route = {
       name: this.refs.name.state.value,
@@ -38,10 +38,10 @@ module.exports = React.createClass({
     });
     var tapeOptions = C.Tapes.map(function(tape, index) {
       var style = {
-        "background-color": tape.background_color,
-        "color": tape.color,
-        "padding": "4px",
-        "text-align": "center",
+        backgroundColor: tape.background_color,
+        color: tape.color,
+        padding: "4px",
+        textAlign: "center",
       };
       return {dom: (<span style={style}>{tape.name}</span>), ref: tape}
     });
@@ -61,56 +61,56 @@ module.exports = React.createClass({
                 <form className="form-horizontal" role="form">
 
                   <div className="form-group">
-                    <label for="new-route-name" className="col-sm-3 control-label">Name</label>
+                    <label htmlFor="new-route-name" className="col-sm-3 control-label">Name</label>
                     <div className="col-sm-9">
                       <input type="text" className="form-control" id="new-route-name" placeholder="Route Name" ref="name" />
                     </div>
                   </div>
 
                   <div className="form-group">
-                    <label for="new-route-setter" className="col-sm-3 control-label">Set By</label>
+                    <label htmlFor="new-route-setter" className="col-sm-3 control-label">Set By</label>
                     <div className="col-sm-9">
                       <input type="text" className="form-control" id="new-route-setter" placeholder="Setter Name / Initials" ref="setter"/>
                     </div>
                   </div>
 
                   <div className="form-group">
-                    <label for="new-route-rating" className="col-sm-3 control-label">Rating</label>
+                    <label htmlFor="new-route-rating" className="col-sm-3 control-label">Rating</label>
                     <div className="col-sm-9">
                       <Selector options={ratingOptions} defaultIndex={C.Ratings["5.9-"]} ref="ratingSelector"/>
                     </div>
                   </div>
 
                   <div className="form-group">
-                    <label for="new-route-tape" className="col-sm-3 control-label">Tape Color</label>
+                    <label htmlFor="new-route-tape" className="col-sm-3 control-label">Tape Color</label>
                     <div className="col-sm-9">
                       <Selector options={tapeOptions} ref="tapeSelector" />
                     </div>
                   </div>
 
                   <div className="form-group">
-                    <label for="new-route-nats" className="col-sm-3 control-label">Natural Features</label>
+                    <label htmlFor="new-route-nats" className="col-sm-3 control-label">Natural Features</label>
                     <div className="col-sm-9">
                       <label className="radio-inline">
-                        <input type="radio" name="new-route-nats" id="new-route-nats-on" value={1} defaultChecked={true} ref="natsOn">Nats ON</input>
+                        <input type="radio" name="new-route-nats" id="new-route-nats-on" value={1} defaultChecked={true} ref="natsOn" />Nats ON
                       </label>
                       <label className="radio-inline">
-                        <input type="radio" name="new-route-nats" id="new-route-nats-off" value={3} ref="natsOff">Nats OFF</input>
+                        <input type="radio" name="new-route-nats" id="new-route-nats-off" value={3} ref="natsOff" />Nats OFF
                       </label>
                       <label className="radio-inline">
-                        <input type="radio" name="new-route-nats" id="new-route-nats-partial" value={2} ref="natsPartial">Nats Partially ON</input>
+                        <input type="radio" name="new-route-nats" id="new-route-nats-feet-only" value={2} ref="natsFeetOnly" />Nats Feet Only
                       </label>
                     </div>
                   </div>
 
                   <div className="form-group">
-                    <label for="new-route-ff" className="col-sm-3 control-label">Follow Feet?</label>
+                    <label htmlFor="new-route-ff" className="col-sm-3 control-label">Follow Feet?</label>
                     <div className="col-sm-9">
                       <label className="radio-inline">
-                        <input type="radio" name="new-route-ff" id="new-route-ff-ff" value={true} defaultChecked={true} ref="ff">FF</input>
+                        <input type="radio" name="new-route-ff" id="new-route-ff-ff" value={true} defaultChecked={true} ref="ff" />FF
                       </label>
                       <label className="radio-inline">
-                        <input type="radio" name="new-route-ff" id="new-route-ff-af" value={false} ref="af">AF</input>
+                        <input type="radio" name="new-route-ff" id="new-route-ff-af" value={false} ref="af" />AF
                       </label>
                     </div>
                   </div>

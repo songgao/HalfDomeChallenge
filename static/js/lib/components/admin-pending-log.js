@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
+var React = require('react');
 var moment = require('moment');
 
 var C = require('../constants');
@@ -23,9 +23,9 @@ module.exports = React.createClass({
       );
     }.bind(this));
     var routeStyle = {
-      "background-color": this.props.route.background_color,
-      "color": this.props.route.color,
-      "padding": "4px 8px 4px 8px",
+      backgroundColor: this.props.route.background_color,
+      color: this.props.route.color,
+      padding: "4px 8px 4px 8px",
     };
     return (
       <li><div>

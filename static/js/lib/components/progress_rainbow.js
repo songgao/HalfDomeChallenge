@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
+var React = require('react');
 
 var C = require('../constants');
 
@@ -12,22 +12,26 @@ module.exports = React.createClass({
     } else {
       slice = this.props.logs;
     }
-    var chips = slice.map(function(log) {
+    var chips = slice.map(function(log, index) {
       var chipStyle = {
-        "background-color": C.Rainbow(log / (C.Ratings.all.length - 1)),
+        backgroundColor: C.Rainbow(log / (C.Ratings.all.length - 1)),
       };
-      return <div className="rainbow-chip" style={chipStyle}></div>;
+      if (!log || !log.id) {
+        return <div key={index}></div>
+      }
+      return <div key={log.id} className="rainbow-chip" style={chipStyle}></div>;
     });
     return (
       <div className="row progress-rainbow">
         <div className="col-sm-12">
-          <div className="rainbow-name-picture">
-            <span className="rainbow-name">{this.props.name}</span><img src={this.props.picture} className="img-circle" />
+          <div key="picture" className="rainbow-name-picture">
+            <span key="span" className="rainbow-name">{this.props.name}</span>
+            <img key="img" src={this.props.picture} className="img-circle" />
           </div>
-          <div className="rainbow-chips">
+          <div key="chips" className="rainbow-chips">
             {chips}
           </div>
-          <div className="rainbow-percentage">
+          <div key="percentage" className="rainbow-percentage">
             {Math.round(this.props.percentage * 100).toString() + '%'}
           </div>
         </div>

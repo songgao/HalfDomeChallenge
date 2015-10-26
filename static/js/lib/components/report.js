@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons');
+var React = require('react');
 var moment = require('moment');
 
 var meStore = require('../stores/me');
@@ -78,7 +78,7 @@ module.exports = React.createClass({
 
     return (
       <div className="report">
-        <div className="progress" style={progressBarStyle} ><div className="progress-bar" role="progressbar" aria-valuenow={percent} aria-valuemin="0" aria-valuemax="100" style={ {"width": percent + "%"} }></div></div>
+        <div className="progress" style={progressBarStyle} ><div className="progress-bar" role="progressbar" aria-valuenow={percent} aria-valuemin="0" aria-valuemax="100" style={ {width: percent + "%"} }></div></div>
         <div className="container">
           <button className="btn btn-primary pull-right" disabled={buttonDisabled} onClick={this._handleStartFetching}>Generate Report Now</button>
           {content}
