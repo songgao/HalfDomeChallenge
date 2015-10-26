@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"gopkg.in/mgo.v2/bson"
 	"net/http"
 	"time"
+
+	"gopkg.in/mgo.v2/bson"
 )
 
 type Server struct {
@@ -249,9 +250,18 @@ func (s *Server) handleLogNew(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"error": "unauthorized"})
 		return
 	}
-	_, err := s.db.NewClimbingLog(req.Payload.RouteID, req.Payload.ClimbersID)
+	log, err := s.db.NewClimbingLog(req.Payload.RouteID, req.Payload.ClimbersID)
 	if err != nil {
-		json.NewEncoder(w).Encode(map[string]string{"error": "internal error"})
+		json.NewEncoder(w).Encode(map[string]string{"error": "internal error creating the pitch."})
+		return
+	}
+	if !s.config.RequireApprove {
+		err = s.db.ApproveLog(log.ID)
+		if err != nil {
+			json.NewEncoder(w).Encode(map[string]string{"error": "internal error auto-approving the pitch."})
+			return
+		}
+		s.recentCache.TriggerUpdate()
 	}
 	json.NewEncoder(w).Encode(map[string]string{"result": "ok"})
 }

@@ -30,14 +30,15 @@ You need a `config.json`. For example:
 
 ```json
 {
-  "fb_app_id"     : "<your facebook APP id>",
-  "fb_app_secret" : "<your facebook App secret>",
-  "laddr_https"   : "0.0.0.0:443",
-  "db_name"       : "elcap_prod",
-  "db_addr"       : "localhost",
-  "ca_cert"       : "certs/server.crt",
-  "ca_key"        : "certs/server.key",
-  "ui_path"       : "static"
+  "fb_app_id"      : "<your facebook APP id>",
+  "fb_app_secret"  : "<your facebook App secret>",
+  "laddr_https"    : "0.0.0.0:443",
+  "db_name"        : "elcap_prod",
+  "db_addr"        : "localhost",
+  "ca_cert"        : "certs/server.crt",
+  "ca_key"         : "certs/server.key",
+  "ui_path"        : "static",
+  "require_approve": true
 }
 ```
 

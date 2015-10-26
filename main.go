@@ -7,15 +7,16 @@ import (
 )
 
 type Config struct {
-	FBAppID     string `json:"fb_app_id"`
-	FBAppSecret string `json:"fb_app_secret"`
-	ListenAddr  string `json:"listen_addr"`
-	LAddrHTTPS  string `json:"laddr_https"`
-	DBName      string `json:"db_name"`
-	DBAddr      string `json:"db_addr"`
-	CACert      string `json:"ca_cert"`
-	CAKey       string `json:"ca_key"`
-	UIPath      string `json:"ui_path"`
+	FBAppID        string `json:"fb_app_id"`
+	FBAppSecret    string `json:"fb_app_secret"`
+	ListenAddr     string `json:"listen_addr"`
+	LAddrHTTPS     string `json:"laddr_https"`
+	DBName         string `json:"db_name"`
+	DBAddr         string `json:"db_addr"`
+	CACert         string `json:"ca_cert"`
+	CAKey          string `json:"ca_key"`
+	UIPath         string `json:"ui_path"`
+	RequireApprove bool   `json:"require_approve"`
 
 	fbToken string
 }
