@@ -79,6 +79,7 @@ module.exports = React.createClass({
     var logs = this.state.logs.map(function(log) {
       return (<Log key={log.id} log={log} category={this.state.user.category} showRemove={true}/>);
     }.bind(this));
+    logs.reverse(); // so more recent pitches are displayed at top
     return (
       <div className="container-fluid fullheight">
         <div className="row el-cap fullheight">

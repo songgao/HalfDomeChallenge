@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -47,9 +48,9 @@ func (c RecentCacheUpdater) Update(db *DB) *json.RawMessage {
 			continue
 		}
 		routeIDs := make([]bson.ObjectId, 0)
-		for i := len(logs) - 1; i >= 0; i-- {
-			if !logs[i].Pending {
-				routeIDs = append(routeIDs, logs[i].Route)
+		for _, log := range logs {
+			if !log.Pending {
+				routeIDs = append(routeIDs, log.Route)
 			}
 		}
 		items[index] = recentItem{UserID: user.ID, RouteIDs: routeIDs}

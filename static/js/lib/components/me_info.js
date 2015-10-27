@@ -30,7 +30,6 @@ module.exports = React.createClass({
       }
       return <div key={log.id} className = "rainbow-chip" style={chipStyle}></div>;
     }.bind(this));
-    chips.reverse();
 
     var aubie;
     if (this.props.logs.length >= C.TotalPitches) {

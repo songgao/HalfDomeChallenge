@@ -172,14 +172,14 @@ func (d *DB) DisableRoute(routeID bson.ObjectId) error {
 func (d *DB) ClimbingLogs(userID bson.ObjectId) (logs []ClimbingLog, err error) {
 	c, s := d.c("climbing_logs")
 	defer s.Close()
-	err = c.Find(bson.M{"climbers": userID}).Sort("-time").All(&logs)
+	err = c.Find(bson.M{"climbers": userID}).Sort("time").All(&logs)
 	return
 }
 
 func (d *DB) PendingLogs() (logs []ClimbingLog, err error) {
 	c, s := d.c("climbing_logs")
 	defer s.Close()
-	err = c.Find(bson.M{"pending": true}).Sort("-time").All(&logs)
+	err = c.Find(bson.M{"pending": true}).Sort("time").All(&logs)
 	return
 }
 

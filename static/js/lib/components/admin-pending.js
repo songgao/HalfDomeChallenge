@@ -28,6 +28,7 @@ module.exports = React.createClass({
         }.bind(this)),
       };
     }.bind(this));
+    logs.reverse(); // so that more recent logs are displayed first
     return logs;
   },
   _onPendingLogsStoreChange: function() {
