@@ -5,6 +5,7 @@ var moment = require('moment');
 
 var C = require('../constants');
 var CategorySetter = require('./category_setter');
+var Chips = require('./chips');
 
 module.exports = React.createClass({
   render: function() {
@@ -24,13 +25,6 @@ module.exports = React.createClass({
       categorySet = false;
     }
 
-    var chips = this.props.logs.map(function(log) {
-      var chipStyle = {
-        backgroundColor: C.Rainbow[this.props.user.category](C.Ratings[log.route.rating] / (C.Ratings.all.length - 1)),
-      }
-      return <div key={log.id} className = "rainbow-chip" style={chipStyle}></div>;
-    }.bind(this));
-
     var aubie;
     if (this.props.logs.length >= C.TotalPitches) {
       aubie = (
@@ -39,6 +33,10 @@ module.exports = React.createClass({
     } else {
       aubie = (<span></span>);
     }
+    var logRatings = this.props.logs.map(function(log) {
+      return log.route.rating;
+    });
+
     return (
       <div className="panel panel-default me-info">
         <div key="titleline" className="title-line">
@@ -48,7 +46,7 @@ module.exports = React.createClass({
         </div>
         {aubie}
         <div key="joined">Joined {moment(this.props.user.since).fromNow()} | Finished: {this.props.logs.length.toString() + ' / ' + C.TotalPitches.toString()}</div>
-        <div key="chips" className="me-info-chips">{chips}</div>
+        <Chips className="me-info-chips" category={this.props.user.category} logRatings={logRatings} />
       </div>
     );
   }

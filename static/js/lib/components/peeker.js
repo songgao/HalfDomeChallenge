@@ -10,6 +10,7 @@ var routesStore = require('../stores/routes');
 var usersStore = require('../stores/users');
 var peekerStore = require('../stores/peeker');
 var peekerActions = require('../actions/peeker_actions');
+var Chips = require('./chips');
 
 module.exports = React.createClass({
   getInitialState: function() {
@@ -78,8 +79,8 @@ module.exports = React.createClass({
       percentage: (this.state.logs ? this.state.logs.length : 0) / C.TotalPitches,
     };
     var logs = this.state.logs.map(function(log) {
-      return (<Log log={log} showRemove={false} />);
-    });
+      return (<Log log={log} category={this.state.user.category} showRemove={false} />);
+    }.bind(this));
     var category;
     if(this.state.user.category === C.Categories[0]) {
       category = <span className="label label-success category-label">{this.state.user.category}</span>
@@ -90,19 +91,20 @@ module.exports = React.createClass({
     } else {
       category = (<div></div>);
     }
-    var chips = this.state.logs.map(function(log) {
-      var chipStyle = {
-        backgroundColor: C.Rainbow[this.state.user.category](C.Ratings[log.route.rating] / (C.Ratings.all.length - 1)),
-      }
-      return <div className = "rainbow-chip" style={chipStyle}></div>;
-    }.bind(this));
+    var logRatings = [];
+    if (this.state.logs && this.state.logs.length) {
+      logRatings = this.state.logs.map(function(log) {
+        return log.route.rating;
+      });
+    }
+
     return (
       <div className="container-fluid fullheight">
         {personPicker}
         <div>
           <h4>{this.state.user.name} {category}</h4>
           <div> Joined {moment(this.state.user.since).fromNow()} | Finished: {this.state.logs.length.toString() + ' / ' + C.TotalPitches.toString()}</div>
-          <div className="me-info-chips">{chips}</div>
+          <Chips className="me-info-chips" category={this.state.user.category} logRatings={logRatings} />
           <hr />
           <ul className="logs clearfix">
             {logs}

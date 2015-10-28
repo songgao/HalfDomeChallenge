@@ -24,21 +24,21 @@ module.exports = React.createClass({
     }
     return recent.map(function(item) {
       var user = usersStore.findOrMissing(item.user_id);
-      var logs;
+      var logRatings;
       if (!item.route_ids || !item.route_ids.length) {
-        logs = [];
+        logRatings = [];
       } else {
-        logs = item.route_ids.map(function(route_id) {
-          return C.Ratings[routesStore.findOrMissing(route_id).rating];
+        logRatings = item.route_ids.map(function(route_id) {
+          return routesStore.findOrMissing(route_id).rating;
         }.bind(this));
       }
       return {
         picture: user.picture_url + "?height=64&width=64",
         name: user.name,
         category: user.category,
-        logs: logs,
+        logRatings: logRatings,
         id: user.id,
-        percentage: logs.length / C.TotalPitches,
+        percentage: logRatings.length / C.TotalPitches,
       }
     }.bind(this))
   },
@@ -73,10 +73,10 @@ module.exports = React.createClass({
     }.bind(this));
     heads.reverse(); // so that newer ones don't get covered by older ones
     var bars = this.state.climbers.map(function(climber, index) {
-      if (!climber.id || !climber.logs || !climber.logs.length) {
+      if (!climber.id || !climber.logRatings || !climber.logRatings.length) {
         return <div key={index}></div>;
       }
-      return <ProgressRainbow key={climber.id} name={climber.name} picture={climber.picture} percentage={climber.percentage} logs={climber.logs} category={climber.category} />
+      return <ProgressRainbow key={climber.id} name={climber.name} picture={climber.picture} percentage={climber.percentage} logRatings={climber.logRatings} category={climber.category} />
     }.bind(this))
     return (
       <div className="container-fluid fullheight">
