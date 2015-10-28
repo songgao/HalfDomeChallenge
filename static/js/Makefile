@@ -4,7 +4,7 @@ MAIN=$(JSX_DIR)/index.js
 
 BROWSERIFY_ARGS=-t reactify -o bundle.js --full-path=false $(MAIN)
 
-default: bundle.min.js
+default: bundle.js
 
 .PHONY : deps watch
 

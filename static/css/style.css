@@ -292,6 +292,10 @@ ul.pending-logs>li>div>span {
   margin-top: 4px;
 }
 
+.log>div>span.royal {
+  background-color: GoldenRod;
+}
+
 
 .log>div.pull-right {
   margin-top: -8px;

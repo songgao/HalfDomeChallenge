@@ -13,27 +13,29 @@ module.exports = React.createClass({
     if (!this.props.logs || !this.props.logs.length || !this.props.user) {
       return [];
     }
-    var logs = this.props.logs.map(function(log) {
+    var logs = this.props.logs.map(function(log, index) {
       var others = [];
       for (var i = 0; i < log.climbers.length; ++i) {
         if (log.climbers[i] !== this.props.user.id) {
           others.push(usersStore.findOrMissing(log.climbers[i]).name);
         }
       }
-      return {
+      var ret = {
         id: log.id,
         time: log.time,
         route: routesStore.findOrMissing(log.route),
         pending: log.pending,
         others: others
       };
+      ret.royal = (ret.route.rating === C.Pitches[index]);
+      return ret;
     }.bind(this));
     return logs;
   },
   render: function() {
     var logs = this._generateLogs().map(function(log) {
-      return (<Log log={log} showRemove={false} absTime={true} />);
-    });
+      return (<Log log={log} category={this.props.user.category} showRemove={false} absTime={true} />);
+    }.bind(this));
     return (
       <div>
         <hr />

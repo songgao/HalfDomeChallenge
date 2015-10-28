@@ -23,20 +23,22 @@ module.exports = React.createClass({
     if (!bareLogs || !bareLogs.length || !user) {
       return [];
     }
-    var logs = bareLogs.map(function(log) {
+    var logs = bareLogs.map(function(log, index) {
       var others = [];
       for (var i = 0; i < log.climbers.length; ++i) {
         if (log.climbers[i] !== user.id) {
           others.push(usersStore.findOrMissing(log.climbers[i]).name);
         }
       }
-      return {
+      var ret = {
         id: log.id,
         time: log.time,
         route: routesStore.findOrMissing(log.route),
         pending: log.pending,
         others: others
       };
+      ret.royal = (ret.route.rating === C.Pitches[index]);
+      return ret;
     }.bind(this));
     return logs;
   },

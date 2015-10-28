@@ -46,6 +46,7 @@ module.exports = React.createClass({
       <li className="log clearfix">
         <div>
         <span>{this.props.log.route.name}</span>
+        {this.props.log.royal? <span className="label royal">Royal</span> : null }
         <span className="label" style={ffStyle}>{this.props.log.route.ff ? "FF" : "AF"}</span>
         <span className="label" style={natsStyle}>{C.Nats.all[this.props.log.route.nats]}</span>
         <span className="label" style={ratingStyle}>{this.props.log.route.rating}</span>
