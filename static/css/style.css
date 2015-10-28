@@ -31,10 +31,10 @@ div.stats-div>div.with-scroll {
 .el-cap {
   /*
    * special thanks to Aaron Clifton for the idea of using floating heads on a
-   * picture of El Capital Mountain
+   * picture of the Half Dome
    */
 
-  background-image: url('/images/elcap.jpg');
+  background-image: url('/images/halfdome.jpg');
   background-repeat: no-repeat;
   background-size: auto 100%;
   background-position: left bottom;
@@ -46,7 +46,7 @@ div.stats-div>div.with-scroll {
 }
 
 @media (min-width: 992px) {
-  .el-cap>div.gradient {
+  .el-cap>div.gradient-disabled {
     background-image: url('/images/gradient.png');
     background-size: 15% 1px;
     background-repeat: repeat-y;

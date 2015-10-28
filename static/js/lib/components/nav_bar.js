@@ -51,7 +51,7 @@ module.exports = React.createClass({
               <span key="2" className="icon-bar"></span>
               <span key="3" className="icon-bar"></span>
             </button>
-            <a key="logo" className="navbar-brand" href="#">El Cap Challenge</a>
+            <a key="logo" className="navbar-brand" href="#">Half Dome Challenge</a>
           </div>
           <div key="main" className="collapse navbar-collapse" id="navbar-main">
             <ul key="nav" className="nav navbar-nav">

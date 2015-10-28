@@ -1,8 +1,8 @@
 {
-  "description": "The El Cap Challenge in Auburn University",
+  "description": "The Half Dome Challenge in Auburn University",
   "repository": {
     "type": "git",
-    "url": "github.com/songgao/ElCapChallenge.git"
+    "url": "github.com/songgao/HalfDomeChallenge.git"
   },
   "author": "Song Gao <song@gao.io>",
   "dependencies": {
