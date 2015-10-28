@@ -13,7 +13,6 @@ module.exports = React.createClass({
     } else {
       slice = this.props.logRatings;
     }
-    console.log(slice);
 
     return (
       <div className="row progress-rainbow">

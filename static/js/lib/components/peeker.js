@@ -5,64 +5,30 @@ var moment = require('moment');
 
 var Log = require('./log');
 var C = require('../constants');
+var utils = require('../utils');
 var PersonPicker = require('./person_picker');
-var routesStore = require('../stores/routes');
-var usersStore = require('../stores/users');
 var peekerStore = require('../stores/peeker');
 var peekerActions = require('../actions/peeker_actions');
 var Chips = require('./chips');
 
 module.exports = React.createClass({
   getInitialState: function() {
-    return {users: usersStore.users, user: peekerStore.user, logs: this._generateLogs(peekerStore.logs) }
-  },
-  _generateLogs: function() {
-    var bareLogs = peekerStore.logs;
-    var user = peekerStore.user;
-    if (!bareLogs || !bareLogs.length || !user) {
-      return [];
-    }
-    var logs = bareLogs.map(function(log) {
-      var others = [];
-      for (var i = 0; i < log.climbers.length; ++i) {
-        if (log.climbers[i] !== user.id) {
-          others.push(usersStore.findOrMissing(log.climbers[i]).name);
-        }
-      }
-      return {
-        id: log.id,
-        time: log.time,
-        route: routesStore.findOrMissing(log.route),
-        pending: log.pending,
-        others: others
-      };
-    }.bind(this));
-    return logs;
-  },
-  _onRoutesStoreChange: function() {
-    this.setState({logs: this._generateLogs()});
-  },
-  _onUsersStoreChange: function() {
-    this.setState({users: usersStore.users, logs: this._generateLogs()});
+    return {user: peekerStore.user}
   },
   _onPeekerStoreChange: function() {
-    this.setState({user: peekerStore.user, logs: this._generateLogs()});
+    this.setState({user: peekerStore.user});
   },
   componentDidMount: function() {
-    routesStore.addChangeListener(this._onRoutesStoreChange);
-    usersStore.addChangeListener(this._onUsersStoreChange);
     peekerStore.addChangeListener(this._onPeekerStoreChange);
-    this.setState(this.getInitialState());
   },
   componentWillUnmount: function() {
-    routesStore.removeChangeListener(this._onRoutesStoreChange);
-    usersStore.removeChangeListener(this._onUsersStoreChange);
     peekerStore.removeChangeListener(this._onPeekerStoreChange);
   },
   _handleSelectPerson: function() {
     peekerActions.selectUser(this.refs.personPicker.state.selected);
   },
   render: function() {
+    var logs = utils.generateLogs(this.state.user, peekerStore.logs);
     var personPicker = (
       <div className="row">
         <div className="col-sm-3"></div>
@@ -76,11 +42,12 @@ module.exports = React.createClass({
     }
     var climber = {
       picture: this.state.user ? (this.state.user.picture_url + "?height=64&width=64") : "",
-      percentage: (this.state.logs ? this.state.logs.length : 0) / C.TotalPitches,
+      percentage: (logs ? logs.length : 0) / C.TotalPitches,
     };
-    var logs = this.state.logs.map(function(log) {
+    var Logs = logs.map(function(log) {
       return (<Log log={log} category={this.state.user.category} showRemove={false} />);
     }.bind(this));
+    Logs.reverse();
     var category;
     if(this.state.user.category === C.Categories[0]) {
       category = <span className="label label-success category-label">{this.state.user.category}</span>
@@ -92,8 +59,8 @@ module.exports = React.createClass({
       category = (<div></div>);
     }
     var logRatings = [];
-    if (this.state.logs && this.state.logs.length) {
-      logRatings = this.state.logs.map(function(log) {
+    if (logs && logs.length) {
+      logRatings = logs.map(function(log) {
         return log.route.rating;
       });
     }
@@ -103,11 +70,11 @@ module.exports = React.createClass({
         {personPicker}
         <div>
           <h4>{this.state.user.name} {category}</h4>
-          <div> Joined {moment(this.state.user.since).fromNow()} | Finished: {this.state.logs.length.toString() + ' / ' + C.TotalPitches.toString()}</div>
+          <div> Joined {moment(this.state.user.since).fromNow()} | Finished: {logs.length.toString() + ' / ' + C.TotalPitches.toString()}</div>
           <Chips className="me-info-chips" category={this.state.user.category} logRatings={logRatings} />
           <hr />
           <ul className="logs clearfix">
-            {logs}
+            {Logs}
           </ul>
         </div>
       </div>

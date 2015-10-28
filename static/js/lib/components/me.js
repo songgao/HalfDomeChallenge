@@ -3,6 +3,7 @@
 var React = require('react');
 var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 
+var utils = require('../utils');
 var FloatingHead = require('./floating_head');
 var Copyright = require('./copyright');
 var Log = require('./log');
@@ -16,40 +17,16 @@ var fbActions = require('../actions/fb_actions');
 
 module.exports = React.createClass({
   getInitialState: function() {
-    return {user: meStore.user, logs: this._generateLogs(meStore.logs) }
-  },
-  _generateLogs: function(bareLogs, user) {
-    user = user || (this.state ? this.state.user : null);
-    if (!bareLogs || !bareLogs.length || !user) {
-      return [];
-    }
-    var logs = bareLogs.map(function(log, index) {
-      var others = [];
-      for (var i = 0; i < log.climbers.length; ++i) {
-        if (log.climbers[i] !== user.id) {
-          others.push(usersStore.findOrMissing(log.climbers[i]).name);
-        }
-      }
-      var ret = {
-        id: log.id,
-        time: log.time,
-        route: routesStore.findOrMissing(log.route),
-        pending: log.pending,
-        others: others
-      };
-      ret.royal = (ret.route.rating === C.Pitches[index]);
-      return ret;
-    }.bind(this));
-    return logs;
+    return {user: meStore.user}
   },
   _onMeStoreChange: function() {
-    this.setState({user: meStore.user, logs: this._generateLogs(meStore.logs, meStore.user)});
+    this.setState({user: meStore.user});
   },
   _onRoutesStoreChange: function() {
-    this.setState({logs: this._generateLogs(meStore.logs)});
+    this.forceUpdate();
   },
   _onUsersStoreChange: function() {
-    this.setState({logs: this._generateLogs(meStore.logs)});
+    this.forceUpdate();
   },
   _handleLogin: function() {
     fbActions.loginButtonClick();
@@ -66,6 +43,7 @@ module.exports = React.createClass({
     usersStore.removeChangeListener(this._onUsersStoreChange);
   },
   render: function() {
+    var logs = utils.generateLogs(this.state.user, meStore.logs);
     if (!this.state.user) {
       return (
         <div className="container-fluid center">
@@ -76,12 +54,12 @@ module.exports = React.createClass({
     }
     var climber = {
       picture: this.state.user ? (this.state.user.picture_url + "?height=64&width=64") : "",
-      percentage: (this.state.logs ? this.state.logs.length : 0) / C.TotalPitches,
+      percentage: (logs ? logs.length : 0) / C.TotalPitches,
     };
-    var logs = this.state.logs.map(function(log) {
+    var Logs = logs.map(function(log) {
       return (<Log key={log.id} log={log} category={this.state.user.category} showRemove={true}/>);
     }.bind(this));
-    logs.reverse(); // so more recent pitches are displayed at top
+    Logs.reverse(); // so more recent pitches are displayed at top
     return (
       <div className="container-fluid fullheight">
         <div className="row el-cap fullheight">
@@ -90,11 +68,11 @@ module.exports = React.createClass({
               <FloatingHead key="head" picture={climber.picture} percentage={climber.percentage} />
           </div>
           <div key="main" className="col-md-6 fullheight with-scroll">
-            <MeInfo key="me" user={this.state.user} logs={this.state.logs}/>
+            <MeInfo key="me" user={this.state.user} logs={logs}/>
             <hr key="hr" />
             <NewLog key="new" ref="newLog"/>
             <ul key="logs" className="logs clearfix">
-              {logs}
+              {Logs}
             </ul>
           </div>
         </div>
