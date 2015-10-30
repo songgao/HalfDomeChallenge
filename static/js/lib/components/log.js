@@ -12,8 +12,12 @@ module.exports = React.createClass({
   },
   render: function() {
     var ffStr, withStr;
+    var categoryRainbow = C.Rainbow[this.props.category];
+    if (!categoryRainbow) {
+      categoryRainbow = C.Rainbow.Unknown;
+    }
     var ratingStyle = {
-      backgroundColor: C.Rainbow[this.props.category](C.Ratings[this.props.log.route.rating] / (C.Ratings.all.length - 1)),
+      backgroundColor: categoryRainbow(C.Ratings[this.props.log.route.rating] / (C.Ratings.all.length - 1)),
     };
     var natsStyle = {
       backgroundColor: C.Rainbow.NATS_FF(this.props.log.route.nats / (C.Nats.all.length - 1)),
