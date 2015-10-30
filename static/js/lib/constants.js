@@ -125,6 +125,7 @@ exports.Nats = {
 };
 
 exports.Rainbow = {
+  Unknown     : require('chroma-js').scale(['#B1B1B1', '#1C1C1C']), // gray
   Beginner    : require('chroma-js').scale(['#B1DF95', '#1C4A00']), // green
   Intermediate: require('chroma-js').scale(['#FFECAA', '#554200']), // yellow
   Advanced    : require('chroma-js').scale(['#FFAAAA', '#550000']), // red
