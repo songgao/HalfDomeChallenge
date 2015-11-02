@@ -27,6 +27,9 @@ module.exports = React.createClass({
     var ffStyle = {
       backgroundColor: C.Rainbow.NATS_FF(this.props.route.ff ? 1 : 0),
     };
+    var halfFullStyle = {
+      backgroundColor: C.Rainbow.NATS_FF(this.props.route.is_half ? 0 : 1),
+    };
     var able, ableText;
     if (this.props.route.enabled) {
       able = (<a className="pointer admin-route-able" onClick={this._handleDisable}>disable</a>);
@@ -45,6 +48,7 @@ module.exports = React.createClass({
         <span className="label" style={ratingStyle}>{this.props.route.rating}</span>
         <span className="label" style={ffStyle}>{this.props.route.ff ? "FF" : "AF"}</span>
         <span className="label" style={natsStyle}>{C.Nats.all[this.props.route.nats]}</span>
+        <span className="label" style={halfFullStyle}>{this.props.route.is_half ? "Half" : "Full"}</span>
         {ableText}
         {able}
         </div>

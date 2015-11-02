@@ -13,6 +13,7 @@ module.exports = React.createClass({
       rating: null,
       nats: 1,
       ff: true,
+      is_half: false,
       setter: "",
       tape: null,
     }
@@ -24,10 +25,19 @@ module.exports = React.createClass({
     this.setState({rating: e.selectedRef});
   },
   _handleNATSOnChange: function(e) {
-    this.setState({nats: parseInt(e.target.value)});
+    if (e.target.checked) {
+      this.setState({nats: parseInt(e.target.value)});
+    }
   },
   _handleFFOnChange: function(e) {
-    this.setState({ff: e.target.value === 'true' });
+    if (e.target.checked) {
+      this.setState({ff: e.target.value === 'true' });
+    }
+  },
+  _handleIsHalfOnChange: function(e) {
+    if (e.target.checked) {
+      this.setState({is_half: e.target.value === 'true' });
+    }
   },
   _handleSetterOnChange: function(e) {
     this.setState({setter: e.target.value});
@@ -41,6 +51,7 @@ module.exports = React.createClass({
       rating: this.state.rating,
       nats: this.state.nats,
       ff: this.state.ff,
+      is_half: this.state.is_half,
       setter: this.state.setter,
       background_color: this.state.tape.background_color,
       color: this.state.tape.color,
@@ -136,6 +147,19 @@ module.exports = React.createClass({
                       </label>
                     </div>
                   </div>
+
+                  <div className="form-group">
+                    <label htmlFor="new-route-ff" className="col-sm-3 control-label">Half Route?</label>
+                    <div className="col-sm-9">
+                      <label className="radio-inline">
+                        <input type="radio" name="new-route-is_half" id="new-route-is_half-full" value={false} checked={this.state.is_half===false} defaultChecked={true} ref="full" onChange={this._handleIsHalfOnChange} />Full Route
+                      </label>
+                      <label className="radio-inline">
+                        <input type="radio" name="new-route-is_half" id="new-route-is_half-half" value={true} checked={this.state.is_half===true} ref="full" onChange={this._handleIsHalfOnChange} />Half Route
+                      </label>
+                    </div>
+                  </div>
+
                 </form>
               </div>
               <div className="modal-footer">

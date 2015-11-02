@@ -45,6 +45,7 @@ type Route struct {
 	Rating          string `bson:"rating" json:"rating"` // on of Ratings
 	NaturalFeatures int    `bson:"nats" json:"nats"`     // NatsON, NatsOFF, NatsFeetOnly
 	FollowFeet      bool   `bson:"ff" json:"ff"`
+	IsHalf          bool   `bson:"is_half" json:"is_half"`
 	Setter          string `bson:"setter" json:"setter"`
 
 	BackgroundColor string `bson:"background_color" json:"background_color"`

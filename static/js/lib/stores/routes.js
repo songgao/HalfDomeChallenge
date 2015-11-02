@@ -36,6 +36,7 @@ Routes.prototype.findOrMissing = function(id) {
     rating: "cupcake",
     ff: false,
     nats: C.Nats.all[0],
+    is_half: false,
     setter: 'unknown',
   };
 };
