@@ -20,13 +20,13 @@ module.exports = React.createClass({
     var btn;
     if (!this.props.set) {
       btn = (
-        <a className="pointer" data-toggle="modal" data-target="#dialogCategory">
+        <a className="pointer category-setter-a" data-toggle="modal" data-target="#dialogCategory">
           Set Category
         </a>
       );
     } else {
       btn = (
-        <a className="pointer" data-toggle="modal" data-target="#dialogCategory">
+        <a className="pointer category-setter-a" data-toggle="modal" data-target="#dialogCategory">
           change
         </a>
       );

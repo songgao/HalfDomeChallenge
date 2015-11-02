@@ -47,21 +47,22 @@ module.exports = React.createClass({
       t = moment(this.props.log.time).fromNow();
     }
     return (
-      <li className="log clearfix">
-        <div>
-        <span>{this.props.log.route.name}</span>
-        {this.props.log.royal? <span className="label royal">Royal</span> : null }
-        <span className="label" style={ffStyle}>{this.props.log.route.ff ? "FF" : "AF"}</span>
-        <span className="label" style={natsStyle}>{C.Nats.all[this.props.log.route.nats]}</span>
-        <span className="label" style={ratingStyle}>{this.props.log.route.rating}</span>
-        <span className="pending">{this.props.log.pending?"pending":""}</span>
+      <div className="log clearfix">
+        <div key="not-right">
+          <div key="log-index" className="log-index"><span className="badge">{this.props.logIndex + 1}</span></div>
+          <span key="route-name">{this.props.log.route.name}</span>
+          {this.props.log.royal? <span key="royal" className="label royal">Royal</span> : null }
+          <span key="ff" className="label" style={ffStyle}>{this.props.log.route.ff ? "FF" : "AF"}</span>
+          <span key="nats" className="label" style={natsStyle}>{C.Nats.all[this.props.log.route.nats]}</span>
+          <span key="rating" className="label" style={ratingStyle}>{this.props.log.route.rating}</span>
+          <span key="pending" className="pending">{this.props.log.pending?"pending":""}</span>
         </div>
-        <div className="pull-right">
-        <span className="with-who">{withStr}</span>
-        <span className="rel-time">{t}</span>
-        {removeLink}
+        <div key="right" className="pull-right">
+          <span key="with" className="with-who">{withStr}</span>
+          <span key="t" className="rel-time">{t}</span>
+          {removeLink}
         </div>
-      </li>
+      </div>
     )
   }
 });

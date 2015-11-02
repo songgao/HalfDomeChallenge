@@ -4,7 +4,9 @@ var React = require('react');
 var moment = require('moment');
 
 var C = require('../constants');
+var utils = require('../utils');
 var CategorySetter = require('./category_setter');
+var MeRoyal = require('./me_royal');
 var Chips = require('./chips');
 
 module.exports = React.createClass({
@@ -45,8 +47,10 @@ module.exports = React.createClass({
           <CategorySetter key="setter" set={categorySet} />
         </div>
         {aubie}
-        <div key="joined">Joined {moment(this.props.user.since).fromNow()} | Finished: {this.props.logs.length.toString() + ' / ' + C.TotalPitches.toString()}</div>
-        <Chips className="me-info-chips" category={this.props.user.category} logRatings={logRatings} />
+        <div key="joined">Joined {moment(this.props.user.since).fromNow()}</div>
+        <div key="status">Finished: {this.props.logs.length.toString()}/{C.TotalPitches.toString()} | Royalness: {Math.round(utils.calculateRoyalness(logRatings) * 100) / 100}</div>
+        <Chips key="chips" className="me-info-chips" category={this.props.user.category} logRatings={logRatings} />
+        <MeRoyal key="royal" logRatings={logRatings} />
       </div>
     );
   }

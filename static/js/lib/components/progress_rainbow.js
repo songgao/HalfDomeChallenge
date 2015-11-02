@@ -3,6 +3,7 @@
 var React = require('react');
 
 var C = require('../constants');
+var utils = require('../utils');
 var Chips = require('./chips');
 
 module.exports = React.createClass({
@@ -23,7 +24,7 @@ module.exports = React.createClass({
           </div>
           <Chips className="rainbow-chips" category={this.props.category} logRatings={slice} />
           <div key="percentage" className="rainbow-percentage">
-            {Math.round(this.props.percentage * 100).toString() + '%'}
+            {Math.round(this.props.percentage * 100).toString() + '%'} <span className="royal-fg">({Math.round(utils.calculateRoyalness(this.props.logRatings) * 100) / 100})</span>
           </div>
         </div>
       </div>

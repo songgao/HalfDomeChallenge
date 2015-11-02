@@ -56,8 +56,8 @@ module.exports = React.createClass({
       picture: this.state.user ? (this.state.user.picture_url + "?height=64&width=64") : "",
       percentage: (logs ? logs.length : 0) / C.TotalPitches,
     };
-    var Logs = logs.map(function(log) {
-      return (<Log key={log.id} log={log} category={this.state.user.category} showRemove={true}/>);
+    var Logs = logs.map(function(log, index) {
+      return (<Log key={log.id} logIndex={index} log={log} category={this.state.user.category} showRemove={true}/>);
     }.bind(this));
     Logs.reverse(); // so more recent pitches are displayed at top
     return (
@@ -71,9 +71,9 @@ module.exports = React.createClass({
             <MeInfo key="me" user={this.state.user} logs={logs}/>
             <hr key="hr" />
             <NewLog key="new" ref="newLog"/>
-            <ul key="logs" className="logs clearfix">
+            <div key="logs" className="logs clearfix">
               {Logs}
-            </ul>
+            </div>
           </div>
         </div>
       </div>

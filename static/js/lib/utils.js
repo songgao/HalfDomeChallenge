@@ -13,6 +13,24 @@ exports.moveCursorToEnd = function(el) {
   }
 };
 
+exports.getRatingNumber = function(rating) {
+  if (C.Ratings[rating] === 0) {
+    return 0; // rainbow
+  } else {
+    return parseInt(rating.substring(2));
+  }
+};
+
+exports.isRoyal = function(index, rating) {
+  var expected = exports.getRatingNumber(C.Pitches[index]);
+  var actual = exports.getRatingNumber(rating);
+  if (expected <= 6) {
+    return actual === 6; // we don't have a 5.5 in gym yet
+  } else {
+    return expected === actual;
+  }
+};
+
 exports.generateLogs = function(user, bareLogs) {
   if (!bareLogs || !bareLogs.length || !user) {
     return [];
@@ -31,8 +49,22 @@ exports.generateLogs = function(user, bareLogs) {
       pending: log.pending,
       others: others
     };
-    ret.royal = (ret.route.rating === C.Pitches[index]);
+    ret.royal = exports.isRoyal(index, ret.route.rating);
     return ret;
   }.bind(this));
   return logs;
 }
+
+exports.calculateRoyalness = function(logRatings) {
+  if (logRatings && logRatings.length) {
+    return logRatings.reduce(function(total, rating, index) {
+      if (exports.isRoyal(index, rating)) {
+        return total + 1;
+      } else {
+        return total;
+      }
+    }, 0) / logRatings.length;
+  } else {
+    return 0;
+  }
+};

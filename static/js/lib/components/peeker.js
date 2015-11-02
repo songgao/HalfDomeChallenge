@@ -44,8 +44,8 @@ module.exports = React.createClass({
       picture: this.state.user ? (this.state.user.picture_url + "?height=64&width=64") : "",
       percentage: (logs ? logs.length : 0) / C.TotalPitches,
     };
-    var Logs = logs.map(function(log) {
-      return (<Log log={log} category={this.state.user.category} showRemove={false} />);
+    var Logs = logs.map(function(log, index) {
+      return (<Log logIndex={index} log={log} category={this.state.user.category} showRemove={false} />);
     }.bind(this));
     Logs.reverse();
     var category;

@@ -10,8 +10,8 @@ var C = require('../constants');
 module.exports = React.createClass({
   render: function() {
     var logs = utils.generateLogs(this.props.user, this.props.logs);
-    var Logs = logs.map(function(log) {
-      return (<Log log={log} category={this.props.user.category} showRemove={false} absTime={true} />);
+    var Logs = logs.map(function(log, index) {
+      return (<Log logIndex={index} log={log} category={this.props.user.category} showRemove={false} absTime={true} />);
     }.bind(this));
     return (
       <div>

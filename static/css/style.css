@@ -171,7 +171,7 @@ div.stats-div>div.with-scroll {
   overflow: hidden;
 }
 .progress-rainbow>div>.rainbow-percentage {
-  width: 42px;
+  width: 75px;
   right: 0px;
   display: inline-block;
   position: absolute;
@@ -218,6 +218,28 @@ div.category-label {
 
 .me-info > div.title-line > div {
   float: left;
+}
+
+.royal-pitches {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.royal-pitch {
+  width: 72px;
+  display: inline-block;
+}
+
+.royal-pitch>span.badge {
+  width: 2em;
+  text-align: center;
+  margin-right: 6px;
+}
+
+.log-index {
+  display: inline-block;
+  text-align: center;
+  width: 4em;
 }
 
 .category-setter-div {
@@ -292,8 +314,11 @@ ul.pending-logs>li>div>span {
   margin-top: 4px;
 }
 
-.log>div>span.royal {
+span.royal {
   background-color: GoldenRod;
+}
+span.royal-fg {
+  color: GoldenRod;
 }
 
 
@@ -309,6 +334,9 @@ li.log>div>a.log-remove,a.admin-route-able {
 a.pointer {
   cursor: pointer;
   text-decoration: none;
+}
+
+a.category-setter-a {
   margin-left: 4px;
 }
 
