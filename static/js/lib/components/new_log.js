@@ -74,6 +74,7 @@ module.exports = React.createClass({
                   <div key="route" className="form-group">
                     <label key="label">Route</label>
                     <div key="selector"><Selector options={routeOptions} selectedRef={this.state.route} ref="routeSelector" onSelect={this._handleRouteOnSelect} /></div>
+                    <div className="info-tip"><span className="glyphicon glyphicon-info-sign"></span>For routes on inside walls, you need to climb twice to count as one pitch.</div>
                   </div>
                   {/* Uncomment this to enable partners
                   <div key="partner" className="form-group">

@@ -24,7 +24,7 @@ module.exports = React.createClass({
           </div>
           <Chips className="rainbow-chips" category={this.props.category} logRatings={slice} />
           <div key="percentage" className="rainbow-percentage">
-            {Math.round(this.props.percentage * 100).toString() + '%'} <span className="royal-fg">({Math.round(utils.calculateRoyalness(this.props.logRatings) * 100) / 100})</span>
+            {Math.round(this.props.percentage * 100).toString() + '%'} <span className="royal-fg">({Math.round(utils.calculateRoyalness(this.props.logRatings) * 100).toString() + '%'})</span>
           </div>
         </div>
       </div>

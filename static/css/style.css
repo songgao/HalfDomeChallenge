@@ -199,6 +199,14 @@ div.stats-div>div.with-scroll {
   clear: both;
 }
 
+.info-tip {
+  margin-top: 16px;
+}
+
+.info-tip>span.glyphicon {
+  margin-right: 8px;
+}
+
 div.category-label>span {
   font-size: 1.5em;
 }
