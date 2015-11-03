@@ -61,7 +61,7 @@ module.exports = React.createClass({
     var info_tip;
     if (this.state.route && this.state.route.is_half) {
       info_tip = (
-          <div className="info-tip alert alert-warning" role="alert"><span className="glyphicon glyphicon-info-sign"></span>You have selected a route on one of the inside walls. Inside-wall routes count as half pitches. Remember to climb it twice before recording.</div>
+          <div className="info-tip alert alert-warning" role="alert"><span className="glyphicon glyphicon-info-sign"></span>You have selected a route on one of the inside walls. Inside-wall routes count as half pitches. Remember to climb it twice before recording. (You only need to record the pitch once for the two climbs.)</div>
           );
     } else {
       info_tip = (
