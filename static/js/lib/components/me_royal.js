@@ -7,6 +7,10 @@ var utils = require('../utils');
 
 module.exports = React.createClass({
   render: function() {
+    if (this.props.logRatings.length >= C.Pitches.length) {
+      return (<div></div>);
+    }
+
     var nextRoute = C.Pitches[this.props.logRatings.length];
     var nextRouteDesc;
     if (utils.getRatingNumber(nextRoute) <= 6) {

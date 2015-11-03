@@ -22,6 +22,9 @@ exports.getRatingNumber = function(rating) {
 };
 
 exports.isRoyal = function(index, rating) {
+  if (index >= C.Pitches.length) {
+    return false;
+  }
   var expected = exports.getRatingNumber(C.Pitches[index]);
   var actual = exports.getRatingNumber(rating);
   if (expected <= 6) {
@@ -56,6 +59,7 @@ exports.generateLogs = function(user, bareLogs) {
 }
 
 exports.calculateRoyalness = function(logRatings) {
+  logRatings = logRatings.slice(0, C.Pitches.length);
   if (logRatings && logRatings.length) {
     return logRatings.reduce(function(total, rating, index) {
       if (exports.isRoyal(index, rating)) {
